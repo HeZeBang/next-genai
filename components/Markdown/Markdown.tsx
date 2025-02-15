@@ -1,7 +1,7 @@
 'use client'
 
 import { ClassAttributes, Fragment, HTMLAttributes, useCallback, useState } from 'react'
-import { IconButton, Tooltip } from '@radix-ui/themes'
+import { Blockquote, Button, Callout, ChevronDownIcon, IconButton, Link, Tooltip } from '@radix-ui/themes'
 import cs from 'classnames'
 import { RxClipboardCopy } from 'react-icons/rx'
 import ReactMarkdown, { ExtraProps } from 'react-markdown'
@@ -18,6 +18,7 @@ import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
 
 import './index.scss'
+import { ChevronUpIcon, InfoCircledIcon } from '@radix-ui/react-icons'
 
 export interface MarkdownProps {
   className?: string
@@ -66,16 +67,38 @@ const HighlightCode = (
 }
 
 const ThinkComponent = ({ className, children }: MarkdownProps) => {
+  const [thinkOpen, setThinkOpen] = useState<boolean>(true)
   return (
-    <div
-      style={{
-        backgroundColor: 'rgba(0, 136, 255, 0.22)',
-        padding: '10px',
-        borderRadius: '5px'
-      }}
-    >
-      {children}
-    </div>
+    // <div
+    //   style={{
+    //     backgroundColor: 'rgba(0, 136, 255, 0.22)',
+    //     padding: '10px',
+    //     borderRadius: '5px'
+    //   }}
+    // >
+    //   {children}
+    // </div>
+    <>
+      <Callout.Root color="gray" variant="surface">
+        <Callout.Icon>
+          <InfoCircledIcon />
+        </Callout.Icon>
+        <Callout.Text
+          style={{
+            marginTop: '-1.25em',
+            marginBottom: '-1.25em',
+          }}>
+          <p><Button
+            onClick={() => setThinkOpen(thinkOpen => !thinkOpen)}
+            size="2"
+            variant="ghost"
+          ><b>Reasoned</b>{thinkOpen ? <ChevronUpIcon width={15} /> : <ChevronDownIcon width={15} />}</Button></p>
+          {thinkOpen && children}
+        </Callout.Text>
+      </Callout.Root>
+    </>
+
+
   )
 }
 
@@ -88,8 +111,12 @@ export const Markdown = ({ className, children }: MarkdownProps) => {
 
     return processedMarkdown;
   };
-  // console.log(children);
-  console.log(processGenMath(children));
+  const thinkPatch = (markdown: string) => {
+    return markdown
+      .replaceAll(/<think>\s*/g, '<think>\n\n')
+      .replaceAll(/\s*<\/think>/g, '\n\n</think>')
+  }
+  // console.log(thinkPatch(processGenMath(children)));
   return (
     <ReactMarkdown
       className={cs('prose dark:prose-invert max-w-none', className)}
@@ -107,7 +134,9 @@ export const Markdown = ({ className, children }: MarkdownProps) => {
         }
       }}
     >
-      {processGenMath(children)}
+      {
+        thinkPatch(
+          processGenMath(children))}
     </ReactMarkdown>
   )
 }
