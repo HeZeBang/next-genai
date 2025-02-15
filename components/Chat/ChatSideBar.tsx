@@ -10,6 +10,7 @@ import { RiRobot2Line } from 'react-icons/ri'
 import ChatContext from './chatContext'
 
 import './index.scss'
+import { GearIcon } from '@radix-ui/react-icons'
 
 export const ChatSideBar = () => {
   const {
@@ -73,8 +74,8 @@ export const ChatSideBar = () => {
           onClick={() => onOpenModelPanel?.('chat')}
           className="bg-token-surface-primary active:scale-95 cursor-pointer"
         >
-          <RiRobot2Line className="size-4" />
-          <Text>Model Store</Text>
+          <GearIcon className="size-4" />
+          <Text>Settings</Text>
         </Box>
       </Flex>
     </Flex>

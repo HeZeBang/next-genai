@@ -1,11 +1,14 @@
 'use client'
 
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { MagnifyingGlassIcon } from '@radix-ui/react-icons'
+import { CopyIcon, Link2Icon, MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import {
+  Badge,
   Box,
   Button,
+  Code,
   Container,
+  DataList,
   Flex,
   Heading,
   IconButton,
@@ -17,8 +20,9 @@ import { debounce } from 'lodash-es'
 import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { LuMessageSquarePlus } from 'react-icons/lu'
 import { ChatContext, Model } from '@/components'
+import Link from 'next/link'
 
-export interface ModelPanelProps {}
+export interface ModelPanelProps { }
 
 const ModelPanel = (_props: ModelPanelProps) => {
   const {
@@ -74,13 +78,74 @@ const ModelPanel = (_props: ModelPanelProps) => {
         px="4"
         style={{ backgroundColor: 'var(--gray-a2)' }}
       >
-        <Heading size="4">Model Store </Heading>
+        <Heading size="4">Settings</Heading>
         <IconButton size="2" variant="ghost" color="gray" radius="full" onClick={onCloseModelPanel}>
           <AiOutlineClose className="size-4" />
         </IconButton>
       </Flex>
       <Container size="3" className="grow-0 px-4">
-        <Flex gap="4" py="5">
+        <Heading
+          className="mt-3"
+          size="5"
+        >
+          API Key
+        </Heading>
+        <Text as="p" size="2" className="mb-3">
+          Next.GenAI needs your account's API key to access ShanghaiTech GenAI API.
+        </Text>
+        <DataList.Root>
+          <DataList.Item align="center">
+            <DataList.Label minWidth="88px">Status</DataList.Label>
+            <DataList.Value>
+              <Badge color="jade" variant="soft" radius="full">
+                Authorized
+              </Badge>
+            </DataList.Value>
+          </DataList.Item>
+          <DataList.Item>
+            <DataList.Label minWidth="88px">API Key</DataList.Label>
+            <DataList.Value>
+              <Flex align="center" gap="2">
+                <Code variant="ghost">u_2J89JSA4GJ</Code>
+                <IconButton
+                  size="1"
+                  aria-label="Copy value"
+                  color="gray"
+                  variant="ghost"
+                >
+                  <CopyIcon />
+                </IconButton>
+              </Flex>
+            </DataList.Value>
+          </DataList.Item>
+          <DataList.Item>
+            <DataList.Label minWidth="88px">Name</DataList.Label>
+            <DataList.Value>Dummy Name</DataList.Value>
+          </DataList.Item>
+          <DataList.Item>
+            <DataList.Label minWidth="88px">Tokens Spent</DataList.Label>
+            <DataList.Value>
+              0
+            </DataList.Value>
+          </DataList.Item>
+          <DataList.Item>
+            <DataList.Label minWidth="88px">Coin Remain</DataList.Label>
+            <DataList.Value>
+              0
+            </DataList.Value>
+          </DataList.Item>
+        </DataList.Root>
+        <Button className='my-2'>
+          Refresh Account
+        </Button>
+
+        <Heading
+          className="mt-3"
+          size="5"
+        >
+          Models
+        </Heading>
+        <Flex gap="4" py="3">
           <TextField.Root
             size="3"
             className="flex-1"
@@ -94,9 +159,10 @@ const ModelPanel = (_props: ModelPanelProps) => {
               <MagnifyingGlassIcon height="16" width="16" />
             </TextField.Slot>
           </TextField.Root>
-          <Button size="3" radius="large" variant="surface" onClick={onOpenModelModal}>
+          {/* TODO: Create Bot */}
+          {/* <Button size="3" radius="large" variant="surface" onClick={onOpenModelModal}>
             Create
-          </Button>
+          </Button> */}
         </Flex>
       </Container>
       <ScrollArea className="flex-1" type="auto" scrollbars="vertical">
@@ -116,7 +182,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
                     {prompt.name}
                   </Text>
                   <Text as="p" size="2" className="line-clamp-2">
-                    {prompt.prompt || ''}
+                    Prompt: {prompt.prompt || ''}
                   </Text>
                 </Box>
                 <Flex gap="3">
