@@ -23,7 +23,7 @@ import './index.scss'
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
 
-export interface ChatProps {}
+export interface ChatProps { }
 
 export interface ChatGPInstance {
   setConversation: (messages: ChatMessage[]) => void
@@ -251,7 +251,7 @@ const Chat = (props: ChatProps, ref: any) => {
             />
             <div className="rt-TextAreaChrome"></div>
           </div>
-          <Flex gap="3" className="absolute right-0 pr-4 bottom-2 pt">
+          <Flex gap="3" className="absolute right-0 pr-4 bottom-3 pt">
             {isLoading && (
               <Flex
                 width="6"
@@ -275,7 +275,8 @@ const Chat = (props: ChatProps, ref: any) => {
                 <FiSend className="size-4" />
               </IconButton>
             </Tooltip>
-            <Tooltip content={'Clear History'}>
+            {/* TODO: Clear Context withoud history */}
+            {/* <Tooltip content={'Clear History'}>
               <IconButton
                 variant="soft"
                 color="gray"
@@ -286,7 +287,7 @@ const Chat = (props: ChatProps, ref: any) => {
               >
                 <AiOutlineClear className="size-4" />
               </IconButton>
-            </Tooltip>
+            </Tooltip> */}
             <Tooltip content={'Toggle Sidebar'}>
               <IconButton
                 variant="soft"
