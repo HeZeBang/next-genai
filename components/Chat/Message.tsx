@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useState } from 'react'
-import { Avatar, Flex, IconButton, Tooltip } from '@radix-ui/themes'
+import { Avatar, Badge, Flex, IconButton, Tooltip } from '@radix-ui/themes'
 import { FaRegCopy } from 'react-icons/fa'
 import { HiUser } from 'react-icons/hi'
 import { RiRobot2Line } from 'react-icons/ri'
@@ -36,6 +36,7 @@ const Message = (props: MessageProps) => {
         radius="full"
       />
       <div className="flex-1 pt-1 break-all">
+        <Badge color={isUser ? 'purple' : 'green'} style={{ marginBottom: '1em' }}>{isUser ? 'You' : 'AI'}</Badge>
         {isUser ? (
           <div
             className="userMessage"

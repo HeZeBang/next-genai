@@ -2,8 +2,8 @@
 import { Suspense } from 'react'
 import { Flex } from '@radix-ui/themes'
 import { Chat, ChatContext, ChatSideBar, useChatHook } from '@/components'
-import PersonaModal from './PersonaModal'
-import PersonaPanel from './PersonaPanel'
+import ModelModal from './ModelModal'
+import ModelPanel from './ModelPanel'
 
 const ChatProvider = () => {
   const provider = useChatHook()
@@ -14,10 +14,10 @@ const ChatProvider = () => {
         <ChatSideBar />
         <div className="flex-1 relative">
           <Chat ref={provider.chatRef} />
-          <PersonaPanel />
+          <ModelPanel />
         </div>
       </Flex>
-      <PersonaModal />
+      <ModelModal />
     </ChatContext.Provider>
   )
 }

@@ -3,7 +3,7 @@ export interface ChatMessage {
   role: ChatRole
 }
 
-export interface Persona {
+export interface Model {
   id?: string
   role: ChatRole
   avatar?: string
@@ -15,7 +15,7 @@ export interface Persona {
 
 export interface Chat {
   id: string
-  persona?: Persona
+  model?: Model
   messages?: ChatMessage[]
 }
 

@@ -1,39 +1,39 @@
 'use client'
 
 import { createContext, MutableRefObject } from 'react'
-import { Chat, ChatMessage, Persona } from './interface'
+import { Chat, ChatMessage, Model } from './interface'
 
 const ChatContext = createContext<{
   debug?: boolean
-  personaPanelType: string
-  DefaultPersonas: Persona[]
+  modelPanelType: string
+  DefaultModels: Model[]
   currentChatRef?: MutableRefObject<Chat | undefined>
   chatList: Chat[]
-  personas: Persona[]
-  isOpenPersonaModal?: boolean
-  editPersona?: Persona
-  personaModalLoading?: boolean
-  openPersonaPanel?: boolean
+  models: Model[]
+  isOpenModelModal?: boolean
+  editModel?: Model
+  modelModalLoading?: boolean
+  openModelPanel?: boolean
   toggleSidebar?: boolean
-  onOpenPersonaModal?: () => void
-  onClosePersonaModal?: () => void
+  onOpenModelModal?: () => void
+  onCloseModelModal?: () => void
   setCurrentChat?: (chat: Chat) => void
-  onCreatePersona?: (persona: Persona) => void
+  onCreateModel?: (model: Model) => void
   onDeleteChat?: (chat: Chat) => void
-  onDeletePersona?: (persona: Persona) => void
-  onEditPersona?: (persona: Persona) => void
-  onCreateChat?: (persona: Persona) => void
+  onDeleteModel?: (model: Model) => void
+  onEditModel?: (model: Model) => void
+  onCreateChat?: (model: Model) => void
   onChangeChat?: (chat: Chat) => void
   saveMessages?: (messages: ChatMessage[]) => void
-  onOpenPersonaPanel?: (type?: string) => void
-  onClosePersonaPanel?: () => void
+  onOpenModelPanel?: (type?: string) => void
+  onCloseModelPanel?: () => void
   onToggleSidebar?: () => void
   forceUpdate?: () => void
 }>({
-  personaPanelType: 'chat',
-  DefaultPersonas: [],
+  modelPanelType: 'chat',
+  DefaultModels: [],
   chatList: [],
-  personas: []
+  models: []
 })
 
 export default ChatContext

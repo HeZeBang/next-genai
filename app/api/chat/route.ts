@@ -10,19 +10,20 @@ export interface Message {
 
 export async function POST(req: NextRequest) {
   try {
-    const { prompt, messages, input } = (await req.json()) as {
+    const { prompt, messages, model, input } = (await req.json()) as {
       prompt: string
       messages: Message[]
+      model: string
       input: string
     }
     const messagesWithHistory = [
       { content: prompt, role: 'system' },
       ...messages,
-      { content: input, role: 'user' }
+      // { content: input, role: 'user' }
     ]
 
-    const { apiUrl, apiKey, model } = getApiConfig()
-    const stream = await getOpenAIStream(apiUrl, apiKey, model, messagesWithHistory)
+    const { apiUrl, apiKey } = getApiConfig()
+    const stream = await getOpenAIStream(apiUrl, apiKey, model, messagesWithHistory, input)
     return new NextResponse(stream, {
       headers: { 'Content-Type': 'text/event-stream' }
     })
@@ -36,59 +37,61 @@ export async function POST(req: NextRequest) {
 }
 
 const getApiConfig = () => {
-  const useAzureOpenAI =
-    process.env.AZURE_OPENAI_API_BASE_URL && process.env.AZURE_OPENAI_API_BASE_URL.length > 0
-
   let apiUrl: string
   let apiKey: string
   let model: string
-  if (useAzureOpenAI) {
-    let apiBaseUrl = process.env.AZURE_OPENAI_API_BASE_URL
-    const apiVersion = '2024-02-01'
-    const deployment = process.env.AZURE_OPENAI_DEPLOYMENT || ''
-    if (apiBaseUrl && apiBaseUrl.endsWith('/')) {
-      apiBaseUrl = apiBaseUrl.slice(0, -1)
-    }
-    apiUrl = `${apiBaseUrl}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`
-    apiKey = process.env.AZURE_OPENAI_API_KEY || ''
-    model = '' // Azure Open AI always ignores the model and decides based on the deployment name passed through.
-  } else {
-    let apiBaseUrl = process.env.OPENAI_API_BASE_URL || 'https://api.openai.com'
-    if (apiBaseUrl && apiBaseUrl.endsWith('/')) {
-      apiBaseUrl = apiBaseUrl.slice(0, -1)
-    }
-    apiUrl = `${apiBaseUrl}/v1/chat/completions`
-    apiKey = process.env.OPENAI_API_KEY || ''
-    model = process.env.OPENAI_MODEL || 'gpt-3.5-turbo'
+  let apiBaseUrl = process.env.GENAI_API_BASE_URL || 'https://api.openai.com'
+  if (apiBaseUrl && apiBaseUrl.endsWith('/')) {
+    apiBaseUrl = apiBaseUrl.slice(0, -1)
   }
+  // apiUrl = `${apiBaseUrl}/v1/chat/completions`
+  apiUrl = "https://genai.shanghaitech.edu.cn/htk/chat/start/chat"
+  // apiKey = process.env.GENAI_API_KEY || ''
+  apiKey = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3Mzk2OTI3MjYsInVzZXJuYW1lIjoiMjAyMzUzMzE4OSJ9.zzES9xcFzU664t6PNyR624vGwH2XzkqnaH4AodGRv3M"
+  // model = process.env.OPENAI_MODEL || 'gpt-3.5-turbo'
+  // model = "deepseek-v3:671b"
 
-  return { apiUrl, apiKey, model }
+  return { apiUrl, apiKey }
 }
 
 const getOpenAIStream = async (
   apiUrl: string,
   apiKey: string,
   model: string,
-  messages: Message[]
+  messages: Message[],
+  input: string
 ) => {
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
   const res = await fetch(apiUrl, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-      'api-key': `${apiKey}`
+      // Authorization: `Bearer ${apiKey}`,
+      // 'api-key': `${apiKey}`
+      'X-Access-Token': `${apiKey}`
     },
     method: 'POST',
     body: JSON.stringify({
-      model: model,
-      frequency_penalty: 0,
-      max_tokens: 4000,
+      // model: model,
+      // frequency_penalty: 0,
+      // max_tokens: 4000,
+
       messages: messages,
-      presence_penalty: 0,
+      // presence_penalty: 0,
       stream: true,
-      temperature: 0.5,
-      top_p: 0.95
+      // temperature: 0.5,
+      // top_p: 0.95
+      chatInfo: input,
+      "type": "3",
+      "aiType": model,
+      "aiSecType": "1",
+      "chatGroupId": "GYoG8XwMaXrUkCur-asX1",
+      "promptTokens": 0,
+      "imageUrl": "",
+      "width": "",
+      "height": "",
+      "rootAiType": "xinference",
+      "maxToken": 16384
     })
   })
 

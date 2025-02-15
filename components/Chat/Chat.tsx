@@ -23,7 +23,7 @@ import './index.scss'
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
 
-export interface ChatProps {}
+export interface ChatProps { }
 
 export interface ChatGPInstance {
   setConversation: (messages: ChatMessage[]) => void
@@ -35,8 +35,9 @@ const postChatOrQuestion = async (chat: Chat, messages: any[], input: string) =>
   const url = '/api/chat'
 
   const data = {
-    prompt: chat?.persona?.prompt,
+    prompt: chat?.model?.prompt,
     messages: [...messages!],
+    model: chat?.model?.id,
     input
   }
 
@@ -214,7 +215,7 @@ const Chat = (props: ChatProps, ref: any) => {
         px="4"
         style={{ backgroundColor: 'var(--gray-a2)' }}
       >
-        <Heading size="4">{currentChatRef?.current?.persona?.name || 'None'}</Heading>
+        <Heading size="4">{currentChatRef?.current?.model?.name || 'None'}</Heading>
       </Flex>
       <ScrollArea
         className="flex-1 px-4"

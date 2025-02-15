@@ -16,28 +16,28 @@ import {
 import { debounce } from 'lodash-es'
 import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { LuMessageSquarePlus } from 'react-icons/lu'
-import { ChatContext, Persona } from '@/components'
+import { ChatContext, Model } from '@/components'
 
-export interface PersonaPanelProps {}
+export interface ModelPanelProps { }
 
-const PersonaPanel = (_props: PersonaPanelProps) => {
+const ModelPanel = (_props: ModelPanelProps) => {
   const {
-    personaPanelType,
-    DefaultPersonas,
-    personas,
-    openPersonaPanel,
-    onDeletePersona,
-    onEditPersona,
+    modelPanelType,
+    DefaultModels,
+    models,
+    openModelPanel,
+    onDeleteModel,
+    onEditModel,
     onCreateChat,
-    onOpenPersonaModal,
-    onClosePersonaPanel
+    onOpenModelModal,
+    onCloseModelPanel
   } = useContext(ChatContext)
 
-  const [promptList, setPromptList] = useState<Persona[]>([])
+  const [promptList, setPromptList] = useState<Model[]>([])
   const [searchText, setSearchText] = useState('')
 
   const handleSearch = useCallback(
-    debounce((type: string, list: Persona[], searchText: string) => {
+    debounce((type: string, list: Model[], searchText: string) => {
       setPromptList(
         list.filter((item) => {
           if (type === 'chat') {
@@ -56,10 +56,10 @@ const PersonaPanel = (_props: PersonaPanelProps) => {
   )
 
   useEffect(() => {
-    handleSearch(personaPanelType, [...DefaultPersonas, ...personas], searchText)
-  }, [personaPanelType, searchText, DefaultPersonas, personas, handleSearch])
+    handleSearch(modelPanelType, [...DefaultModels, ...models], searchText)
+  }, [modelPanelType, searchText, DefaultModels, models, handleSearch])
 
-  return openPersonaPanel ? (
+  return openModelPanel ? (
     <Flex
       direction="column"
       width="100%"
@@ -74,13 +74,13 @@ const PersonaPanel = (_props: PersonaPanelProps) => {
         px="4"
         style={{ backgroundColor: 'var(--gray-a2)' }}
       >
-        <Heading size="4">Persona Store </Heading>
+        <Heading size="4">Model Store </Heading>
         <IconButton
           size="2"
           variant="ghost"
           color="gray"
           radius="full"
-          onClick={onClosePersonaPanel}
+          onClick={onCloseModelPanel}
         >
           <AiOutlineClose className="size-4" />
         </IconButton>
@@ -91,7 +91,7 @@ const PersonaPanel = (_props: PersonaPanelProps) => {
             size="3"
             className="flex-1"
             radius="large"
-            placeholder="Search Persona Template"
+            placeholder="Search Model Template"
             onChange={({ target }) => {
               setSearchText(target.value)
             }}
@@ -100,7 +100,7 @@ const PersonaPanel = (_props: PersonaPanelProps) => {
               <MagnifyingGlassIcon height="16" width="16" />
             </TextField.Slot>
           </TextField.Root>
-          <Button size="3" radius="large" variant="surface" onClick={onOpenPersonaModal}>
+          <Button size="3" radius="large" variant="surface" onClick={onOpenModelModal}>
             Create
           </Button>
         </Flex>
@@ -142,7 +142,7 @@ const PersonaPanel = (_props: PersonaPanelProps) => {
                     color="gray"
                     radius="full"
                     onClick={() => {
-                      onEditPersona?.(prompt)
+                      onEditModel?.(prompt)
                     }}
                   >
                     <AiOutlineEdit className="size-4" />
@@ -153,7 +153,7 @@ const PersonaPanel = (_props: PersonaPanelProps) => {
                     color="crimson"
                     radius="full"
                     onClick={() => {
-                      onDeletePersona?.(prompt)
+                      onDeleteModel?.(prompt)
                     }}
                   >
                     <AiOutlineDelete className="size-4" />
@@ -168,4 +168,4 @@ const PersonaPanel = (_props: PersonaPanelProps) => {
   ) : null
 }
 
-export default PersonaPanel
+export default ModelPanel

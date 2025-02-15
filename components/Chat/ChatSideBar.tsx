@@ -15,12 +15,12 @@ export const ChatSideBar = () => {
   const {
     currentChatRef,
     chatList,
-    DefaultPersonas,
+    DefaultModels,
     toggleSidebar,
     onDeleteChat,
     onChangeChat,
     onCreateChat,
-    onOpenPersonaPanel
+    onOpenModelPanel
   } = useContext(ChatContext)
 
   return (
@@ -28,7 +28,7 @@ export const ChatSideBar = () => {
       <Flex className="p-2 h-full overflow-hidden w-64" direction="column" gap="3">
         <Box
           width="auto"
-          onClick={() => onCreateChat?.(DefaultPersonas[0])}
+          onClick={() => onCreateChat?.(DefaultModels[0])}
           className="bg-token-surface-primary active:scale-95 cursor-pointer"
         >
           <FiPlus className="size-4" />
@@ -48,7 +48,7 @@ export const ChatSideBar = () => {
                 <Flex gap="2" align="center" className="overflow-hidden whitespace-nowrap">
                   <BiMessageDetail className="size-4" />
                   <Text as="p" className="truncate">
-                    {chat.persona?.name}
+                    {chat.model?.name}
                   </Text>
                 </Flex>
                 <IconButton
@@ -70,11 +70,11 @@ export const ChatSideBar = () => {
         </ScrollArea>
         <Box
           width="auto"
-          onClick={() => onOpenPersonaPanel?.('chat')}
+          onClick={() => onOpenModelPanel?.('chat')}
           className="bg-token-surface-primary active:scale-95 cursor-pointer"
         >
           <RiRobot2Line className="size-4" />
-          <Text>Persona Store</Text>
+          <Text>Model Store</Text>
         </Box>
       </Flex>
     </Flex>

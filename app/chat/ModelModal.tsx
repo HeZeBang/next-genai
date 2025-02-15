@@ -1,20 +1,20 @@
 import React, { useContext, useEffect } from 'react'
 import { Button, Dialog, Flex, TextArea, TextField } from '@radix-ui/themes'
 import { useForm } from 'react-hook-form'
-import { ChatContext, Persona } from '@/components'
+import { ChatContext, Model } from '@/components'
 
-const PersonaModal = () => {
+const ModelModal = () => {
   const {
-    isOpenPersonaModal: open,
-    editPersona: detail,
-    onCreatePersona,
-    onClosePersonaModal
+    isOpenModelModal: open,
+    editModel: detail,
+    onCreateModel,
+    onCloseModelModal
   } = useContext(ChatContext)
 
   const { register, handleSubmit, setValue } = useForm()
 
   const formSubmit = handleSubmit((values: any) => {
-    onCreatePersona?.(values as Persona)
+    onCreateModel?.(values as Model)
   })
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const PersonaModal = () => {
   return (
     <Dialog.Root open={open!}>
       <Dialog.Content size="4">
-        <Dialog.Title>Create or Edit Persona Prompt</Dialog.Title>
+        <Dialog.Title>Create or Edit Model Prompt</Dialog.Title>
         <Dialog.Description size="2" mb="4"></Dialog.Description>
         <form onSubmit={formSubmit}>
           <Flex direction="column" gap="3">
@@ -36,7 +36,7 @@ const PersonaModal = () => {
           </Flex>
           <Flex gap="3" mt="4" justify="end">
             <Dialog.Close>
-              <Button variant="soft" type="button" color="gray" onClick={onClosePersonaModal}>
+              <Button variant="soft" type="button" color="gray" onClick={onCloseModelModal}>
                 Cancel
               </Button>
             </Dialog.Close>
@@ -52,4 +52,4 @@ const PersonaModal = () => {
   )
 }
 
-export default PersonaModal
+export default ModelModal
