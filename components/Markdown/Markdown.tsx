@@ -15,6 +15,7 @@ import remarkMath from 'remark-math'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
+import { MathJax, MathJaxContext } from 'better-react-mathjax';
 
 import './index.scss'
 
@@ -79,11 +80,24 @@ const ThinkComponent = ({ className, children }: MarkdownProps) => {
 }
 
 export const Markdown = ({ className, children }: MarkdownProps) => {
+  const processGenMath = (markdown: string) => {
+    // Convert `\(...\)`, `\[...\]` -> `$...$` 和 `$$...$$`
+    const processedMarkdown = markdown
+      .replaceAll(/\\\((\s*?.*?\s*?)\\\)/g, '$$$1$$')
+      .replaceAll(/\\\[(\s*?[\s\S]*?\s*?)\\\]/g, '$$$$$1$$$$');
+
+    return processedMarkdown;
+  };
+  // console.log(children);
+  console.log(processGenMath(children));
   return (
     <ReactMarkdown
       className={cs('prose dark:prose-invert max-w-none', className)}
       remarkPlugins={[remarkParse, remarkMath, remarkRehype, remarkGfm]}
-      rehypePlugins={[rehypeRaw, rehypeKatex, rehypeStringify]}
+      rehypePlugins={[
+        rehypeRaw,
+        [rehypeKatex, { output: 'mathml' }],
+        rehypeStringify]}
       components={{
         // TODO: fix error
         //@ts-ignore
@@ -91,12 +105,9 @@ export const Markdown = ({ className, children }: MarkdownProps) => {
         code(props) {
           return <HighlightCode {...props} />
         }
-        // think(props) {
-        //   return <ThinkComponent {...props}>{String(props.children)}</ThinkComponent>
-        // }
       }}
     >
-      {children}
+      {processGenMath(children)}
     </ReactMarkdown>
   )
 }
