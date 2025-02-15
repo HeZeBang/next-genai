@@ -65,12 +65,18 @@ const HighlightCode = (
 }
 
 const ThinkComponent = ({ className, children }: MarkdownProps) => {
-  return <div style={{
-    backgroundColor: 'rgba(0, 136, 255, 0.22)',
-    padding: '10px',
-    borderRadius: '5px',
-  }}>{children}</div>;
-};
+  return (
+    <div
+      style={{
+        backgroundColor: 'rgba(0, 136, 255, 0.22)',
+        padding: '10px',
+        borderRadius: '5px'
+      }}
+    >
+      {children}
+    </div>
+  )
+}
 
 export const Markdown = ({ className, children }: MarkdownProps) => {
   return (
@@ -84,7 +90,7 @@ export const Markdown = ({ className, children }: MarkdownProps) => {
         think: ThinkComponent,
         code(props) {
           return <HighlightCode {...props} />
-        },
+        }
         // think(props) {
         //   return <ThinkComponent {...props}>{String(props.children)}</ThinkComponent>
         // }

@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     }
     const messagesWithHistory = [
       { content: prompt, role: 'system' },
-      ...messages,
+      ...messages
       // { content: input, role: 'user' }
     ]
 
@@ -45,9 +45,10 @@ const getApiConfig = () => {
     apiBaseUrl = apiBaseUrl.slice(0, -1)
   }
   // apiUrl = `${apiBaseUrl}/v1/chat/completions`
-  apiUrl = "https://genai.shanghaitech.edu.cn/htk/chat/start/chat"
+  apiUrl = 'https://genai.shanghaitech.edu.cn/htk/chat/start/chat'
   // apiKey = process.env.GENAI_API_KEY || ''
-  apiKey = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3Mzk2OTI3MjYsInVzZXJuYW1lIjoiMjAyMzUzMzE4OSJ9.zzES9xcFzU664t6PNyR624vGwH2XzkqnaH4AodGRv3M"
+  apiKey =
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3Mzk2OTI3MjYsInVzZXJuYW1lIjoiMjAyMzUzMzE4OSJ9.zzES9xcFzU664t6PNyR624vGwH2XzkqnaH4AodGRv3M'
   // model = process.env.OPENAI_MODEL || 'gpt-3.5-turbo'
   // model = "deepseek-v3:671b"
 
@@ -82,16 +83,16 @@ const getOpenAIStream = async (
       // temperature: 0.5,
       // top_p: 0.95
       chatInfo: input,
-      "type": "3",
-      "aiType": model,
-      "aiSecType": "1",
-      "chatGroupId": "GYoG8XwMaXrUkCur-asX1",
-      "promptTokens": 0,
-      "imageUrl": "",
-      "width": "",
-      "height": "",
-      "rootAiType": "xinference",
-      "maxToken": 16384
+      type: '3',
+      aiType: model,
+      aiSecType: '1',
+      chatGroupId: 'GYoG8XwMaXrUkCur-asX1',
+      promptTokens: 0,
+      imageUrl: '',
+      width: '',
+      height: '',
+      rootAiType: 'xinference',
+      maxToken: 16384
     })
   })
 

@@ -18,7 +18,7 @@ import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { LuMessageSquarePlus } from 'react-icons/lu'
 import { ChatContext, Model } from '@/components'
 
-export interface ModelPanelProps { }
+export interface ModelPanelProps {}
 
 const ModelPanel = (_props: ModelPanelProps) => {
   const {
@@ -75,13 +75,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
         style={{ backgroundColor: 'var(--gray-a2)' }}
       >
         <Heading size="4">Model Store </Heading>
-        <IconButton
-          size="2"
-          variant="ghost"
-          color="gray"
-          radius="full"
-          onClick={onCloseModelPanel}
-        >
+        <IconButton size="2" variant="ghost" color="gray" radius="full" onClick={onCloseModelPanel}>
           <AiOutlineClose className="size-4" />
         </IconButton>
       </Flex>

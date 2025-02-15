@@ -36,7 +36,9 @@ const Message = (props: MessageProps) => {
         radius="full"
       />
       <div className="flex-1 pt-1 break-all">
-        <Badge color={isUser ? 'purple' : 'green'} style={{ marginBottom: '1em' }}>{isUser ? 'You' : 'AI'}</Badge>
+        <Badge color={isUser ? 'purple' : 'green'} style={{ marginBottom: '1em' }}>
+          {isUser ? 'You' : 'AI'}
+        </Badge>
         {isUser ? (
           <div
             className="userMessage"

@@ -23,7 +23,7 @@ import './index.scss'
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
 
-export interface ChatProps { }
+export interface ChatProps {}
 
 export interface ChatGPInstance {
   setConversation: (messages: ChatMessage[]) => void
