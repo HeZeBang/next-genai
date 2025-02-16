@@ -137,6 +137,8 @@ const useChatHook = () => {
     if (chatList.length === 0) {
       onOpenModelPanel('chat')
     }
+    else
+      onChangeChat(chatList[0])
   }
 
   const onCreateModel = async (values: any) => {

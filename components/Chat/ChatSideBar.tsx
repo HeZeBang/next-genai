@@ -44,7 +44,10 @@ export const ChatSideBar = () => {
                 className={cs('bg-token-surface active:scale-95 truncate cursor-pointer', {
                   active: currentChatRef?.current?.id === chat.id
                 })}
-                onClick={() => onChangeChat?.(chat)}
+                onClick={() => {
+                  if (currentChatRef?.current?.id !== chat.id)
+                    onChangeChat?.(chat)
+                }}
               >
                 <Flex gap="2" align="center" className="overflow-hidden whitespace-nowrap">
                   <BiMessageDetail className="size-4" />
