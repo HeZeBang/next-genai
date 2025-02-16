@@ -8,7 +8,7 @@ Visit the [ChatGPT Lite Demo Site](https://bit.ly/chatgpt-lite)
 
 ## Features
 
-ChatGPT Lite is a lightweight ChatGPT web interface developed using Next.js and the [OpenAI Chat API](https://platform.openai.com/docs/api-reference/chat). It's compatible with both OpenAI and Azure OpenAI accounts.
+ChatGPT Lite is a lightweight ChatGPT web interface developed using Next.js and the [GenAI Chat API](https://platform.openai.com/docs/api-reference/chat). It's compatible with both GenAI and Azure GenAI accounts.
 
 - Deploy a custom ChatGPT web interface that supports markdown, prompt storage, and multi-person chats.
 - Create a private, web-based ChatGPT for use among friends without sharing your API key.
@@ -20,7 +20,7 @@ For a beginner-friendly version of the ChatGPT UI codebase, visit [ChatGPT Minim
 
 ## Prerequisites
 
-You need an OpenAI or Azure OpenAI account.
+You need an GenAI or Azure GenAI account.
 
 ## Deployment
 
@@ -34,7 +34,7 @@ Click the button below to deploy on Vercel:
 
 ### Deploy with Docker
 
-For OpenAI account users:
+For GenAI account users:
 
 ```
 docker run -d -p 3000:3000 \
@@ -42,7 +42,7 @@ docker run -d -p 3000:3000 \
    blrchen/chatgpt-lite
 ```
 
-For Azure OpenAI account users:
+For Azure GenAI account users:
 
 ```
 docker run -d -p 3000:3000 \
@@ -74,15 +74,15 @@ docker run -d -p 3000:3000 \
 
 Required environment variables:
 
-For OpenAI account:
+For GenAI account:
 
 | Name                | Description                                                                                             | Default Value            |
 | ------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------ |
 | OPENAI_API_BASE_URL | Use if you plan to use a reverse proxy for `api.openai.com`.                                            | `https://api.openai.com` |
-| OPENAI_API_KEY      | Secret key string obtained from the [OpenAI API website](https://platform.openai.com/account/api-keys). |                          |
+| OPENAI_API_KEY      | Secret key string obtained from the [GenAI API website](https://platform.openai.com/account/api-keys). |                          |
 | OPENAI_MODEL        | Model of GPT used                                                                                       | `gpt-3.5-turbo`          |
 
-For Azure OpenAI account:
+For Azure GenAI account:
 
 | Name                      | Description                                      |
 | ------------------------- | ------------------------------------------------ |

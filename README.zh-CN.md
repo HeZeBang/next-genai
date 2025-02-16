@@ -8,7 +8,7 @@
 
 ## 功能
 
-ChatGPT Lite是一个基于Next.js和[OpenAI Chat API](https://platform.openai.com/docs/api-reference/chat)的网站程序，兼容OpenAI和Azure OpenAI账户。
+ChatGPT Lite是一个基于Next.js和[GenAI Chat API](https://platform.openai.com/docs/api-reference/chat)的网站程序，兼容GenAI和Azure GenAI账户。
 
 - 部署个性化ChatGPT程序，支持Markdown显示，提示词商店，多角色对话等。
 - 创建供朋友使用的ChatGPT程序，无需共享API密钥。
@@ -20,7 +20,7 @@ ChatGPT Lite是一个基于Next.js和[OpenAI Chat API](https://platform.openai.c
 
 ## 前提条件
 
-需要OpenAI账户或Azure OpenAI账户。
+需要GenAI账户或Azure GenAI账户。
 
 ## 部署
 
@@ -34,7 +34,7 @@ ChatGPT Lite是一个基于Next.js和[OpenAI Chat API](https://platform.openai.c
 
 ### 使用Docker部署
 
-OpenAI账户用户：
+GenAI账户用户：
 
 ```
 docker run -d -p 3000:3000 \
@@ -42,7 +42,7 @@ docker run -d -p 3000:3000 \
    blrchen/chatgpt-lite
 ```
 
-Azure OpenAI账户用户：
+Azure GenAI账户用户：
 
 ```
 docker run -d -p 3000:3000 \
@@ -74,15 +74,15 @@ docker run -d -p 3000:3000 \
 
 运行应用需要的环境变量：
 
-OpenAI账户环境变量：
+GenAI账户环境变量：
 
 | 名称                | 描述                                                                               | 默认值                   |
 | ------------------- | ---------------------------------------------------------------------------------- | ------------------------ |
 | OPENAI_API_BASE_URL | 如需为`api.openai.com`使用反向代理，请使用此变量。                                 | `https://api.openai.com` |
-| OPENAI_API_KEY      | 从[OpenAI API网站](https://platform.openai.com/account/api-keys)获取的密钥字符串。 |                          |
+| OPENAI_API_KEY      | 从[GenAI API网站](https://platform.openai.com/account/api-keys)获取的密钥字符串。 |                          |
 | OPENAI_MODEL        | GPT模型                                                                            | `gpt-3.5-turbo`          |
 
-Azure OpenAI账户环境变量：
+Azure GenAI账户环境变量：
 
 | 名称                      | 描述                                         |
 | ------------------------- | -------------------------------------------- |
