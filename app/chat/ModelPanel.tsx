@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { CopyIcon, Link2Icon, MagnifyingGlassIcon, ReloadIcon } from '@radix-ui/react-icons'
+import { CopyIcon, MagnifyingGlassIcon, ReloadIcon } from '@radix-ui/react-icons'
 import {
   Badge,
   Box,
@@ -23,7 +23,7 @@ import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { LuMessageSquarePlus } from 'react-icons/lu'
 import { ChatContext, Model } from '@/components'
 
-export interface ModelPanelProps {}
+export interface ModelPanelProps { }
 enum TokenState {
   Invalid = -1,
   Validating = 0,
@@ -39,7 +39,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
     onDeleteModel,
     onEditModel,
     onCreateChat,
-    onOpenModelModal,
+    // onOpenModelModal,
     onCloseModelPanel
   } = useContext(ChatContext)
 
@@ -75,7 +75,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
       apiKey: localStorage.getItem('apiKey')
     }
     try {
-      const response = await fetch('/api/refresh', {
+      await fetch('/api/refresh', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -102,7 +102,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
     }
     setIsValidating(TokenState.Validating)
     try {
-      const response = await fetch('/api/validate', {
+      await fetch('/api/validate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -160,7 +160,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
           API Key
         </Heading>
         <Text as="p" size="2" className="mb-3">
-          Next.GenAI needs your account's API key to access ShanghaiTech GenAI API.
+          Next.GenAI needs your API key to access ShanghaiTech GenAI API.
         </Text>
         <DataList.Root>
           <DataList.Item align="center">
@@ -249,9 +249,9 @@ const ModelPanel = (_props: ModelPanelProps) => {
                 GenAI Login Page
               </Link>
               <br />
-              2. Login by your ShanghaiTech Account. If you're already logged in, skip this step.
+              2. Login by your ShanghaiTech Account. If you are already logged in, skip this step.
               <br />
-              3. Copy the link of the page you're redirected to after login. <br />
+              3. Copy the link of the page you are redirected to after login. <br />
               It should be like{' '}
               <code>https://genai.shanghaitech.edu.cn/dashboard/analysis?token=...</code>
             </Dialog.Description>

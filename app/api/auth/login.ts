@@ -1,6 +1,5 @@
-import axios from 'axios'
-import { exec } from 'child_process'
 import CryptoJS from 'crypto-js'
+import axios from 'axios'
 
 const headers = {
   'User-Agent':
