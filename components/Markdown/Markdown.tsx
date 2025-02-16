@@ -23,7 +23,6 @@ import remarkMath from 'remark-math'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
-import { MathJax, MathJaxContext } from 'better-react-mathjax'
 
 import './index.scss'
 import { ChevronUpIcon, InfoCircledIcon } from '@radix-ui/react-icons'
