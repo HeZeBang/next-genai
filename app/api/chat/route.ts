@@ -60,8 +60,6 @@ const getGenAIStream = async (
   const res = await fetch(apiUrl, {
     headers: {
       'Content-Type': 'application/json',
-      // Authorization: `Bearer ${apiKey}`,
-      // 'api-key': `${apiKey}`
       'X-Access-Token': `${apiKey}`
     },
     method: 'POST',
