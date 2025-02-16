@@ -9,7 +9,7 @@ import {
   useRef,
   useState
 } from 'react'
-import { Flex, Heading, IconButton, ScrollArea, Tooltip } from '@radix-ui/themes'
+import { Container, Flex, Heading, IconButton, ScrollArea, Tooltip } from '@radix-ui/themes'
 import ContentEditable from 'react-contenteditable'
 import toast from 'react-hot-toast'
 import { AiOutlineClear, AiOutlineLoading3Quarters, AiOutlineUnorderedList } from 'react-icons/ai'
@@ -23,7 +23,7 @@ import './index.scss'
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
 
-export interface ChatProps {}
+export interface ChatProps { }
 
 export interface ChatGPInstance {
   setConversation: (messages: ChatMessage[]) => void
@@ -31,7 +31,7 @@ export interface ChatGPInstance {
   focus: () => void
 }
 
-const postChatOrQuestion = async (chat: Chat, messages: any[], input: string) => {
+const postChatOrQuestion = async (chat: Chat, messages: any[], input: string, controller: AbortController) => {
   const url = '/api/chat'
 
   const data = {
@@ -42,7 +42,6 @@ const postChatOrQuestion = async (chat: Chat, messages: any[], input: string) =>
     apiKey: localStorage.getItem('apiKey')
   }
 
-  const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 seconds timeout
 
   try {
@@ -95,7 +94,9 @@ const Chat = (props: ChatProps, ref: any) => {
         setMessage('')
         setIsLoading(true)
         try {
-          const response = await postChatOrQuestion(currentChatRef?.current!, message, input)
+
+          const controller = new AbortController()
+          const response = await postChatOrQuestion(currentChatRef?.current!, message, input, controller)
 
           if (response.ok) {
             const data = response.body
@@ -235,60 +236,63 @@ const Chat = (props: ChatProps, ref: any) => {
         scrollbars="vertical"
         style={{ height: '100%' }}
       >
-        {conversation.current.map((item, index) => (
-          <Message key={index} message={item} />
-        ))}
-        {currentMessage && <Message message={{ content: currentMessage, role: 'assistant' }} />}
-        <div ref={bottomOfChatRef}></div>
+        <Container size="3">
+          {conversation.current.map((item, index) => (
+            <Message key={index} message={item} />
+          ))}
+          {currentMessage && <Message message={{ content: currentMessage, role: 'assistant' }} isLoading />}
+          <div ref={bottomOfChatRef}></div>
+        </Container>
       </ScrollArea>
       <div className="px-4 pb-3">
-        <Flex align="end" justify="between" gap="3" className="relative">
-          <div className="rt-TextAreaRoot rt-r-size-1 rt-variant-surface flex-1 rounded-3xl chat-textarea">
-            <ContentEditable
-              innerRef={textAreaRef}
-              style={{
-                minHeight: '24px',
-                maxHeight: '200px',
-                overflowY: 'auto'
-              }}
-              className="rt-TextAreaInput text-base"
-              html={message}
-              disabled={isLoading}
-              onChange={(e) => {
-                setMessage(e.target.value.replace(HTML_REGULAR, ''))
-              }}
-              onKeyDown={(e) => {
-                handleKeypress(e)
-              }}
-            />
-            <div className="rt-TextAreaChrome"></div>
-          </div>
-          <Flex gap="3" className="absolute right-0 pr-4 bottom-3 pt">
-            {isLoading && (
-              <Flex
-                width="6"
-                height="6"
-                align="center"
-                justify="center"
-                style={{ color: 'var(--accent-11)' }}
-              >
-                <AiOutlineLoading3Quarters className="animate-spin size-4" />
-              </Flex>
-            )}
-            <Tooltip content={'Send Message'}>
-              <IconButton
-                variant="soft"
+        <Container size="3">
+          <Flex align="end" justify="between" gap="3" className="relative">
+            <div className="rt-TextAreaRoot rt-r-size-1 rt-variant-surface flex-1 rounded-3xl chat-textarea">
+              <ContentEditable
+                innerRef={textAreaRef}
+                style={{
+                  minHeight: '24px',
+                  maxHeight: '200px',
+                  overflowY: 'auto'
+                }}
+                className="rt-TextAreaInput text-base"
+                html={message}
                 disabled={isLoading}
-                color="gray"
-                size="2"
-                className="rounded-xl cursor-pointer"
-                onClick={sendMessage}
-              >
-                <FiSend className="size-4" />
-              </IconButton>
-            </Tooltip>
-            {/* TODO: Clear Context withoud history */}
-            {/* <Tooltip content={'Clear History'}>
+                onChange={(e) => {
+                  setMessage(e.target.value.replace(HTML_REGULAR, ''))
+                }}
+                onKeyDown={(e) => {
+                  handleKeypress(e)
+                }}
+              />
+              <div className="rt-TextAreaChrome"></div>
+            </div>
+            <Flex gap="3" className="absolute right-0 pr-4 bottom-3 pt">
+              {isLoading && (
+                <Flex
+                  width="6"
+                  height="6"
+                  align="center"
+                  justify="center"
+                  style={{ color: 'var(--accent-11)' }}
+                >
+                  <AiOutlineLoading3Quarters className="animate-spin size-4" />
+                </Flex>
+              )}
+              <Tooltip content={'Send Message'}>
+                <IconButton
+                  variant="soft"
+                  disabled={isLoading}
+                  color="gray"
+                  size="2"
+                  className="rounded-xl cursor-pointer"
+                  onClick={sendMessage}
+                >
+                  <FiSend className="size-4" />
+                </IconButton>
+              </Tooltip>
+              {/* TODO: Clear Context withoud history */}
+              {/* <Tooltip content={'Clear History'}>
               <IconButton
                 variant="soft"
                 color="gray"
@@ -300,20 +304,21 @@ const Chat = (props: ChatProps, ref: any) => {
                 <AiOutlineClear className="size-4" />
               </IconButton>
             </Tooltip> */}
-            <Tooltip content={'Toggle Sidebar'}>
-              <IconButton
-                variant="soft"
-                color="gray"
-                size="2"
-                className="rounded-xl md:hidden cursor-pointer"
-                disabled={isLoading}
-                onClick={onToggleSidebar}
-              >
-                <AiOutlineUnorderedList className="size-4" />
-              </IconButton>
-            </Tooltip>
+              <Tooltip content={'Toggle Sidebar'}>
+                <IconButton
+                  variant="soft"
+                  color="gray"
+                  size="2"
+                  className="rounded-xl md:hidden cursor-pointer"
+                  disabled={isLoading}
+                  onClick={onToggleSidebar}
+                >
+                  <AiOutlineUnorderedList className="size-4" />
+                </IconButton>
+              </Tooltip>
+            </Flex>
           </Flex>
-        </Flex>
+        </Container>
       </div>
     </Flex>
   )

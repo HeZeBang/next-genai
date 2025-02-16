@@ -1,16 +1,18 @@
 'use client'
 
 import { useCallback, useState } from 'react'
-import { Avatar, Badge, Flex, IconButton, Tooltip } from '@radix-ui/themes'
+import { Avatar, Badge, Flex, IconButton, Spinner, Tooltip } from '@radix-ui/themes'
 import { FaRegCopy } from 'react-icons/fa'
 import { HiUser } from 'react-icons/hi'
 import { RiRobot2Line } from 'react-icons/ri'
 import { Markdown } from '@/components'
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
 import { ChatMessage } from './interface'
+import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 
 export interface MessageProps {
   message: ChatMessage
+  isLoading?: boolean
 }
 
 const Message = (props: MessageProps) => {
@@ -52,6 +54,17 @@ const Message = (props: MessageProps) => {
         ) : (
           <Flex direction="column" gap="4">
             <Markdown>{content}</Markdown>
+            {props.isLoading && (
+              <Flex
+                width="6"
+                height="6"
+                align="center"
+                justify="center"
+                style={{ color: 'var(--accent-11)' }}
+              >
+                <AiOutlineLoading3Quarters className="animate-spin size-4" />
+              </Flex>
+            )}
             <Flex gap="4" align="center">
               <Tooltip open={tooltipOpen} content="Copied!">
                 <IconButton
