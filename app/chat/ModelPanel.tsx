@@ -85,6 +85,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
         .then((resp) => resp.json())
         .then((data) => {
           localStorage.setItem('apiKey', data.token)
+          setToken(data.token)
           localStorage.setItem('username', data.username)
           localStorage.setItem('userid', data.userid)
         })
@@ -110,6 +111,8 @@ const ModelPanel = (_props: ModelPanelProps) => {
       })
         .then((resp) => resp.json())
         .then((data) => {
+          if (data.success === false)
+            throw new Error('Not Valid')
           setQuota(data.quota)
           setSurplus(data.used)
           localStorage.setItem('username', data.username)
@@ -125,7 +128,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
     }
   }
 
-  useEffect(() => { validateToken() }, [])
+  useEffect(() => { validateToken() }, [token])
 
   useEffect(() => {
     handleSearch(modelPanelType, [...DefaultModels, ...models], searchText)
@@ -283,10 +286,9 @@ const ModelPanel = (_props: ModelPanelProps) => {
                       'https://genai.shanghaitech.edu.cn/dashboard/analysis?token=',
                       ''
                     )
-                    setToken(tok)
+                    // setToken(tok)
                     localStorage.setItem('apiKey', tok)
                     refreshToken()
-                    validateToken()
                   }}
                 >
                   Save
