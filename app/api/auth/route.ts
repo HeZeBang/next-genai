@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { loginGenAI } from './login'
 
-
 export const runtime = 'edge'
 
 export async function POST(req: NextRequest) {
@@ -11,7 +10,7 @@ export async function POST(req: NextRequest) {
       password: string
     }
 
-    loginGenAI(username, password);
+    loginGenAI(username, password)
   } catch (error) {
     console.error(error)
     return NextResponse.json(

@@ -11,9 +11,9 @@ export async function POST(req: NextRequest) {
     const res = await fetch(
       `https://genai.shanghaitech.edu.cn/htk/user/info/${apiKey}?_t=${Date.now()}`
     )
-      .then(res => res.json())
-      .then(data => data.result)
-      .then(res => {
+      .then((res) => res.json())
+      .then((data) => data.result)
+      .then((res) => {
         return {
           username: res.userInfo.username,
           token: res.token
@@ -27,5 +27,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     )
   }
-
 }

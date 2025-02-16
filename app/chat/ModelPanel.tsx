@@ -23,7 +23,7 @@ import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { LuMessageSquarePlus } from 'react-icons/lu'
 import { ChatContext, Model } from '@/components'
 
-export interface ModelPanelProps { }
+export interface ModelPanelProps {}
 enum TokenState {
   Invalid = -1,
   Validating = 0,
@@ -73,20 +73,18 @@ const ModelPanel = (_props: ModelPanelProps) => {
       apiKey: localStorage.getItem('apiKey')
     }
     try {
-      const response = await fetch("/api/refresh", {
+      const response = await fetch('/api/refresh', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(data)
       })
-        .then(resp => resp.json())
-        .then(data => {
+        .then((resp) => resp.json())
+        .then((data) => {
           localStorage.setItem('apiKey', data.token)
         })
-        .catch(
-          err => console.error(err)
-        )
+        .catch((err) => console.error(err))
     } catch (err) {
       console.error(err)
     }
@@ -127,9 +125,11 @@ const ModelPanel = (_props: ModelPanelProps) => {
           <DataList.Item align="center">
             <DataList.Label minWidth="88px">Status</DataList.Label>
             <DataList.Value>
-              {!isValidating && <Badge color="yellow" variant="soft" radius="full">
-                Validating
-              </Badge>}
+              {!isValidating && (
+                <Badge color="yellow" variant="soft" radius="full">
+                  Validating
+                </Badge>
+              )}
             </DataList.Value>
           </DataList.Item>
           <DataList.Item>
@@ -137,9 +137,13 @@ const ModelPanel = (_props: ModelPanelProps) => {
             <DataList.Value>
               <Flex align="center" gap="2">
                 <Code variant="ghost">{localStorage.getItem('apiKey') || 'No API Key'}</Code>
-                <IconButton size="1" aria-label="Copy value" color="gray" variant="ghost"
+                <IconButton
+                  size="1"
+                  aria-label="Copy value"
+                  color="gray"
+                  variant="ghost"
                   onClick={async () => {
-                    await navigator.clipboard.writeText(localStorage.getItem('apiKey') || "")
+                    await navigator.clipboard.writeText(localStorage.getItem('apiKey') || '')
                   }}
                 >
                   <CopyIcon />
@@ -162,23 +166,30 @@ const ModelPanel = (_props: ModelPanelProps) => {
         </DataList.Root>
         <Dialog.Root>
           <Dialog.Trigger>
-            <Button className="my-2">Retrieve  API Key</Button>
+            <Button className="my-2">Retrieve API Key</Button>
           </Dialog.Trigger>
 
           <Dialog.Content maxWidth="450px">
             <Dialog.Title>Retrieve API Key</Dialog.Title>
             <Dialog.Description size="2" mb="4">
               To retrieve your API Key, please follow the steps below.
-              <br /><br />
-              1. Go to <Link
+              <br />
+              <br />
+              1. Go to{' '}
+              <Link
                 href="https://genai.shanghaitech.edu.cn/htk/user/login"
                 target="_blank"
                 referrerPolicy="no-referrer"
-                underline="always">GenAI Login Page</Link>
+                underline="always"
+              >
+                GenAI Login Page
+              </Link>
               <br />
               2. Login by your ShanghaiTech Account. If you're already logged in, skip this step.
               <br />
-              3. Copy the link of the page you're redirected to after login. <br />It should be like <code>https://genai.shanghaitech.edu.cn/dashboard/analysis?token=...</code>
+              3. Copy the link of the page you're redirected to after login. <br />
+              It should be like{' '}
+              <code>https://genai.shanghaitech.edu.cn/dashboard/analysis?token=...</code>
             </Dialog.Description>
 
             <Flex direction="column" gap="3">
@@ -204,12 +215,19 @@ const ModelPanel = (_props: ModelPanelProps) => {
               </Dialog.Close>
               <Dialog.Close>
                 <Button
-                  disabled={!tokenText.startsWith("https://genai.shanghaitech.edu.cn/dashboard/analysis?token=")}
+                  disabled={
+                    !tokenText.startsWith(
+                      'https://genai.shanghaitech.edu.cn/dashboard/analysis?token='
+                    )
+                  }
                   onClick={() => {
-                    const tok = tokenText.replace("https://genai.shanghaitech.edu.cn/dashboard/analysis?token=", "")
+                    const tok = tokenText.replace(
+                      'https://genai.shanghaitech.edu.cn/dashboard/analysis?token=',
+                      ''
+                    )
                     setToken(tok)
-                    localStorage.setItem("apiKey", tok)
-                    validateToken();
+                    localStorage.setItem('apiKey', tok)
+                    validateToken()
                   }}
                 >
                   Save
@@ -218,7 +236,6 @@ const ModelPanel = (_props: ModelPanelProps) => {
             </Flex>
           </Dialog.Content>
         </Dialog.Root>
-
 
         <Heading className="mt-3" size="5">
           Models

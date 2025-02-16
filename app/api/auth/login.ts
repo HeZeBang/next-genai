@@ -33,58 +33,57 @@ export const loginGenAI = async (studentid: string, password: string) => {
   const session = axios.create({
     baseURL: url,
     headers: headers,
-    withCredentials: true,
+    withCredentials: true
   })
 
   try {
-    await session.get(url).then((response) => {
-      const text = response.data
-      // response URL
-      const serviceUrl = getServiceUrl(text)
-      const idsUrl = `https://ids.shanghaitech.edu.cn/authserver/login?service=${encodeURIComponent(serviceUrl)}`
-      const lt = ''
-      const dllt = 'generalLogin'
-      const execution = collectData(text, 'execution', '/>')
-      const _eventId = 'submit'
-      const rmShown = '1'
-      const key = collectData(text, 'pwdEncryptSalt', '/>')
+    await session
+      .get(url)
+      .then((response) => {
+        const text = response.data
+        // response URL
+        const serviceUrl = getServiceUrl(text)
+        const idsUrl = `https://ids.shanghaitech.edu.cn/authserver/login?service=${encodeURIComponent(serviceUrl)}`
+        const lt = ''
+        const dllt = 'generalLogin'
+        const execution = collectData(text, 'execution', '/>')
+        const _eventId = 'submit'
+        const rmShown = '1'
+        const key = collectData(text, 'pwdEncryptSalt', '/>')
 
-      if (key === null) {
-        throw new Error('Failed to get encrypt key')
-      }
-      if (execution === null) {
-        throw new Error('Failed to get execution')
-      }
-      const encryptedPassword = encryptPassword(
-        password,
-        key
-      )
-
-      const data = {
-        username: studentid,
-        password: encryptedPassword,
-        lt: lt,
-        dllt: dllt,
-        execution: execution,
-        _eventId: _eventId,
-        rmShown: rmShown
-      }
-
-      if (idsUrl === null || serviceUrl === null) {
-        throw new Error('Failed to get service URL')
-      }
-      return session.post(
-        idsUrl,
-        // type: application/x-www-form-urlencoded
-        data,
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            ...headers
-          }
+        if (key === null) {
+          throw new Error('Failed to get encrypt key')
         }
-      )
-    })
+        if (execution === null) {
+          throw new Error('Failed to get execution')
+        }
+        const encryptedPassword = encryptPassword(password, key)
+
+        const data = {
+          username: studentid,
+          password: encryptedPassword,
+          lt: lt,
+          dllt: dllt,
+          execution: execution,
+          _eventId: _eventId,
+          rmShown: rmShown
+        }
+
+        if (idsUrl === null || serviceUrl === null) {
+          throw new Error('Failed to get service URL')
+        }
+        return session.post(
+          idsUrl,
+          // type: application/x-www-form-urlencoded
+          data,
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              ...headers
+            }
+          }
+        )
+      })
       .then((response) => {
         console.log(response.data)
       })
@@ -96,36 +95,36 @@ export const loginGenAI = async (studentid: string, password: string) => {
 
 function encryptPassword(password: string, key: string): string {
   // Create initial padding of "Nu1L" repeated 16 times
-  const initialPadding = CryptoJS.enc.Latin1.parse('Nu1L'.repeat(16));
+  const initialPadding = CryptoJS.enc.Latin1.parse('Nu1L'.repeat(16))
   // Convert password to UTF-8 bytes
-  const passwordBytes = CryptoJS.enc.Utf8.parse(password);
+  const passwordBytes = CryptoJS.enc.Utf8.parse(password)
   // Concatenate initial padding and password bytes
-  const paddedPassword = initialPadding.concat(passwordBytes);
+  const paddedPassword = initialPadding.concat(passwordBytes)
 
   // Calculate required PKCS7 padding size
-  const blockSize = 16;
-  const currentLength = paddedPassword.sigBytes;
-  let padSize = blockSize - (currentLength % blockSize);
-  padSize = padSize === 0 ? blockSize : padSize;
+  const blockSize = 16
+  const currentLength = paddedPassword.sigBytes
+  let padSize = blockSize - (currentLength % blockSize)
+  padSize = padSize === 0 ? blockSize : padSize
 
   // Create padding string (e.g., 05 05 05 05 05 for padSize=5)
-  const padStr = String.fromCharCode(padSize).repeat(padSize);
-  const pkcs7Padding = CryptoJS.enc.Latin1.parse(padStr);
+  const padStr = String.fromCharCode(padSize).repeat(padSize)
+  const pkcs7Padding = CryptoJS.enc.Latin1.parse(padStr)
   // Apply PKCS7 padding
-  const pkcs7PaddedPassword = paddedPassword.concat(pkcs7Padding);
+  const pkcs7PaddedPassword = paddedPassword.concat(pkcs7Padding)
 
   // Initialization vector "Nu1L" repeated 4 times
-  const iv = CryptoJS.enc.Latin1.parse('Nu1L'.repeat(4));
+  const iv = CryptoJS.enc.Latin1.parse('Nu1L'.repeat(4))
   // Convert key to UTF-8 bytes
-  const keyData = CryptoJS.enc.Utf8.parse(key);
+  const keyData = CryptoJS.enc.Utf8.parse(key)
 
   // AES-256-CBC encryption with no padding (already padded)
   const encrypted = CryptoJS.AES.encrypt(pkcs7PaddedPassword, keyData, {
     iv: iv,
     mode: CryptoJS.mode.CBC,
     padding: CryptoJS.pad.NoPadding
-  });
+  })
 
   // Return result as Base64 string
-  return encrypted.toString();
+  return encrypted.toString()
 }
