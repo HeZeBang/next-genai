@@ -1,7 +1,15 @@
 'use client'
 
 import { ClassAttributes, Fragment, HTMLAttributes, useCallback, useState } from 'react'
-import { Blockquote, Button, Callout, ChevronDownIcon, IconButton, Link, Tooltip } from '@radix-ui/themes'
+import {
+  Blockquote,
+  Button,
+  Callout,
+  ChevronDownIcon,
+  IconButton,
+  Link,
+  Tooltip
+} from '@radix-ui/themes'
 import cs from 'classnames'
 import { RxClipboardCopy } from 'react-icons/rx'
 import ReactMarkdown, { ExtraProps } from 'react-markdown'
@@ -15,7 +23,7 @@ import remarkMath from 'remark-math'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import { MathJax, MathJaxContext } from 'better-react-mathjax'
 
 import './index.scss'
 import { ChevronUpIcon, InfoCircledIcon } from '@radix-ui/react-icons'
@@ -86,19 +94,23 @@ const ThinkComponent = ({ className, children }: MarkdownProps) => {
         <Callout.Text
           style={{
             marginTop: '-1.25em',
-            marginBottom: '-1.25em',
-          }}>
-          <p><Button
-            onClick={() => setThinkOpen(thinkOpen => !thinkOpen)}
-            size="2"
-            variant="ghost"
-          ><b>Reasoned</b>{thinkOpen ? <ChevronUpIcon width={15} /> : <ChevronDownIcon width={15} />}</Button></p>
+            marginBottom: '-1.25em'
+          }}
+        >
+          <p>
+            <Button
+              onClick={() => setThinkOpen((thinkOpen) => !thinkOpen)}
+              size="2"
+              variant="ghost"
+            >
+              <b>Reasoned</b>
+              {thinkOpen ? <ChevronUpIcon width={15} /> : <ChevronDownIcon width={15} />}
+            </Button>
+          </p>
           {thinkOpen && children}
         </Callout.Text>
       </Callout.Root>
     </>
-
-
   )
 }
 
@@ -107,10 +119,10 @@ export const Markdown = ({ className, children }: MarkdownProps) => {
     // Convert `\(...\)`, `\[...\]` -> `$...$` 和 `$$...$$`
     const processedMarkdown = markdown
       .replaceAll(/\\\((\s*?.*?\s*?)\\\)/g, '$$$1$$')
-      .replaceAll(/\\\[(\s*?[\s\S]*?\s*?)\\\]/g, '$$$$$1$$$$');
+      .replaceAll(/\\\[(\s*?[\s\S]*?\s*?)\\\]/g, '$$$$$1$$$$')
 
-    return processedMarkdown;
-  };
+    return processedMarkdown
+  }
   const thinkPatch = (markdown: string) => {
     return markdown
       .replaceAll(/<think>\s*/g, '<think>\n\n')
@@ -121,10 +133,7 @@ export const Markdown = ({ className, children }: MarkdownProps) => {
     <ReactMarkdown
       className={cs('prose dark:prose-invert max-w-none', className)}
       remarkPlugins={[remarkParse, remarkMath, remarkRehype, remarkGfm]}
-      rehypePlugins={[
-        rehypeRaw,
-        [rehypeKatex, { output: 'mathml' }],
-        rehypeStringify]}
+      rehypePlugins={[rehypeRaw, [rehypeKatex, { output: 'mathml' }], rehypeStringify]}
       components={{
         // TODO: fix error
         //@ts-ignore
@@ -134,9 +143,7 @@ export const Markdown = ({ className, children }: MarkdownProps) => {
         }
       }}
     >
-      {
-        thinkPatch(
-          processGenMath(children))}
+      {thinkPatch(processGenMath(children))}
     </ReactMarkdown>
   )
 }

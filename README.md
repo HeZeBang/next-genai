@@ -76,11 +76,11 @@ Required environment variables:
 
 For GenAI account:
 
-| Name                | Description                                                                                             | Default Value            |
-| ------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------ |
-| OPENAI_API_BASE_URL | Use if you plan to use a reverse proxy for `api.openai.com`.                                            | `https://api.openai.com` |
+| Name                | Description                                                                                            | Default Value            |
+| ------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------ |
+| OPENAI_API_BASE_URL | Use if you plan to use a reverse proxy for `api.openai.com`.                                           | `https://api.openai.com` |
 | OPENAI_API_KEY      | Secret key string obtained from the [GenAI API website](https://platform.openai.com/account/api-keys). |                          |
-| OPENAI_MODEL        | Model of GPT used                                                                                       | `gpt-3.5-turbo`          |
+| OPENAI_MODEL        | Model of GPT used                                                                                      | `gpt-3.5-turbo`          |
 
 For Azure GenAI account:
 

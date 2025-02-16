@@ -76,11 +76,11 @@ docker run -d -p 3000:3000 \
 
 GenAI账户环境变量：
 
-| 名称                | 描述                                                                               | 默认值                   |
-| ------------------- | ---------------------------------------------------------------------------------- | ------------------------ |
-| OPENAI_API_BASE_URL | 如需为`api.openai.com`使用反向代理，请使用此变量。                                 | `https://api.openai.com` |
+| 名称                | 描述                                                                              | 默认值                   |
+| ------------------- | --------------------------------------------------------------------------------- | ------------------------ |
+| OPENAI_API_BASE_URL | 如需为`api.openai.com`使用反向代理，请使用此变量。                                | `https://api.openai.com` |
 | OPENAI_API_KEY      | 从[GenAI API网站](https://platform.openai.com/account/api-keys)获取的密钥字符串。 |                          |
-| OPENAI_MODEL        | GPT模型                                                                            | `gpt-3.5-turbo`          |
+| OPENAI_MODEL        | GPT模型                                                                           | `gpt-3.5-turbo`          |
 
 Azure GenAI账户环境变量：
 

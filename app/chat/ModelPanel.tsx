@@ -22,7 +22,7 @@ import { LuMessageSquarePlus } from 'react-icons/lu'
 import { ChatContext, Model } from '@/components'
 import Link from 'next/link'
 
-export interface ModelPanelProps { }
+export interface ModelPanelProps {}
 
 const ModelPanel = (_props: ModelPanelProps) => {
   const {
@@ -84,10 +84,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
         </IconButton>
       </Flex>
       <Container size="3" className="grow-0 px-4">
-        <Heading
-          className="mt-3"
-          size="5"
-        >
+        <Heading className="mt-3" size="5">
           API Key
         </Heading>
         <Text as="p" size="2" className="mb-3">
@@ -106,13 +103,8 @@ const ModelPanel = (_props: ModelPanelProps) => {
             <DataList.Label minWidth="88px">API Key</DataList.Label>
             <DataList.Value>
               <Flex align="center" gap="2">
-                <Code variant="ghost">u_2J89JSA4GJ</Code>
-                <IconButton
-                  size="1"
-                  aria-label="Copy value"
-                  color="gray"
-                  variant="ghost"
-                >
+                <Code variant="ghost">{localStorage.getItem('apiKey') || 'No API Key'}</Code>
+                <IconButton size="1" aria-label="Copy value" color="gray" variant="ghost">
                   <CopyIcon />
                 </IconButton>
               </Flex>
@@ -124,25 +116,16 @@ const ModelPanel = (_props: ModelPanelProps) => {
           </DataList.Item>
           <DataList.Item>
             <DataList.Label minWidth="88px">Tokens Spent</DataList.Label>
-            <DataList.Value>
-              0
-            </DataList.Value>
+            <DataList.Value>0</DataList.Value>
           </DataList.Item>
           <DataList.Item>
             <DataList.Label minWidth="88px">Coin Remain</DataList.Label>
-            <DataList.Value>
-              0
-            </DataList.Value>
+            <DataList.Value>0</DataList.Value>
           </DataList.Item>
         </DataList.Root>
-        <Button className='my-2'>
-          Refresh Account
-        </Button>
+        <Button className="my-2">Refresh Account</Button>
 
-        <Heading
-          className="mt-3"
-          size="5"
-        >
+        <Heading className="mt-3" size="5">
           Models
         </Heading>
         <Flex gap="4" py="3">
