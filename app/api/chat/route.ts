@@ -10,11 +10,12 @@ export interface Message {
 
 export async function POST(req: NextRequest) {
   try {
-    const { prompt, messages, model, input } = (await req.json()) as {
+    const { prompt, messages, model, input, apiKey } = (await req.json()) as {
       prompt: string
       messages: Message[]
       model: string
       input: string
+      apiKey: string
     }
     const messagesWithHistory = [
       { content: prompt, role: 'system' },
@@ -22,8 +23,8 @@ export async function POST(req: NextRequest) {
       // { content: input, role: 'user' }
     ]
 
-    const { apiUrl, apiKey } = getApiConfig()
-    const stream = await getOpenAIStream(apiUrl, apiKey, model, messagesWithHistory, input)
+    const { apiUrl } = getApiConfig()
+    const stream = await getGenAIStream(apiUrl, apiKey, model, messagesWithHistory, input)
     return new NextResponse(stream, {
       headers: { 'Content-Type': 'text/event-stream' }
     })
@@ -38,24 +39,16 @@ export async function POST(req: NextRequest) {
 
 const getApiConfig = () => {
   let apiUrl: string
-  let apiKey: string
-  let model: string
   let apiBaseUrl = process.env.GENAI_API_BASE_URL || 'https://api.openai.com'
   if (apiBaseUrl && apiBaseUrl.endsWith('/')) {
     apiBaseUrl = apiBaseUrl.slice(0, -1)
   }
-  // apiUrl = `${apiBaseUrl}/v1/chat/completions`
   apiUrl = 'https://genai.shanghaitech.edu.cn/htk/chat/start/chat'
-  // apiKey = process.env.GENAI_API_KEY || ''
-  apiKey =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3Mzk2OTI3MjYsInVzZXJuYW1lIjoiMjAyMzUzMzE4OSJ9.zzES9xcFzU664t6PNyR624vGwH2XzkqnaH4AodGRv3M'
-  // model = process.env.OPENAI_MODEL || 'gpt-3.5-turbo'
-  // model = "deepseek-v3:671b"
 
-  return { apiUrl, apiKey }
+  return { apiUrl }
 }
 
-const getOpenAIStream = async (
+const getGenAIStream = async (
   apiUrl: string,
   apiKey: string,
   model: string,
@@ -99,10 +92,16 @@ const getOpenAIStream = async (
   if (res.status !== 200) {
     const statusText = res.statusText
     const responseBody = await res.text()
-    console.error(`OpenAI API response error: ${responseBody}`)
+    console.error(`GenAI API response error: ${responseBody}`)
     throw new Error(
-      `The OpenAI API has encountered an error with a status code of ${res.status} ${statusText}: ${responseBody}`
+      `The GenAI API has encountered an error with a status code of ${res.status} ${statusText}: ${responseBody}`
     )
+  }
+
+  if (res.headers.get('Content-Type') == 'application/json') {
+    const response = await res.json()
+    console.error('GenAI API error:', response)
+    throw new Error(response.message || 'Unknown error')
   }
 
   return new ReadableStream({
@@ -135,7 +134,7 @@ const getOpenAIStream = async (
       const parser = createParser(onParse)
 
       for await (const chunk of res.body as any) {
-        // An extra newline is required to make AzureOpenAI work.
+        // An extra newline is required to make AzureGenAI work.
         const str = decoder.decode(chunk).replace('[DONE]\n', '[DONE]\n\n')
         parser.feed(str)
       }

@@ -38,16 +38,30 @@ const postChatOrQuestion = async (chat: Chat, messages: any[], input: string) =>
     prompt: chat?.model?.prompt,
     messages: [...messages!],
     model: chat?.model?.id,
-    input
+    input,
+    apiKey: localStorage.getItem('apiKey')
   }
 
-  return await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  })
+  console.log(JSON.stringify(data));
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 seconds timeout
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data),
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    throw error;
+  }
 }
 
 const Chat = (props: ChatProps, ref: any) => {
