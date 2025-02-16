@@ -133,8 +133,7 @@ const useChatHook = () => {
     localStorage.removeItem(`ms_${chat.id}`)
     if (currentChatRef.current?.id === chat.id) {
       currentChatRef.current = chatList[0]
-      if (chatList.length !== 0)
-        onChangeChat(chatList[0])
+      if (chatList.length !== 0) onChangeChat(chatList[0])
     }
     if (chatList.length === 0) {
       onOpenModelPanel('chat')

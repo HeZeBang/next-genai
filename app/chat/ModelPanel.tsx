@@ -23,7 +23,7 @@ import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { LuMessageSquarePlus } from 'react-icons/lu'
 import { ChatContext, Model } from '@/components'
 
-export interface ModelPanelProps { }
+export interface ModelPanelProps {}
 enum TokenState {
   Invalid = -1,
   Validating = 0,
@@ -111,8 +111,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
       })
         .then((resp) => resp.json())
         .then((data) => {
-          if (data.success === false)
-            throw new Error('Not Valid')
+          if (data.success === false) throw new Error('Not Valid')
           setQuota(data.quota)
           setSurplus(data.used)
           localStorage.setItem('username', data.username)
@@ -128,7 +127,9 @@ const ModelPanel = (_props: ModelPanelProps) => {
     }
   }
 
-  useEffect(() => { validateToken() }, [token])
+  useEffect(() => {
+    validateToken()
+  }, [token])
 
   useEffect(() => {
     handleSearch(modelPanelType, [...DefaultModels, ...models], searchText)
@@ -214,15 +215,17 @@ const ModelPanel = (_props: ModelPanelProps) => {
           </DataList.Item>
           <DataList.Item>
             <DataList.Label minWidth="88px">Name</DataList.Label>
-            <DataList.Value>{localStorage.getItem('username') || "Unknown"}</DataList.Value>
+            <DataList.Value>{localStorage.getItem('username') || 'Unknown'}</DataList.Value>
           </DataList.Item>
           <DataList.Item>
             <DataList.Label minWidth="88px">ID</DataList.Label>
-            <DataList.Value>{localStorage.getItem('userid') || "Unknown"}</DataList.Value>
+            <DataList.Value>{localStorage.getItem('userid') || 'Unknown'}</DataList.Value>
           </DataList.Item>
           <DataList.Item>
             <DataList.Label minWidth="88px">Month Quota</DataList.Label>
-            <DataList.Value>{surplus} / {quota}</DataList.Value>
+            <DataList.Value>
+              {surplus} / {quota}
+            </DataList.Value>
           </DataList.Item>
         </DataList.Root>
         <Dialog.Root>

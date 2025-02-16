@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from 'next/server'
 
 export const runtime = 'edge'
@@ -6,7 +5,7 @@ export const runtime = 'edge'
 export async function POST(req: NextRequest) {
   try {
     const { apiKey, userid } = (await req.json()) as {
-      apiKey: string,
+      apiKey: string
       userid: string
     }
     const res = await fetch(
@@ -27,10 +26,8 @@ export async function POST(req: NextRequest) {
           username: res.username,
           userid: res.id
         }
-        if (!!data.quota && !!data.used && data.username && data.userid)
-          return data
-        else
-          throw new Error('One of data is undefined')
+        if (!!data.quota && !!data.used && data.username && data.userid) return data
+        else throw new Error('One of data is undefined')
       })
     return NextResponse.json(res)
   } catch (error) {
