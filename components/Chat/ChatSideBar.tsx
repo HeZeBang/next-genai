@@ -11,6 +11,7 @@ import ChatContext from './chatContext'
 
 import './index.scss'
 import { GearIcon } from '@radix-ui/react-icons'
+import { ChatMessage } from './interface'
 
 export const ChatSideBar = () => {
   const {
@@ -33,7 +34,11 @@ export const ChatSideBar = () => {
           className="bg-token-surface-primary active:scale-95 cursor-pointer"
         >
           <FiPlus className="size-4" />
-          <Text>New Chat</Text>
+          <div>
+            <Text size="1" color="gray">{DefaultModels[0].name}</Text>
+            <br />
+            <Text>New Chat</Text>
+          </div>
         </Box>
         <ScrollArea className="flex-1 " style={{ width: '100%' }} type="auto">
           <Flex direction="column" gap="3">
@@ -49,10 +54,14 @@ export const ChatSideBar = () => {
                 }}
               >
                 <Flex gap="2" align="center" className="overflow-hidden whitespace-nowrap">
-                  <BiMessageDetail className="size-4" />
-                  <Text as="p" className="truncate">
-                    {chat.model?.name}
-                  </Text>
+                  <div className='truncate'>
+                    <Text as="p" truncate size="1" color="gray">
+                      {chat.model?.name}
+                    </Text>
+                    <Text as="p" truncate>
+                      {(JSON.parse(localStorage.getItem(`ms_${chat.id}`) || '[]') as ChatMessage[]).at(-1)?.content}
+                    </Text>
+                  </div>
                 </Flex>
                 <IconButton
                   size="2"
