@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
       .then((res) => {
         return {
           username: res.userInfo.username,
+          userid: res.userInfo.id,
           token: res.token
         }
       })

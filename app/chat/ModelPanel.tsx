@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { CopyIcon, Link2Icon, MagnifyingGlassIcon } from '@radix-ui/react-icons'
+import { CopyIcon, Link2Icon, MagnifyingGlassIcon, ReloadIcon } from '@radix-ui/react-icons'
 import {
   Badge,
   Box,
@@ -23,7 +23,7 @@ import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { LuMessageSquarePlus } from 'react-icons/lu'
 import { ChatContext, Model } from '@/components'
 
-export interface ModelPanelProps {}
+export interface ModelPanelProps { }
 enum TokenState {
   Invalid = -1,
   Validating = 0,
@@ -48,6 +48,8 @@ const ModelPanel = (_props: ModelPanelProps) => {
   const [tokenText, setTokenText] = useState('')
   const [token, setToken] = useState('')
   const [isValidating, setIsValidating] = useState<TokenState>(0)
+  const [quota, setQuota] = useState(4.0)
+  const [surplus, setSurplus] = useState(0)
 
   const handleSearch = useCallback(
     debounce((type: string, list: Model[], searchText: string) => {
@@ -68,7 +70,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
     []
   )
 
-  const validateToken = async () => {
+  const refreshToken = async () => {
     const data = {
       apiKey: localStorage.getItem('apiKey')
     }
@@ -83,12 +85,47 @@ const ModelPanel = (_props: ModelPanelProps) => {
         .then((resp) => resp.json())
         .then((data) => {
           localStorage.setItem('apiKey', data.token)
+          localStorage.setItem('username', data.username)
+          localStorage.setItem('userid', data.userid)
         })
         .catch((err) => console.error(err))
     } catch (err) {
       console.error(err)
     }
   }
+
+  const validateToken = async () => {
+    const data = {
+      apiKey: localStorage.getItem('apiKey'),
+      userid: localStorage.getItem('userid')
+    }
+    setIsValidating(TokenState.Validating)
+    try {
+      const response = await fetch('/api/validate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+        .then((resp) => resp.json())
+        .then((data) => {
+          setQuota(data.quota)
+          setSurplus(data.used)
+          localStorage.setItem('username', data.username)
+          localStorage.setItem('userid', data.userid)
+          setIsValidating(TokenState.Valid)
+        })
+        .catch((err) => {
+          console.error(err)
+          setIsValidating(TokenState.Invalid)
+        })
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  useEffect(() => { validateToken() }, [])
 
   useEffect(() => {
     handleSearch(modelPanelType, [...DefaultModels, ...models], searchText)
@@ -125,11 +162,32 @@ const ModelPanel = (_props: ModelPanelProps) => {
           <DataList.Item align="center">
             <DataList.Label minWidth="88px">Status</DataList.Label>
             <DataList.Value>
-              {!isValidating && (
-                <Badge color="yellow" variant="soft" radius="full">
-                  Validating
-                </Badge>
-              )}
+              <Flex align="center" gap="2">
+                {isValidating === TokenState.Validating && (
+                  <Badge color="yellow" variant="soft" size="2">
+                    Validating
+                  </Badge>
+                )}
+                {isValidating === TokenState.Valid && (
+                  <Badge color="green" variant="soft" size="2">
+                    Valid
+                  </Badge>
+                )}
+                {isValidating === TokenState.Invalid && (
+                  <Badge color="red" variant="soft" size="2">
+                    Invalid
+                  </Badge>
+                )}
+                <IconButton
+                  size="1"
+                  aria-label="Refresh"
+                  color="gray"
+                  variant="ghost"
+                  onClick={validateToken}
+                >
+                  <ReloadIcon />
+                </IconButton>
+              </Flex>
             </DataList.Value>
           </DataList.Item>
           <DataList.Item>
@@ -153,15 +211,15 @@ const ModelPanel = (_props: ModelPanelProps) => {
           </DataList.Item>
           <DataList.Item>
             <DataList.Label minWidth="88px">Name</DataList.Label>
-            <DataList.Value>Dummy Name</DataList.Value>
+            <DataList.Value>{localStorage.getItem('username') || "Unknown"}</DataList.Value>
           </DataList.Item>
           <DataList.Item>
-            <DataList.Label minWidth="88px">Tokens Spent</DataList.Label>
-            <DataList.Value>0</DataList.Value>
+            <DataList.Label minWidth="88px">ID</DataList.Label>
+            <DataList.Value>{localStorage.getItem('userid') || "Unknown"}</DataList.Value>
           </DataList.Item>
           <DataList.Item>
-            <DataList.Label minWidth="88px">Coin Remain</DataList.Label>
-            <DataList.Value>0</DataList.Value>
+            <DataList.Label minWidth="88px">Month Quota</DataList.Label>
+            <DataList.Value>{surplus} / {quota}</DataList.Value>
           </DataList.Item>
         </DataList.Root>
         <Dialog.Root>
@@ -227,6 +285,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
                     )
                     setToken(tok)
                     localStorage.setItem('apiKey', tok)
+                    refreshToken()
                     validateToken()
                   }}
                 >
