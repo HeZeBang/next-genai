@@ -2,13 +2,13 @@
 
 import { useCallback, useState } from 'react'
 import { Avatar, Badge, Flex, IconButton, Spinner, Tooltip } from '@radix-ui/themes'
+import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 import { FaRegCopy } from 'react-icons/fa'
 import { HiUser } from 'react-icons/hi'
 import { RiRobot2Line } from 'react-icons/ri'
 import { Markdown } from '@/components'
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
 import { ChatMessage } from './interface'
-import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 
 export interface MessageProps {
   message: ChatMessage

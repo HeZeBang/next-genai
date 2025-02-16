@@ -1,7 +1,6 @@
 'use client'
 
 import { ClassAttributes, Fragment, HTMLAttributes, useCallback, useState } from 'react'
-import { RxClipboardCopy } from 'react-icons/rx'
 import { ChevronUpIcon, InfoCircledIcon } from '@radix-ui/react-icons'
 import {
   Button,
@@ -11,6 +10,7 @@ import {
   Tooltip
 } from '@radix-ui/themes'
 import cs from 'classnames'
+import { RxClipboardCopy } from 'react-icons/rx'
 import ReactMarkdown, { ExtraProps } from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
