@@ -11,11 +11,11 @@ import { useTheme } from '../Themes'
 
 export const Header = () => {
   const { theme, setTheme } = useTheme()
-  const [, setShow] = useState(false)
+  // const [, setShow] = useState(false)
 
-  const toggleNavBar = useCallback(() => {
-    setShow((state) => !state)
-  }, [])
+  // const toggleNavBar = useCallback(() => {
+  //   setShow((state) => !state)
+  // }, [])
 
   return (
     <header
@@ -54,7 +54,7 @@ export const Header = () => {
             </Select.Content>
           </Select.Root>
         </Flex>
-        <Tooltip content="Navigation">
+        {/* <Tooltip content="Navigation">
           <IconButton
             size="3"
             variant="ghost"
@@ -64,7 +64,7 @@ export const Header = () => {
           >
             <HamburgerMenuIcon width="16" height="16" />
           </IconButton>
-        </Tooltip>
+        </Tooltip> */}
       </Flex>
     </header>
   )
