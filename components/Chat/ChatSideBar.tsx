@@ -35,7 +35,9 @@ export const ChatSideBar = () => {
         >
           <FiPlus className="size-4" />
           <div>
-            <Text size="1" color="gray">{DefaultModels[0].name}</Text>
+            <Text size="1" color="gray">
+              {DefaultModels[0].name}
+            </Text>
             <br />
             <Text>New Chat</Text>
           </div>
@@ -54,12 +56,16 @@ export const ChatSideBar = () => {
                 }}
               >
                 <Flex gap="2" align="center" className="overflow-hidden whitespace-nowrap">
-                  <div className='truncate'>
+                  <div className="truncate">
                     <Text as="p" truncate size="1" color="gray">
                       {chat.model?.name}
                     </Text>
                     <Text as="p" truncate>
-                      {(JSON.parse(localStorage.getItem(`ms_${chat.id}`) || '[]') as ChatMessage[]).at(-1)?.content}
+                      {
+                        (
+                          JSON.parse(localStorage.getItem(`ms_${chat.id}`) || '[]') as ChatMessage[]
+                        ).at(-1)?.content
+                      }
                     </Text>
                   </div>
                 </Flex>

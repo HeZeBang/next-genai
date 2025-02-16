@@ -23,7 +23,7 @@ import './index.scss'
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
 
-export interface ChatProps { }
+export interface ChatProps {}
 
 export interface ChatGPInstance {
   setConversation: (messages: ChatMessage[]) => void
@@ -31,7 +31,12 @@ export interface ChatGPInstance {
   focus: () => void
 }
 
-const postChatOrQuestion = async (chat: Chat, messages: any[], input: string, controller: AbortController) => {
+const postChatOrQuestion = async (
+  chat: Chat,
+  messages: any[],
+  input: string,
+  controller: AbortController
+) => {
   const url = '/api/chat'
 
   const data = {
@@ -94,9 +99,13 @@ const Chat = (props: ChatProps, ref: any) => {
         setMessage('')
         setIsLoading(true)
         try {
-
           const controller = new AbortController()
-          const response = await postChatOrQuestion(currentChatRef?.current!, message, input, controller)
+          const response = await postChatOrQuestion(
+            currentChatRef?.current!,
+            message,
+            input,
+            controller
+          )
 
           if (response.ok) {
             const data = response.body
@@ -240,7 +249,9 @@ const Chat = (props: ChatProps, ref: any) => {
           {conversation.current.map((item, index) => (
             <Message key={index} message={item} />
           ))}
-          {currentMessage && <Message message={{ content: currentMessage, role: 'assistant' }} isLoading />}
+          {currentMessage && (
+            <Message message={{ content: currentMessage, role: 'assistant' }} isLoading />
+          )}
           <div ref={bottomOfChatRef}></div>
         </Container>
       </ScrollArea>
