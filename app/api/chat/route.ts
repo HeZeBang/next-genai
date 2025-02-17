@@ -77,7 +77,7 @@ const getGenAIStream = async (
       type: '3',
       aiType: model,
       aiSecType: '1',
-      chatGroupId: 'GYoG8XwMaXrUkCur-asX1',
+      chatGroupId: '',
       promptTokens: 0,
       imageUrl: '',
       width: '',
