@@ -2,13 +2,7 @@
 
 import { ClassAttributes, Fragment, HTMLAttributes, useCallback, useState } from 'react'
 import { ChevronUpIcon, InfoCircledIcon } from '@radix-ui/react-icons'
-import {
-  Button,
-  Callout,
-  ChevronDownIcon,
-  IconButton,
-  Tooltip
-} from '@radix-ui/themes'
+import { Button, Callout, ChevronDownIcon, IconButton, Tooltip } from '@radix-ui/themes'
 import cs from 'classnames'
 import { RxClipboardCopy } from 'react-icons/rx'
 import ReactMarkdown, { ExtraProps } from 'react-markdown'

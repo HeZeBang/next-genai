@@ -23,7 +23,7 @@ import './index.scss'
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
 
-export interface ChatProps { }
+export interface ChatProps {}
 
 export interface ChatGPInstance {
   setConversation: (messages: ChatMessage[]) => void
@@ -89,7 +89,8 @@ const Chat = (props: ChatProps, ref: any) => {
   const stopGeneration = useCallback(
     async (e: any) => {
       controllerRef.current?.abort()
-    }, [currentMessage, controllerRef]
+    },
+    [currentMessage, controllerRef]
   )
 
   const sendMessage = useCallback(
@@ -300,33 +301,32 @@ const Chat = (props: ChatProps, ref: any) => {
                   <AiOutlineLoading3Quarters className="animate-spin size-4" />
                 </Flex>
               )}
-              {
-                currentMessage ? (
-                  <Tooltip content={'Stop Generation'}>
-                    <IconButton
-                      variant="soft"
-                      // disabled={isLoading}
-                      color="gray"
-                      size="2"
-                      className="rounded-xl cursor-pointer"
-                      onClick={stopGeneration}
-                    >
-                      <FiStopCircle className="size-4" />
-                    </IconButton>
-                  </Tooltip>
-                ) : (
-                  <Tooltip content={'Stop Generation'}>
-                    <IconButton
-                      variant="soft"
-                      color="gray"
-                      size="2"
-                      className="rounded-xl cursor-pointer"
-                      onClick={sendMessage}
-                    >
-                      <FiSend className="size-4" />
-                    </IconButton>
-                  </Tooltip>
-                )}
+              {currentMessage ? (
+                <Tooltip content={'Stop Generation'}>
+                  <IconButton
+                    variant="soft"
+                    // disabled={isLoading}
+                    color="gray"
+                    size="2"
+                    className="rounded-xl cursor-pointer"
+                    onClick={stopGeneration}
+                  >
+                    <FiStopCircle className="size-4" />
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                <Tooltip content={'Stop Generation'}>
+                  <IconButton
+                    variant="soft"
+                    color="gray"
+                    size="2"
+                    className="rounded-xl cursor-pointer"
+                    onClick={sendMessage}
+                  >
+                    <FiSend className="size-4" />
+                  </IconButton>
+                </Tooltip>
+              )}
               {/* TODO: Clear Context withoud history */}
               {/* <Tooltip content={'Clear History'}>
               <IconButton
