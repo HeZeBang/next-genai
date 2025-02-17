@@ -13,7 +13,7 @@ import { Container, Flex, Heading, IconButton, ScrollArea, Tooltip } from '@radi
 import ContentEditable from 'react-contenteditable'
 import toast from 'react-hot-toast'
 import { AiOutlineClear, AiOutlineLoading3Quarters, AiOutlineUnorderedList } from 'react-icons/ai'
-import { FiSend } from 'react-icons/fi'
+import { FiSend, FiStopCircle } from 'react-icons/fi'
 import ChatContext from './chatContext'
 import type { Chat, ChatMessage } from './interface'
 import Message from './Message'
@@ -23,7 +23,7 @@ import './index.scss'
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
 
-export interface ChatProps {}
+export interface ChatProps { }
 
 export interface ChatGPInstance {
   setConversation: (messages: ChatMessage[]) => void
@@ -47,7 +47,7 @@ const postChatOrQuestion = async (
     apiKey: localStorage.getItem('apiKey')
   }
 
-  const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 seconds timeout
+  const timeoutId = setTimeout(() => controller.abort(), 5 * 60 * 1000) // 5 min timeout
 
   try {
     const response = await fetch(url, {
@@ -83,6 +83,15 @@ const Chat = (props: ChatProps, ref: any) => {
   const conversation = useRef<ChatMessage[]>([])
 
   const bottomOfChatRef = useRef<HTMLDivElement>(null)
+
+  const controllerRef = useRef<AbortController>()
+
+  const stopGeneration = useCallback(
+    async (e: any) => {
+      controllerRef.current?.abort()
+    }, [currentMessage, controllerRef]
+  )
+
   const sendMessage = useCallback(
     async (e: any) => {
       if (!isLoading) {
@@ -100,6 +109,7 @@ const Chat = (props: ChatProps, ref: any) => {
         setIsLoading(true)
         try {
           const controller = new AbortController()
+          controllerRef.current = controller
           const response = await postChatOrQuestion(
             currentChatRef?.current!,
             message,
@@ -290,18 +300,33 @@ const Chat = (props: ChatProps, ref: any) => {
                   <AiOutlineLoading3Quarters className="animate-spin size-4" />
                 </Flex>
               )}
-              <Tooltip content={'Send Message'}>
-                <IconButton
-                  variant="soft"
-                  disabled={isLoading}
-                  color="gray"
-                  size="2"
-                  className="rounded-xl cursor-pointer"
-                  onClick={sendMessage}
-                >
-                  <FiSend className="size-4" />
-                </IconButton>
-              </Tooltip>
+              {
+                currentMessage ? (
+                  <Tooltip content={'Stop Generation'}>
+                    <IconButton
+                      variant="soft"
+                      // disabled={isLoading}
+                      color="gray"
+                      size="2"
+                      className="rounded-xl cursor-pointer"
+                      onClick={stopGeneration}
+                    >
+                      <FiStopCircle className="size-4" />
+                    </IconButton>
+                  </Tooltip>
+                ) : (
+                  <Tooltip content={'Stop Generation'}>
+                    <IconButton
+                      variant="soft"
+                      color="gray"
+                      size="2"
+                      className="rounded-xl cursor-pointer"
+                      onClick={sendMessage}
+                    >
+                      <FiSend className="size-4" />
+                    </IconButton>
+                  </Tooltip>
+                )}
               {/* TODO: Clear Context withoud history */}
               {/* <Tooltip content={'Clear History'}>
               <IconButton
