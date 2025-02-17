@@ -315,7 +315,7 @@ const Chat = (props: ChatProps, ref: any) => {
                   </IconButton>
                 </Tooltip>
               ) : (
-                <Tooltip content={'Stop Generation'}>
+                <Tooltip content={'Send Message'}>
                   <IconButton
                     variant="soft"
                     color="gray"
