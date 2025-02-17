@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
           username: res.username,
           userid: res.id
         }
-        if (!!data.quota && !!data.used && data.username && data.userid) return data
+        if (!!data.quota && (typeof data.used === "number") && data.username && data.userid) return data
         else throw new Error('One of data is undefined')
       })
     return NextResponse.json(res)
