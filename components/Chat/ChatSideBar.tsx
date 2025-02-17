@@ -61,7 +61,7 @@ export const ChatSideBar = () => {
                       {
                         (
                           JSON.parse(localStorage.getItem(`ms_${chat.id}`) || '[]') as ChatMessage[]
-                        ).at(-1)?.content
+                        ).at(0)?.content
                       }
                     </Text>
                   </div>
