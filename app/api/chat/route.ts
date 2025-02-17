@@ -10,12 +10,13 @@ export interface Message {
 
 export async function POST(req: NextRequest) {
   try {
-    const { prompt, messages, model, input, apiKey } = (await req.json()) as {
+    const { prompt, messages, model, input, apiKey, groupId } = (await req.json()) as {
       prompt: string
       messages: Message[]
       model: string
       input: string
       apiKey: string
+      groupId: string
     }
     const messagesWithHistory = [
       { content: prompt, role: 'system' },
@@ -24,7 +25,7 @@ export async function POST(req: NextRequest) {
     ]
 
     const { apiUrl } = getApiConfig()
-    const stream = await getGenAIStream(apiUrl, apiKey, model, messagesWithHistory, input)
+    const stream = await getGenAIStream(apiUrl, apiKey, model, messagesWithHistory, input, groupId)
     return new NextResponse(stream, {
       headers: { 'Content-Type': 'text/event-stream' }
     })
@@ -53,7 +54,8 @@ const getGenAIStream = async (
   apiKey: string,
   model: string,
   messages: Message[],
-  input: string
+  input: string,
+  groupId: string,
 ) => {
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
@@ -77,7 +79,7 @@ const getGenAIStream = async (
       type: '3',
       aiType: model,
       aiSecType: '1',
-      chatGroupId: '',
+      chatGroupId: `${groupId}`,
       promptTokens: 0,
       imageUrl: '',
       width: '',

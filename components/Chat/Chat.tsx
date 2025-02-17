@@ -23,7 +23,7 @@ import './index.scss'
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
 
-export interface ChatProps {}
+export interface ChatProps { }
 
 export interface ChatGPInstance {
   setConversation: (messages: ChatMessage[]) => void
@@ -35,6 +35,7 @@ const postChatOrQuestion = async (
   chat: Chat,
   messages: any[],
   input: string,
+  groupId: string,
   controller: AbortController
 ) => {
   const url = '/api/chat'
@@ -44,7 +45,8 @@ const postChatOrQuestion = async (
     messages: [...messages!],
     model: chat?.model?.id,
     input,
-    apiKey: localStorage.getItem('apiKey')
+    apiKey: localStorage.getItem('apiKey'),
+    groupId
   }
 
   const timeoutId = setTimeout(() => controller.abort(), 5 * 60 * 1000) // 5 min timeout
@@ -115,7 +117,8 @@ const Chat = (props: ChatProps, ref: any) => {
             currentChatRef?.current!,
             message,
             input,
-            controller
+            currentChatRef?.current?.id!,
+            controller,
           )
 
           if (response.ok) {
