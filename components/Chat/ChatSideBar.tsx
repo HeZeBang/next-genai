@@ -29,7 +29,8 @@ export const ChatSideBar = () => {
     onDeleteChat,
     onChangeChat,
     onCreateChat,
-    onOpenModelPanel
+    onOpenModelPanel,
+    onCloseModelPanel
   } = useContext(ChatContext)
 
   return (
@@ -116,7 +117,9 @@ export const ChatSideBar = () => {
                   active: currentChatRef?.current?.id === chat.id
                 })}
                 onClick={() => {
-                  if (currentChatRef?.current?.id !== chat.id) onChangeChat?.(chat)
+                  if (currentChatRef?.current?.id !== chat.id)
+                    onChangeChat?.(chat)
+                  onCloseModelPanel?.()
                 }}
               >
                 <Flex gap="2" align="center" className="overflow-hidden whitespace-nowrap">
