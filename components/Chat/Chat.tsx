@@ -10,7 +10,7 @@ import {
   useState
 } from 'react'
 import { LockClosedIcon, LockOpen1Icon } from '@radix-ui/react-icons'
-import { Container, Flex, Heading, IconButton, ScrollArea, Tooltip } from '@radix-ui/themes'
+import { Container, Flex, Heading, IconButton, ScrollArea, Tooltip, Text, Blockquote } from '@radix-ui/themes'
 import ContentEditable from 'react-contenteditable'
 import toast from 'react-hot-toast'
 import { AiOutlineClear, AiOutlineLoading3Quarters, AiOutlineUnorderedList } from 'react-icons/ai'
@@ -245,7 +245,7 @@ const Chat = (props: ChatProps, ref: any) => {
     }
   })
 
-  return (
+  return currentChatRef?.current ? (
     <Flex direction="column" height="100%" className="relative" gap="3">
       <Flex
         justify="between"
@@ -378,6 +378,20 @@ const Chat = (props: ChatProps, ref: any) => {
           </Flex>
         </Container>
       </div>
+    </Flex>
+  ) : (
+    <Flex direction="column" height="100%" justify="center" align="center">
+      <Heading
+        className="text-center font-mono lg:text-7xl text-4xl py-2 tracking-tight from-[#FF1CF7] to-[#b249f8] bg-clip-text text-transparent bg-gradient-to-b inline"
+        weight="bold"
+      >
+        Next.GenAI
+      </Heading>
+      <Text size="4" className="text-gray-500 font-mono">Let's make GenAI prettier.</Text>
+
+      <Blockquote className='my-5 py-2 text-gray-500' weight='light'>
+        First use? Please configure your API key in the settings below.
+      </Blockquote>
     </Flex>
   )
 }
