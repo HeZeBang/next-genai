@@ -5,7 +5,7 @@ import { HamburgerMenuIcon } from '@radix-ui/react-icons'
 import { Avatar, Flex, Heading, IconButton, Select, Tooltip } from '@radix-ui/themes'
 import cs from 'classnames'
 import NextLink from 'next/link'
-import { FaAdjust, FaGithub, FaMoon, FaRegSun } from 'react-icons/fa'
+import { FaAdjust, FaGithub, FaMoon, FaSun } from 'react-icons/fa'
 import { Link } from '../Link'
 import { useTheme } from '../Themes'
 
@@ -43,7 +43,7 @@ export const Header = () => {
             <Select.Trigger radius="full" />
             <Select.Content>
               <Select.Item value="light">
-                <FaRegSun />
+                <FaSun />
               </Select.Item>
               <Select.Item value="dark">
                 <FaMoon />
