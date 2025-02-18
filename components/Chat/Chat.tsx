@@ -32,7 +32,7 @@ import './index.scss'
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
 
-export interface ChatProps {}
+export interface ChatProps { }
 
 export interface ChatGPInstance {
   setConversation: (messages: ChatMessage[]) => void
@@ -396,7 +396,7 @@ const Chat = (props: ChatProps, ref: any) => {
         Next.GenAI
       </Heading>
       <Text size="4" className="text-gray-500 font-mono">
-        Let's make GenAI prettier.
+        Let&apos;s make GenAI prettier.
       </Text>
 
       <Blockquote className="my-5 py-2 text-gray-500" weight="light">
