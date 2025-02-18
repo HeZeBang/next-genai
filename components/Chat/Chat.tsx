@@ -9,7 +9,7 @@ import {
   useRef,
   useState
 } from 'react'
-import { LockClosedIcon, LockOpen1Icon, PlusIcon } from '@radix-ui/react-icons'
+import { HamburgerMenuIcon, LockClosedIcon, LockOpen1Icon, PlusIcon } from '@radix-ui/react-icons'
 import {
   Container,
   Flex,
@@ -274,18 +274,26 @@ const Chat = (props: ChatProps, ref: any) => {
             // style={{ backgroundColor: 'var(--gray-a2)' }}
             className='shadow-sm'
           >
-            <Heading size="4" weight='regular' className="font-mono">
+            <Heading size="4" weight='regular' className="font-mono flex-1">
               {currentChatRef?.current?.model?.name || 'None'}
             </Heading>
             <Tooltip content={'New Chat'}>
               <Button
-                variant='soft' className='rounded-xl'
+                variant='soft' className='rounded-xl mx-1'
                 onClick={() => {
                   if (currentChatRef?.current?.model)
                     onCreateChat?.(currentChatRef?.current?.model)
                 }}
               >
                 <PlusIcon />
+              </Button>
+            </Tooltip>
+            <Tooltip content={'New Chat'}>
+              <Button
+                variant='soft' className='rounded-xl mx-1 md:hidden'
+                onClick={onToggleSidebar}
+              >
+                <HamburgerMenuIcon />
               </Button>
             </Tooltip>
           </Flex>

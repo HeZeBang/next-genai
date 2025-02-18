@@ -23,7 +23,7 @@ import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { LuMessageSquarePlus } from 'react-icons/lu'
 import { ChatContext, Model } from '@/components'
 
-export interface ModelPanelProps {}
+export interface ModelPanelProps { }
 enum TokenState {
   Invalid = -1,
   Validating = 0,
@@ -143,188 +143,189 @@ const ModelPanel = (_props: ModelPanelProps) => {
       className="absolute top-0 z-10 flex-1"
       style={{ backgroundColor: 'var(--color-background)' }}
     >
-      <Flex
-        justify="between"
-        align="center"
-        py="3"
-        px="4"
-        style={{ backgroundColor: 'var(--gray-a2)' }}
-      >
-        <Heading size="4">Settings</Heading>
-        <IconButton size="2" variant="ghost" color="gray" radius="full" onClick={onCloseModelPanel}>
-          <AiOutlineClose className="size-4" />
-        </IconButton>
-      </Flex>
-      <Container size="3" className="grow-0 px-4">
-        <Heading className="my-3" size="5">
-          API Key
-        </Heading>
-        <Text as="p" size="2" className="mb-3">
-          Next.GenAI needs your API key to access ShanghaiTech GenAI API.
-        </Text>
-        <DataList.Root>
-          <DataList.Item align="center">
-            <DataList.Label minWidth="88px">Status</DataList.Label>
-            <DataList.Value>
-              <Flex align="center" gap="2">
-                {isValidating === TokenState.Validating && (
-                  <Badge color="yellow" variant="soft" size="2">
-                    Validating
-                  </Badge>
-                )}
-                {isValidating === TokenState.Valid && (
-                  <Badge color="green" variant="soft" size="2">
-                    Valid
-                  </Badge>
-                )}
-                {isValidating === TokenState.Invalid && (
-                  <Badge color="red" variant="soft" size="2">
-                    Invalid
-                  </Badge>
-                )}
-                <IconButton
-                  size="1"
-                  aria-label="Refresh"
-                  color="gray"
-                  variant="ghost"
-                  onClick={validateToken}
+      <ScrollArea className="flex-1" type="auto" scrollbars="vertical">
+        <Flex
+          justify="between"
+          align="center"
+          py="3"
+          px="4"
+          style={{ backgroundColor: 'var(--color-background)' }}
+          className='sticky top-0 shadow-md'
+        >
+          <Heading size="4" className="font-mono font-normal">Settings</Heading>
+          <IconButton size="2" variant="ghost" color="gray" radius="full" onClick={onCloseModelPanel}>
+            <AiOutlineClose className="size-4" />
+          </IconButton>
+        </Flex>
+        <Container size="3" className="grow-0 px-4">
+          <Heading className="my-3" size="5">
+            API Key
+          </Heading>
+          <Text as="p" size="2" className="mb-3">
+            Next.GenAI needs your API key to access ShanghaiTech GenAI API.
+          </Text>
+          <DataList.Root>
+            <DataList.Item align="center">
+              <DataList.Label minWidth="88px">Status</DataList.Label>
+              <DataList.Value>
+                <Flex align="center" gap="2">
+                  {isValidating === TokenState.Validating && (
+                    <Badge color="yellow" variant="soft" size="2">
+                      Validating
+                    </Badge>
+                  )}
+                  {isValidating === TokenState.Valid && (
+                    <Badge color="green" variant="soft" size="2">
+                      Valid
+                    </Badge>
+                  )}
+                  {isValidating === TokenState.Invalid && (
+                    <Badge color="red" variant="soft" size="2">
+                      Invalid
+                    </Badge>
+                  )}
+                  <IconButton
+                    size="1"
+                    aria-label="Refresh"
+                    color="gray"
+                    variant="ghost"
+                    onClick={validateToken}
+                  >
+                    <ReloadIcon />
+                  </IconButton>
+                </Flex>
+              </DataList.Value>
+            </DataList.Item>
+            <DataList.Item>
+              <DataList.Label minWidth="88px">API Key</DataList.Label>
+              <DataList.Value>
+                <Flex align="center" gap="2">
+                  <Code variant="ghost">{localStorage.getItem('apiKey') || 'No API Key'}</Code>
+                  <IconButton
+                    size="1"
+                    aria-label="Copy value"
+                    color="gray"
+                    variant="ghost"
+                    onClick={async () => {
+                      await navigator.clipboard.writeText(localStorage.getItem('apiKey') || '')
+                    }}
+                  >
+                    <CopyIcon />
+                  </IconButton>
+                </Flex>
+              </DataList.Value>
+            </DataList.Item>
+            <DataList.Item>
+              <DataList.Label minWidth="88px">Name</DataList.Label>
+              <DataList.Value>{localStorage.getItem('username') || 'Unknown'}</DataList.Value>
+            </DataList.Item>
+            <DataList.Item>
+              <DataList.Label minWidth="88px">ID</DataList.Label>
+              <DataList.Value>{localStorage.getItem('userid') || 'Unknown'}</DataList.Value>
+            </DataList.Item>
+            <DataList.Item>
+              <DataList.Label minWidth="88px">Month Quota</DataList.Label>
+              <DataList.Value>
+                {surplus} / {quota}
+              </DataList.Value>
+            </DataList.Item>
+          </DataList.Root>
+          <Dialog.Root>
+            <Dialog.Trigger>
+              <Button className="my-2">Retrieve API Key</Button>
+            </Dialog.Trigger>
+
+            <Dialog.Content maxWidth="450px">
+              <Dialog.Title>Retrieve API Key</Dialog.Title>
+              <Dialog.Description size="2" mb="4">
+                To retrieve your API Key, please follow the steps below.
+                <br />
+                <br />
+                1. Go to{' '}
+                <Link
+                  href="https://genai.shanghaitech.edu.cn/htk/user/login"
+                  target="_blank"
+                  referrerPolicy="no-referrer"
+                  underline="always"
                 >
-                  <ReloadIcon />
-                </IconButton>
+                  GenAI Login Page
+                </Link>
+                <br />
+                2. Login by your ShanghaiTech Account. If you are already logged in, skip this step.
+                <br />
+                3. Copy the link of the page you are redirected to after login. <br />
+                It should be like{' '}
+                <code>https://genai.shanghaitech.edu.cn/dashboard/analysis?token=...</code>
+              </Dialog.Description>
+
+              <Flex direction="column" gap="3">
+                <label>
+                  <Text as="div" size="2" mb="1" weight="bold">
+                    URL
+                  </Text>
+                  <TextField.Root
+                    defaultValue=""
+                    placeholder="https://genai.shanghaitech.edu.cn/dashboard/analysis?token=..."
+                    onChange={({ target }) => {
+                      setTokenText(target.value)
+                    }}
+                  />
+                </label>
               </Flex>
-            </DataList.Value>
-          </DataList.Item>
-          <DataList.Item>
-            <DataList.Label minWidth="88px">API Key</DataList.Label>
-            <DataList.Value>
-              <Flex align="center" gap="2">
-                <Code variant="ghost">{localStorage.getItem('apiKey') || 'No API Key'}</Code>
-                <IconButton
-                  size="1"
-                  aria-label="Copy value"
-                  color="gray"
-                  variant="ghost"
-                  onClick={async () => {
-                    await navigator.clipboard.writeText(localStorage.getItem('apiKey') || '')
-                  }}
-                >
-                  <CopyIcon />
-                </IconButton>
+
+              <Flex gap="3" mt="4" justify="end">
+                <Dialog.Close>
+                  <Button variant="soft" color="gray">
+                    Cancel
+                  </Button>
+                </Dialog.Close>
+                <Dialog.Close>
+                  <Button
+                    disabled={
+                      !tokenText.startsWith(
+                        'https://genai.shanghaitech.edu.cn/dashboard/analysis?token='
+                      )
+                    }
+                    onClick={() => {
+                      const tok = tokenText.replace(
+                        'https://genai.shanghaitech.edu.cn/dashboard/analysis?token=',
+                        ''
+                      )
+                      // setToken(tok)
+                      localStorage.setItem('apiKey', tok)
+                      refreshToken()
+                    }}
+                  >
+                    Save
+                  </Button>
+                </Dialog.Close>
               </Flex>
-            </DataList.Value>
-          </DataList.Item>
-          <DataList.Item>
-            <DataList.Label minWidth="88px">Name</DataList.Label>
-            <DataList.Value>{localStorage.getItem('username') || 'Unknown'}</DataList.Value>
-          </DataList.Item>
-          <DataList.Item>
-            <DataList.Label minWidth="88px">ID</DataList.Label>
-            <DataList.Value>{localStorage.getItem('userid') || 'Unknown'}</DataList.Value>
-          </DataList.Item>
-          <DataList.Item>
-            <DataList.Label minWidth="88px">Month Quota</DataList.Label>
-            <DataList.Value>
-              {surplus} / {quota}
-            </DataList.Value>
-          </DataList.Item>
-        </DataList.Root>
-        <Dialog.Root>
-          <Dialog.Trigger>
-            <Button className="my-2">Retrieve API Key</Button>
-          </Dialog.Trigger>
+            </Dialog.Content>
+          </Dialog.Root>
 
-          <Dialog.Content maxWidth="450px">
-            <Dialog.Title>Retrieve API Key</Dialog.Title>
-            <Dialog.Description size="2" mb="4">
-              To retrieve your API Key, please follow the steps below.
-              <br />
-              <br />
-              1. Go to{' '}
-              <Link
-                href="https://genai.shanghaitech.edu.cn/htk/user/login"
-                target="_blank"
-                referrerPolicy="no-referrer"
-                underline="always"
-              >
-                GenAI Login Page
-              </Link>
-              <br />
-              2. Login by your ShanghaiTech Account. If you are already logged in, skip this step.
-              <br />
-              3. Copy the link of the page you are redirected to after login. <br />
-              It should be like{' '}
-              <code>https://genai.shanghaitech.edu.cn/dashboard/analysis?token=...</code>
-            </Dialog.Description>
-
-            <Flex direction="column" gap="3">
-              <label>
-                <Text as="div" size="2" mb="1" weight="bold">
-                  URL
-                </Text>
-                <TextField.Root
-                  defaultValue=""
-                  placeholder="https://genai.shanghaitech.edu.cn/dashboard/analysis?token=..."
-                  onChange={({ target }) => {
-                    setTokenText(target.value)
-                  }}
-                />
-              </label>
-            </Flex>
-
-            <Flex gap="3" mt="4" justify="end">
-              <Dialog.Close>
-                <Button variant="soft" color="gray">
-                  Cancel
-                </Button>
-              </Dialog.Close>
-              <Dialog.Close>
-                <Button
-                  disabled={
-                    !tokenText.startsWith(
-                      'https://genai.shanghaitech.edu.cn/dashboard/analysis?token='
-                    )
-                  }
-                  onClick={() => {
-                    const tok = tokenText.replace(
-                      'https://genai.shanghaitech.edu.cn/dashboard/analysis?token=',
-                      ''
-                    )
-                    // setToken(tok)
-                    localStorage.setItem('apiKey', tok)
-                    refreshToken()
-                  }}
-                >
-                  Save
-                </Button>
-              </Dialog.Close>
-            </Flex>
-          </Dialog.Content>
-        </Dialog.Root>
-
-        <Heading className="mt-3" size="5">
-          Models
-        </Heading>
-        <Flex gap="4" py="3">
-          <TextField.Root
-            size="3"
-            className="flex-1"
-            radius="large"
-            placeholder="Search Model Template"
-            onChange={({ target }) => {
-              setSearchText(target.value)
-            }}
-          >
-            <TextField.Slot>
-              <MagnifyingGlassIcon height="16" width="16" />
-            </TextField.Slot>
-          </TextField.Root>
-          {/* TODO: Create Bot */}
-          {/* <Button size="3" radius="large" variant="surface" onClick={onOpenModelModal}>
+          <Heading className="mt-3" size="5">
+            Models
+          </Heading>
+          <Flex gap="4" py="3">
+            <TextField.Root
+              size="3"
+              className="flex-1"
+              radius="large"
+              placeholder="Search Model Template"
+              onChange={({ target }) => {
+                setSearchText(target.value)
+              }}
+            >
+              <TextField.Slot>
+                <MagnifyingGlassIcon height="16" width="16" />
+              </TextField.Slot>
+            </TextField.Root>
+            {/* TODO: Create Bot */}
+            {/* <Button size="3" radius="large" variant="surface" onClick={onOpenModelModal}>
             Create
           </Button> */}
-        </Flex>
-      </Container>
-      <ScrollArea className="flex-1" type="auto" scrollbars="vertical">
+          </Flex>
+        </Container>
         <Container size="3" className="px-4">
           <Flex direction="column" className="divide-y">
             {promptList.map((prompt) => (
