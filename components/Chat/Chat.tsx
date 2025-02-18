@@ -9,6 +9,7 @@ import {
   useRef,
   useState
 } from 'react'
+import { LockClosedIcon, LockOpen1Icon } from '@radix-ui/react-icons'
 import { Container, Flex, Heading, IconButton, ScrollArea, Tooltip } from '@radix-ui/themes'
 import ContentEditable from 'react-contenteditable'
 import toast from 'react-hot-toast'
@@ -17,9 +18,7 @@ import { FiSend, FiStopCircle } from 'react-icons/fi'
 import ChatContext from './chatContext'
 import type { Chat, ChatMessage } from './interface'
 import Message from './Message'
-
 import './index.scss'
-import { LockClosedIcon, LockOpen1Icon } from '@radix-ui/react-icons'
 
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
