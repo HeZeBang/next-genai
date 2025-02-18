@@ -19,11 +19,12 @@ import type { Chat, ChatMessage } from './interface'
 import Message from './Message'
 
 import './index.scss'
+import { LockClosedIcon, LockOpen1Icon } from '@radix-ui/react-icons'
 
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
 
-export interface ChatProps {}
+export interface ChatProps { }
 
 export interface ChatGPInstance {
   setConversation: (messages: ChatMessage[]) => void
@@ -80,6 +81,8 @@ const Chat = (props: ChatProps, ref: any) => {
   const [message, setMessage] = useState('')
 
   const [currentMessage, setCurrentMessage] = useState<string>('')
+
+  const [scrollToBottom, setScrollToBottom] = useState(true)
 
   const textAreaRef = useRef<HTMLElement>(null)
 
@@ -210,7 +213,7 @@ const Chat = (props: ChatProps, ref: any) => {
   }, [message, textAreaRef])
 
   useEffect(() => {
-    if (bottomOfChatRef.current) {
+    if (bottomOfChatRef.current && scrollToBottom) {
       bottomOfChatRef.current.scrollIntoView({ behavior: 'smooth' })
     }
   }, [conversation, currentMessage])
@@ -305,6 +308,22 @@ const Chat = (props: ChatProps, ref: any) => {
                   <AiOutlineLoading3Quarters className="animate-spin size-4" />
                 </Flex>
               )}
+              <Tooltip content={'Auto Scrolling'}>
+                <IconButton
+                  variant="soft"
+                  color="gray"
+                  size="2"
+                  className="rounded-xl cursor-pointer"
+                  onClick={() => setScrollToBottom((state) => !state)}
+                >
+                  {
+                    scrollToBottom ?
+                      <LockClosedIcon className="size-4" />
+                      :
+                      <LockOpen1Icon className="size-4" />
+                  }
+                </IconButton>
+              </Tooltip>
               {currentMessage ? (
                 <Tooltip content={'Stop Generation'}>
                   <IconButton
