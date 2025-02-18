@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useContext } from 'react'
-import { GearIcon } from '@radix-ui/react-icons'
+import { ArrowLeftIcon, GearIcon } from '@radix-ui/react-icons'
 import './index.scss'
 import {
   Box,
@@ -30,7 +30,8 @@ export const ChatSideBar = () => {
     onChangeChat,
     onCreateChat,
     onOpenModelPanel,
-    onCloseModelPanel
+    onCloseModelPanel,
+    onToggleSidebar
   } = useContext(ChatContext)
 
   return (

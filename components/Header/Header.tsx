@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { HamburgerMenuIcon } from '@radix-ui/react-icons'
 import { Avatar, Flex, Heading, IconButton, Select, Tooltip } from '@radix-ui/themes'
 import cs from 'classnames'
@@ -8,9 +8,11 @@ import NextLink from 'next/link'
 import { FaAdjust, FaGithub, FaMoon, FaSun } from 'react-icons/fa'
 import { Link } from '../Link'
 import { useTheme } from '../Themes'
+// import ChatContext from '../Chat/chatContext'
 
 export const Header = () => {
   const { theme, setTheme } = useTheme()
+  // const { onToggleSidebar } = useContext(ChatContext)
   // const [, setShow] = useState(false)
 
   // const toggleNavBar = useCallback(() => {
@@ -23,6 +25,19 @@ export const Header = () => {
       style={{ backgroundColor: 'var(--color-background)' }}
     >
       <Flex align="center" gap="3">
+        {/* <Tooltip content={'Toggle Sidebar'}>
+          <IconButton
+            variant="soft"
+            color="gray"
+            size="2"
+            className="rounded-xl md:hidden cursor-pointer"
+            onClick={() => {
+              onToggleSidebar?.()
+            }}
+          >
+            <HamburgerMenuIcon className="size-4" />
+          </IconButton>
+        </Tooltip> */}
         <NextLink href="/">
           <Heading as="h2" size="4" style={{ maxWidth: 200 }} className="font-mono">
             Next.GenAI
