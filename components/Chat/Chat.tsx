@@ -10,7 +10,16 @@ import {
   useState
 } from 'react'
 import { LockClosedIcon, LockOpen1Icon } from '@radix-ui/react-icons'
-import { Container, Flex, Heading, IconButton, ScrollArea, Tooltip, Text, Blockquote } from '@radix-ui/themes'
+import {
+  Container,
+  Flex,
+  Heading,
+  IconButton,
+  ScrollArea,
+  Tooltip,
+  Text,
+  Blockquote
+} from '@radix-ui/themes'
 import ContentEditable from 'react-contenteditable'
 import toast from 'react-hot-toast'
 import { AiOutlineClear, AiOutlineLoading3Quarters, AiOutlineUnorderedList } from 'react-icons/ai'
@@ -23,7 +32,7 @@ import './index.scss'
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
 
-export interface ChatProps { }
+export interface ChatProps {}
 
 export interface ChatGPInstance {
   setConversation: (messages: ChatMessage[]) => void
@@ -315,12 +324,11 @@ const Chat = (props: ChatProps, ref: any) => {
                   className="rounded-xl cursor-pointer"
                   onClick={() => setScrollToBottom((state) => !state)}
                 >
-                  {
-                    scrollToBottom ?
-                      <LockClosedIcon className="size-4" />
-                      :
-                      <LockOpen1Icon className="size-4" />
-                  }
+                  {scrollToBottom ? (
+                    <LockClosedIcon className="size-4" />
+                  ) : (
+                    <LockOpen1Icon className="size-4" />
+                  )}
                 </IconButton>
               </Tooltip>
               {currentMessage ? (
@@ -387,9 +395,11 @@ const Chat = (props: ChatProps, ref: any) => {
       >
         Next.GenAI
       </Heading>
-      <Text size="4" className="text-gray-500 font-mono">Let's make GenAI prettier.</Text>
+      <Text size="4" className="text-gray-500 font-mono">
+        Let's make GenAI prettier.
+      </Text>
 
-      <Blockquote className='my-5 py-2 text-gray-500' weight='light'>
+      <Blockquote className="my-5 py-2 text-gray-500" weight="light">
         First use? Please configure your API key in the settings below.
       </Blockquote>
     </Flex>

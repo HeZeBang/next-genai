@@ -117,8 +117,7 @@ export const ChatSideBar = () => {
                   active: currentChatRef?.current?.id === chat.id
                 })}
                 onClick={() => {
-                  if (currentChatRef?.current?.id !== chat.id)
-                    onChangeChat?.(chat)
+                  if (currentChatRef?.current?.id !== chat.id) onChangeChat?.(chat)
                   onCloseModelPanel?.()
                 }}
               >
