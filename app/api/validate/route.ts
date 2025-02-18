@@ -8,14 +8,18 @@ export async function POST(req: NextRequest) {
       apiKey: string
       userid: string
     }
-    const res = await fetch(
-      `https://genai.shanghaitech.edu.cn/htk/ai-user-info/list?userId=${userid}`,
-      {
-        headers: {
-          'X-Access-Token': `${apiKey}`
-        }
+    let apiUrl: string
+    let apiBaseUrl = process.env.GENAI_API_BASE_URL || 'https://genai.shanghaitech.edu.cn'
+    if (apiBaseUrl && apiBaseUrl.endsWith('/')) {
+      apiBaseUrl = apiBaseUrl.slice(0, -1)
+    }
+    apiUrl = `${apiBaseUrl}/htk/ai-user-info/list?userId=${userid}`
+
+    const res = await fetch(apiUrl, {
+      headers: {
+        'X-Access-Token': `${apiKey}`
       }
-    )
+    })
       .then((res) => res.json())
       .then((data) => data.result)
       .then((res) => res.records.at(0))
@@ -26,7 +30,8 @@ export async function POST(req: NextRequest) {
           username: res.username,
           userid: res.id
         }
-        if (!!data.quota && (typeof data.used === "number") && data.username && data.userid) return data
+        if (!!data.quota && typeof data.used === 'number' && data.username && data.userid)
+          return data
         else throw new Error('One of data is undefined')
       })
     return NextResponse.json(res)

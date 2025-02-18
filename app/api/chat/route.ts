@@ -40,11 +40,11 @@ export async function POST(req: NextRequest) {
 
 const getApiConfig = () => {
   let apiUrl: string
-  let apiBaseUrl = process.env.GENAI_API_BASE_URL || 'https://api.openai.com'
+  let apiBaseUrl = process.env.GENAI_API_BASE_URL || 'https://genai.shanghaitech.edu.cn'
   if (apiBaseUrl && apiBaseUrl.endsWith('/')) {
     apiBaseUrl = apiBaseUrl.slice(0, -1)
   }
-  apiUrl = 'https://genai.shanghaitech.edu.cn/htk/chat/start/chat'
+  apiUrl = `${apiBaseUrl}/htk/chat/start/chat`
 
   return { apiUrl }
 }
@@ -55,7 +55,7 @@ const getGenAIStream = async (
   model: string,
   messages: Message[],
   input: string,
-  groupId: string,
+  groupId: string
 ) => {
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()

@@ -26,18 +26,22 @@ const getServiceUrl = (text: string) => {
 }
 
 export const loginGenAI = async (studentid: string, password: string) => {
-  // const url = 'https://ids.shanghaitech.edu.cn/authserver/login?service='
-  const url = 'https://genai.shanghaitech.edu.cn/htk/user/login'
+  let apiUrl: string
+  let apiBaseUrl = process.env.GENAI_API_BASE_URL || 'https://genai.shanghaitech.edu.cn'
+  if (apiBaseUrl && apiBaseUrl.endsWith('/')) {
+    apiBaseUrl = apiBaseUrl.slice(0, -1)
+  }
+  apiUrl = `${apiBaseUrl}/htk/user/login`
 
   const session = axios.create({
-    baseURL: url,
+    baseURL: apiUrl,
     headers: headers,
     withCredentials: true
   })
 
   try {
     await session
-      .get(url)
+      .get(apiUrl)
       .then((response) => {
         const text = response.data
         // response URL

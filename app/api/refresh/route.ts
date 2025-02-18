@@ -7,10 +7,14 @@ export async function POST(req: NextRequest) {
     const { apiKey } = (await req.json()) as {
       apiKey: string
     }
+    let apiUrl: string
+    let apiBaseUrl = process.env.GENAI_API_BASE_URL || 'https://genai.shanghaitech.edu.cn'
+    if (apiBaseUrl && apiBaseUrl.endsWith('/')) {
+      apiBaseUrl = apiBaseUrl.slice(0, -1)
+    }
+    apiUrl = `${apiBaseUrl}/htk/user/info/${apiKey}?_t=${Date.now()}`
 
-    const res = await fetch(
-      `https://genai.shanghaitech.edu.cn/htk/user/info/${apiKey}?_t=${Date.now()}`
-    )
+    const res = await fetch(apiUrl)
       .then((res) => res.json())
       .then((data) => data.result)
       .then((res) => {
