@@ -9,6 +9,10 @@ export interface Model {
   avatar?: string
   name?: string
   prompt?: string
+  rootAiType?: string
+  description?: string
+  promptPrice?: number
+  completionPrice?: number
   key?: string
   isDefault?: boolean
 }

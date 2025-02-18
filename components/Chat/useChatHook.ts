@@ -14,6 +14,9 @@ export const DefaultModels: Model[] = [
     role: 'system',
     name: 'DeepSeek V3 - 671B',
     prompt: 'You are an AI assistant that helps people find information.',
+    rootAiType: 'xinference',
+    promptPrice: 0,
+    completionPrice: 0,
     isDefault: true
   },
   {
@@ -21,6 +24,9 @@ export const DefaultModels: Model[] = [
     role: 'system',
     name: 'DeepSeek R1 - 671B',
     prompt: 'You are an AI assistant that helps people find information.',
+    rootAiType: 'xinference',
+    promptPrice: 0,
+    completionPrice: 0,
     isDefault: false
   }
 ]

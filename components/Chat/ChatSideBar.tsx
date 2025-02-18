@@ -3,7 +3,7 @@
 import React, { useContext } from 'react'
 import { GearIcon } from '@radix-ui/react-icons'
 import './index.scss'
-import { Box, Flex, IconButton, ScrollArea, Text } from '@radix-ui/themes'
+import { Box, Button, Dialog, Flex, IconButton, Inset, ScrollArea, Table, Text } from '@radix-ui/themes'
 import cs from 'classnames'
 import { AiOutlineCloseCircle } from 'react-icons/ai'
 import { FiPlus } from 'react-icons/fi'
@@ -25,20 +25,70 @@ export const ChatSideBar = () => {
   return (
     <Flex direction="column" className={cs('chat-side-bar', { show: toggleSidebar })}>
       <Flex className="p-2 h-full overflow-hidden w-64" direction="column" gap="3">
-        <Box
-          width="auto"
-          onClick={() => onCreateChat?.(DefaultModels[0])}
-          className="bg-token-surface-primary active:scale-95 cursor-pointer"
-        >
-          <FiPlus className="size-4" />
-          <div>
-            <Text size="1" color="gray">
-              {DefaultModels[0].name}
-            </Text>
-            <br />
-            <Text>New Chat</Text>
-          </div>
-        </Box>
+        <Dialog.Root>
+          <Dialog.Trigger>
+            <Box
+              width="auto"
+              // onClick={() => onCreateChat?.(DefaultModels[0])}
+              className="bg-token-surface-primary active:scale-95 cursor-pointer"
+            >
+              <FiPlus className="size-4" />
+              <div>
+                <Text size="1" color="gray">
+                  {DefaultModels.length} Available Models
+                </Text>
+                <br />
+                <Text>New Chat</Text>
+              </div>
+            </Box>
+          </Dialog.Trigger>
+          <Dialog.Content>
+            <Dialog.Title>Create Chat</Dialog.Title>
+            <Dialog.Description>
+              Available models:
+            </Dialog.Description>
+
+            <Inset side="x" my="5">
+              <Table.Root>
+                <Table.Header>
+                  <Table.Row>
+                    <Table.ColumnHeaderCell>Model</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell>Prompt Price</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell>Completion Price</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
+                  </Table.Row>
+                </Table.Header>
+
+                <Table.Body>
+                  {DefaultModels.map((model) => (
+                    <Table.Row>
+                      <Table.RowHeaderCell className="align-middle font-bold">{model.name}</Table.RowHeaderCell>
+                      <Table.Cell className="align-middle">{model.promptPrice?.toFixed(2) || 'Unknown'} / K tokens</Table.Cell>
+                      <Table.Cell className="align-middle">{model.completionPrice?.toFixed(2) || 'Unknown'} / K tokens</Table.Cell>
+                      <Table.Cell className="align-middle">
+                        <Dialog.Close>
+                          <Button variant="soft" size="2" onClick={() => onCreateChat?.(model)}>
+                            Create
+                          </Button>
+                        </Dialog.Close>
+                      </Table.Cell>
+                    </Table.Row>
+                  )
+                  )}
+                </Table.Body>
+              </Table.Root>
+            </Inset>
+
+            <Flex gap="3" justify="end">
+              <Dialog.Close>
+                <Button variant="soft" color="gray">
+                  Close
+                </Button>
+              </Dialog.Close>
+            </Flex>
+          </Dialog.Content>
+        </Dialog.Root>
+
         <ScrollArea className="flex-1 " style={{ width: '100%' }} type="auto">
           <Flex direction="column" gap="3">
             {chatList.map((chat) => (
@@ -61,7 +111,7 @@ export const ChatSideBar = () => {
                       {
                         (
                           JSON.parse(localStorage.getItem(`ms_${chat.id}`) || '[]') as ChatMessage[]
-                        ).at(0)?.content
+                        ).at(0)?.content || 'New Chat'
                       }
                     </Text>
                   </div>
