@@ -268,7 +268,7 @@ const useChatHook = () => {
 
       onChangeChat(currentChat || chatList[0])
     } else {
-      onCreateChat(DefaultModels[0])
+      // onCreateChat(DefaultModels[0])
     }
 
     return () => {
@@ -304,7 +304,7 @@ const useChatHook = () => {
 
   useEffect(() => {
     if (isInit && !openModelPanel && chatList.length === 0) {
-      onCreateChat(DefaultModels[0])
+      // onCreateChat(DefaultModels[0])
     }
     isInit = true
   }, [chatList, openModelPanel, onCreateChat])

@@ -9,7 +9,17 @@ import {
   useRef,
   useState
 } from 'react'
-import { Container, Flex, Heading, IconButton, ScrollArea, Tooltip } from '@radix-ui/themes'
+import { LockClosedIcon, LockOpen1Icon } from '@radix-ui/react-icons'
+import {
+  Container,
+  Flex,
+  Heading,
+  IconButton,
+  ScrollArea,
+  Tooltip,
+  Text,
+  Blockquote
+} from '@radix-ui/themes'
 import ContentEditable from 'react-contenteditable'
 import toast from 'react-hot-toast'
 import { AiOutlineClear, AiOutlineLoading3Quarters, AiOutlineUnorderedList } from 'react-icons/ai'
@@ -17,7 +27,6 @@ import { FiSend, FiStopCircle } from 'react-icons/fi'
 import ChatContext from './chatContext'
 import type { Chat, ChatMessage } from './interface'
 import Message from './Message'
-
 import './index.scss'
 
 const HTML_REGULAR =
@@ -80,6 +89,8 @@ const Chat = (props: ChatProps, ref: any) => {
   const [message, setMessage] = useState('')
 
   const [currentMessage, setCurrentMessage] = useState<string>('')
+
+  const [scrollToBottom, setScrollToBottom] = useState(true)
 
   const textAreaRef = useRef<HTMLElement>(null)
 
@@ -210,7 +221,7 @@ const Chat = (props: ChatProps, ref: any) => {
   }, [message, textAreaRef])
 
   useEffect(() => {
-    if (bottomOfChatRef.current) {
+    if (bottomOfChatRef.current && scrollToBottom) {
       bottomOfChatRef.current.scrollIntoView({ behavior: 'smooth' })
     }
   }, [conversation, currentMessage])
@@ -243,7 +254,7 @@ const Chat = (props: ChatProps, ref: any) => {
     }
   })
 
-  return (
+  return currentChatRef?.current ? (
     <Flex direction="column" height="100%" className="relative" gap="3">
       <Flex
         justify="between"
@@ -305,6 +316,21 @@ const Chat = (props: ChatProps, ref: any) => {
                   <AiOutlineLoading3Quarters className="animate-spin size-4" />
                 </Flex>
               )}
+              <Tooltip content={'Auto Scrolling'}>
+                <IconButton
+                  variant="soft"
+                  color="gray"
+                  size="2"
+                  className="rounded-xl cursor-pointer"
+                  onClick={() => setScrollToBottom((state) => !state)}
+                >
+                  {scrollToBottom ? (
+                    <LockClosedIcon className="size-4" />
+                  ) : (
+                    <LockOpen1Icon className="size-4" />
+                  )}
+                </IconButton>
+              </Tooltip>
               {currentMessage ? (
                 <Tooltip content={'Stop Generation'}>
                   <IconButton
@@ -360,6 +386,22 @@ const Chat = (props: ChatProps, ref: any) => {
           </Flex>
         </Container>
       </div>
+    </Flex>
+  ) : (
+    <Flex direction="column" height="100%" justify="center" align="center">
+      <Heading
+        className="text-center font-mono lg:text-7xl text-4xl py-2 tracking-tight from-[#FF1CF7] to-[#b249f8] bg-clip-text text-transparent bg-gradient-to-b inline"
+        weight="bold"
+      >
+        Next.GenAI
+      </Heading>
+      <Text size="4" className="text-gray-500 font-mono">
+        Let&apos;s make GenAI prettier.
+      </Text>
+
+      <Blockquote className="my-5 py-2 text-gray-500" weight="light">
+        First use? Please configure your API key in the settings below.
+      </Blockquote>
     </Flex>
   )
 }
