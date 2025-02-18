@@ -1,0 +1,53 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: next-genai
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: next-genai
+  name: next-genai
+  namespace: next-genai
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: next-genai
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: next-genai
+    spec:
+      containers:
+        - env:
+            - name: OPENAI_API_BASE_URL
+              valueFrom:
+                secretKeyRef:
+                  key: OPENAI_API_BASE_URL
+                  name: env
+          image: ghcr.io/hezebang/next-genai:latest
+          name: next-genai
+          ports:
+            - containerPort: 3000
+          resources: {}
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: next-genai
+  name: next-genai
+  namespace: next-genai
+spec:
+  ports:
+    - name: "3000"
+      port: 3000
+      targetPort: 3000
+  selector:
+    app: next-genai
