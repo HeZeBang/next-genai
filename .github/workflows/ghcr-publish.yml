@@ -7,9 +7,6 @@ on:
 
 jobs:
   publish:
-  	permissions:
-		  contents: read
-		  packages: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,4 +32,4 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/zambar/next-genai:latest
+          tags: ghcr.io/hezebang/next-genai:latest
