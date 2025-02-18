@@ -63,8 +63,8 @@ export const ChatSideBar = () => {
                   {DefaultModels.map((model) => (
                     <Table.Row>
                       <Table.RowHeaderCell className="align-middle font-bold">{model.name}</Table.RowHeaderCell>
-                      <Table.Cell className="align-middle">{model.promptPrice?.toFixed(2) || 'Unknown'} / K tokens</Table.Cell>
-                      <Table.Cell className="align-middle">{model.completionPrice?.toFixed(2) || 'Unknown'} / K tokens</Table.Cell>
+                      <Table.Cell className="align-middle">{((model.promptPrice || 0) * 1000000).toFixed(1)} / M tokens</Table.Cell>
+                      <Table.Cell className="align-middle">{((model.completionPrice || 0) * 1000000).toFixed(1)} / M tokens</Table.Cell>
                       <Table.Cell className="align-middle">
                         <Dialog.Close>
                           <Button variant="soft" size="2" onClick={() => onCreateChat?.(model)}>

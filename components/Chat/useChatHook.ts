@@ -28,6 +28,56 @@ export const DefaultModels: Model[] = [
     promptPrice: 0,
     completionPrice: 0,
     isDefault: false
+  },
+  {
+    id: 'gpt-4-turbo',
+    role: 'system',
+    name: 'GPT-4 Turbo',
+    prompt: 'You are an AI assistant that helps people find information.',
+    rootAiType: 'azure',
+    promptPrice: 0.00001000,
+    completionPrice: 0.00003000,
+    isDefault: false
+  },
+  {
+    id: 'gpt-3.5-turbo',
+    role: 'system',
+    name: 'GPT-3.5 Turbo',
+    prompt: 'You are an AI assistant that helps people find information.',
+    rootAiType: 'azure',
+    promptPrice: 5.0E-7,
+    completionPrice: 0.00000150,
+    isDefault: false
+  },
+  {
+    id: 'gpt-4',
+    role: 'system',
+    name: 'GPT-4',
+    prompt: 'You are an AI assistant that helps people find information.',
+    rootAiType: 'azure',
+    promptPrice: 0.00006000,
+    completionPrice: 0.00012000,
+    isDefault: false
+  },
+  {
+    id: 'gpt-4-o',
+    role: 'system',
+    name: 'GPT-4o',
+    prompt: 'You are an AI assistant that helps people find information.',
+    rootAiType: 'azure',
+    promptPrice: 0.00000500,
+    completionPrice: 0.00001500,
+    isDefault: false
+  },
+  {
+    id: 'o1-mini',
+    role: 'user',
+    name: 'O1 Mini',
+    prompt: 'You are an AI assistant that helps people find information.',
+    rootAiType: 'azure',
+    promptPrice: 0.00000330,
+    completionPrice: 0.00001485,
+    isDefault: false
   }
 ]
 

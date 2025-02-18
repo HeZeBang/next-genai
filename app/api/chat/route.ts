@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       rootAiType: string
     }
     const messagesWithHistory = [
-      { content: prompt, role: 'system' },
+      { content: prompt, role: model == 'o1-mini' ? 'user' : 'system' },
       ...messages
       // { content: input, role: 'user' }
     ]
@@ -112,9 +112,19 @@ const getGenAIStream = async (
         if (event.type === 'event') {
           const data = event.data
 
+          // TODO: remove this old flag
           if (data === '[DONE]') {
             controller.close()
             return
+          }
+
+          try {
+            const json = JSON.parse(data)
+            if (json.code == 500) {
+              throw new Error(json.errMsg)
+            }
+          } catch (e) {
+            throw e
           }
 
           try {
@@ -127,7 +137,7 @@ const getGenAIStream = async (
               console.error('Received undefined content:', json)
             }
           } catch (e) {
-            console.error('Error parsing event data:', e)
+            console.error('Error parsing event data: ', data, e)
             controller.error(e)
           }
         }
