@@ -3,7 +3,17 @@
 import React, { useContext } from 'react'
 import { GearIcon } from '@radix-ui/react-icons'
 import './index.scss'
-import { Box, Button, Dialog, Flex, IconButton, Inset, ScrollArea, Table, Text } from '@radix-ui/themes'
+import {
+  Box,
+  Button,
+  Dialog,
+  Flex,
+  IconButton,
+  Inset,
+  ScrollArea,
+  Table,
+  Text
+} from '@radix-ui/themes'
 import cs from 'classnames'
 import { AiOutlineCloseCircle } from 'react-icons/ai'
 import { FiPlus } from 'react-icons/fi'
@@ -44,27 +54,35 @@ export const ChatSideBar = () => {
           </Dialog.Trigger>
           <Dialog.Content>
             <Dialog.Title>Create Chat</Dialog.Title>
-            <Dialog.Description>
-              Available models:
-            </Dialog.Description>
+            <Dialog.Description>Available models:</Dialog.Description>
 
             <Inset side="x" my="5">
               <Table.Root>
                 <Table.Header>
                   <Table.Row>
                     <Table.ColumnHeaderCell>Model</Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell>Prompt Price</Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell>Completion Price</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="text-right">
+                      Prompt Price
+                    </Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="text-right">
+                      Completion Price
+                    </Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
                   </Table.Row>
                 </Table.Header>
 
                 <Table.Body>
                   {DefaultModels.map((model) => (
-                    <Table.Row>
-                      <Table.RowHeaderCell className="align-middle font-bold">{model.name}</Table.RowHeaderCell>
-                      <Table.Cell className="align-middle">{((model.promptPrice || 0) * 1000000).toFixed(1)} / M tokens</Table.Cell>
-                      <Table.Cell className="align-middle">{((model.completionPrice || 0) * 1000000).toFixed(1)} / M tokens</Table.Cell>
+                    <Table.Row key={model.id}>
+                      <Table.RowHeaderCell className="align-middle font-bold">
+                        {model.name}
+                      </Table.RowHeaderCell>
+                      <Table.Cell className="align-middle text-right">
+                        {((model.promptPrice || 0) * 1000000).toFixed(1)} / M tokens
+                      </Table.Cell>
+                      <Table.Cell className="align-middle text-right">
+                        {((model.completionPrice || 0) * 1000000).toFixed(1)} / M tokens
+                      </Table.Cell>
                       <Table.Cell className="align-middle">
                         <Dialog.Close>
                           <Button variant="soft" size="2" onClick={() => onCreateChat?.(model)}>
@@ -73,8 +91,7 @@ export const ChatSideBar = () => {
                         </Dialog.Close>
                       </Table.Cell>
                     </Table.Row>
-                  )
-                  )}
+                  ))}
                 </Table.Body>
               </Table.Root>
             </Inset>
@@ -108,11 +125,9 @@ export const ChatSideBar = () => {
                       {chat.model?.name}
                     </Text>
                     <Text as="p" truncate>
-                      {
-                        (
-                          JSON.parse(localStorage.getItem(`ms_${chat.id}`) || '[]') as ChatMessage[]
-                        ).at(0)?.content || 'New Chat'
-                      }
+                      {(
+                        JSON.parse(localStorage.getItem(`ms_${chat.id}`) || '[]') as ChatMessage[]
+                      ).at(0)?.content || 'New Chat'}
                     </Text>
                   </div>
                 </Flex>

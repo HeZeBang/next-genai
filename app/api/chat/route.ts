@@ -26,7 +26,15 @@ export async function POST(req: NextRequest) {
     ]
 
     const { apiUrl } = getApiConfig()
-    const stream = await getGenAIStream(apiUrl, apiKey, model, messagesWithHistory, input, groupId, rootAiType)
+    const stream = await getGenAIStream(
+      apiUrl,
+      apiKey,
+      model,
+      messagesWithHistory,
+      input,
+      groupId,
+      rootAiType
+    )
     return new NextResponse(stream, {
       headers: { 'Content-Type': 'text/event-stream' }
     })
