@@ -46,7 +46,8 @@ const postChatOrQuestion = async (
     model: chat?.model?.id,
     input,
     apiKey: localStorage.getItem('apiKey'),
-    groupId
+    groupId,
+    rootAiType: chat?.model?.rootAiType
   }
 
   const timeoutId = setTimeout(() => controller.abort(), 5 * 60 * 1000) // 5 min timeout

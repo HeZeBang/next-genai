@@ -14,6 +14,9 @@ export const DefaultModels: Model[] = [
     role: 'system',
     name: 'DeepSeek V3 - 671B',
     prompt: 'You are an AI assistant that helps people find information.',
+    rootAiType: 'xinference',
+    promptPrice: 0,
+    completionPrice: 0,
     isDefault: true
   },
   {
@@ -21,6 +24,59 @@ export const DefaultModels: Model[] = [
     role: 'system',
     name: 'DeepSeek R1 - 671B',
     prompt: 'You are an AI assistant that helps people find information.',
+    rootAiType: 'xinference',
+    promptPrice: 0,
+    completionPrice: 0,
+    isDefault: false
+  },
+  {
+    id: 'gpt-4-turbo',
+    role: 'system',
+    name: 'GPT-4 Turbo',
+    prompt: 'You are an AI assistant that helps people find information.',
+    rootAiType: 'azure',
+    promptPrice: 0.00001,
+    completionPrice: 0.00003,
+    isDefault: false
+  },
+  {
+    id: 'gpt-3.5-turbo',
+    role: 'system',
+    name: 'GPT-3.5 Turbo',
+    prompt: 'You are an AI assistant that helps people find information.',
+    rootAiType: 'azure',
+    promptPrice: 5.0e-7,
+    completionPrice: 0.0000015,
+    isDefault: false
+  },
+  {
+    id: 'gpt-4',
+    role: 'system',
+    name: 'GPT-4',
+    prompt: 'You are an AI assistant that helps people find information.',
+    rootAiType: 'azure',
+    promptPrice: 0.00006,
+    completionPrice: 0.00012,
+    isDefault: false
+  },
+  {
+    id: 'gpt-4-o',
+    role: 'system',
+    name: 'GPT-4o',
+    prompt: 'You are an AI assistant that helps people find information.',
+    rootAiType: 'azure',
+    promptPrice: 0.000005,
+    completionPrice: 0.000015,
+    isDefault: false
+  },
+  {
+    id: 'o1-mini',
+    role: 'user',
+    name: 'O1 Mini',
+    prompt: 'You are an AI assistant that helps people find information.',
+    rootAiType: 'azure',
+    promptPrice: 0.0000033,
+    completionPrice: 0.00001485,
     isDefault: false
   }
 ]

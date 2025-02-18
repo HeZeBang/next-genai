@@ -10,22 +10,31 @@ export interface Message {
 
 export async function POST(req: NextRequest) {
   try {
-    const { prompt, messages, model, input, apiKey, groupId } = (await req.json()) as {
+    const { prompt, messages, model, input, apiKey, groupId, rootAiType } = (await req.json()) as {
       prompt: string
       messages: Message[]
       model: string
       input: string
       apiKey: string
       groupId: string
+      rootAiType: string
     }
     const messagesWithHistory = [
-      { content: prompt, role: 'system' },
+      { content: prompt, role: model == 'o1-mini' ? 'user' : 'system' },
       ...messages
       // { content: input, role: 'user' }
     ]
 
     const { apiUrl } = getApiConfig()
-    const stream = await getGenAIStream(apiUrl, apiKey, model, messagesWithHistory, input, groupId)
+    const stream = await getGenAIStream(
+      apiUrl,
+      apiKey,
+      model,
+      messagesWithHistory,
+      input,
+      groupId,
+      rootAiType
+    )
     return new NextResponse(stream, {
       headers: { 'Content-Type': 'text/event-stream' }
     })
@@ -55,7 +64,8 @@ const getGenAIStream = async (
   model: string,
   messages: Message[],
   input: string,
-  groupId: string
+  groupId: string,
+  rootAiType: string
 ) => {
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
@@ -84,7 +94,7 @@ const getGenAIStream = async (
       imageUrl: '',
       width: '',
       height: '',
-      rootAiType: 'xinference',
+      rootAiType: `${rootAiType}`,
       maxToken: 16384
     })
   })
@@ -110,9 +120,19 @@ const getGenAIStream = async (
         if (event.type === 'event') {
           const data = event.data
 
+          // TODO: remove this old flag
           if (data === '[DONE]') {
             controller.close()
             return
+          }
+
+          try {
+            const json = JSON.parse(data)
+            if (json.code == 500) {
+              throw new Error(json.errMsg)
+            }
+          } catch (e) {
+            throw e
           }
 
           try {
@@ -125,7 +145,7 @@ const getGenAIStream = async (
               console.error('Received undefined content:', json)
             }
           } catch (e) {
-            console.error('Error parsing event data:', e)
+            console.error('Error parsing event data: ', data, e)
             controller.error(e)
           }
         }
