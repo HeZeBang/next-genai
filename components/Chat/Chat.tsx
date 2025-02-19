@@ -34,7 +34,10 @@ import './index.scss'
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
 
-export interface ChatProps { }
+export interface ChatProps {
+  isGenerating: boolean
+  setIsGenerating: (state: boolean) => void
+}
 
 export interface ChatGPInstance {
   setConversation: (messages: ChatMessage[]) => void
@@ -86,7 +89,7 @@ const Chat = (props: ChatProps, ref: any) => {
     forceUpdate, toggleSidebar } =
     useContext(ChatContext)
 
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = [props.isGenerating, props.setIsGenerating]
 
   const conversationRef = useRef<ChatMessage[]>()
 

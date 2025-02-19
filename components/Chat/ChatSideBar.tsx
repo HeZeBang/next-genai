@@ -19,8 +19,12 @@ import { AiOutlineCloseCircle } from 'react-icons/ai'
 import { FiPlus } from 'react-icons/fi'
 import ChatContext from './chatContext'
 import { ChatMessage } from './interface'
+import toast from 'react-hot-toast'
 
-export const ChatSideBar = () => {
+export interface ChatSideBarProps {
+  isGenerating?: boolean
+}
+export const ChatSideBar = (props: ChatSideBarProps) => {
   const {
     currentChatRef,
     chatList,
@@ -31,7 +35,6 @@ export const ChatSideBar = () => {
     onCreateChat,
     onOpenModelPanel,
     onCloseModelPanel,
-    onToggleSidebar
   } = useContext(ChatContext)
 
   return (
@@ -118,7 +121,9 @@ export const ChatSideBar = () => {
                   active: currentChatRef?.current?.id === chat.id
                 })}
                 onClick={() => {
-                  if (currentChatRef?.current?.id !== chat.id) onChangeChat?.(chat)
+                  if (props.isGenerating) toast.error('Please wait for the current chat to finish generating.')
+                  else
+                    if (currentChatRef?.current?.id !== chat.id) onChangeChat?.(chat)
                   onCloseModelPanel?.()
                 }}
               >
