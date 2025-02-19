@@ -15,11 +15,11 @@ import {
   Text
 } from '@radix-ui/themes'
 import cs from 'classnames'
+import toast from 'react-hot-toast'
 import { AiOutlineCloseCircle } from 'react-icons/ai'
 import { FiPlus } from 'react-icons/fi'
 import ChatContext from './chatContext'
 import { ChatMessage } from './interface'
-import toast from 'react-hot-toast'
 
 export interface ChatSideBarProps {
   isGenerating?: boolean
