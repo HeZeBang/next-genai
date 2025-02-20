@@ -57,12 +57,14 @@ const postChatOrQuestion = async (
   const data = {
     prompt: chat?.model?.prompt,
     messages: [...messages!],
-    model: chat?.model?.id,
+    model: chat?.model?.aiType,
     input,
     apiKey: localStorage.getItem('apiKey'),
     groupId,
     rootAiType: chat?.model?.rootAiType
   }
+
+  console.log(chat?.model?.aiType, chat?.model?.id)
 
   const timeoutId = setTimeout(() => controller.abort(), 5 * 60 * 1000) // 5 min timeout
 

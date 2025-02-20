@@ -21,6 +21,8 @@ const ModelModal = () => {
     if (detail) {
       setValue('name', detail.name, { shouldTouch: true })
       setValue('prompt', detail.prompt, { shouldTouch: true })
+      setValue('aiType', detail.aiType, { shouldTouch: true })
+      setValue('rootAiType', detail.rootAiType, { shouldTouch: true })
     }
   }, [detail, setValue])
 
@@ -32,6 +34,8 @@ const ModelModal = () => {
         <form onSubmit={formSubmit}>
           <Flex direction="column" gap="3">
             <TextField.Root placeholder="Name" {...register('name', { required: true })} />
+            <TextField.Root placeholder="AI Type" {...register('aiType', { required: true })} />
+            <TextField.Root placeholder="Root AI Type" {...register('rootAiType', { required: true })} />
             <TextArea placeholder="Prompt" rows={7} {...register('prompt', { required: true })} />
           </Flex>
           <Flex gap="3" mt="4" justify="end">
