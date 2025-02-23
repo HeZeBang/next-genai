@@ -35,7 +35,10 @@ const ModelModal = () => {
           <Flex direction="column" gap="3">
             <TextField.Root placeholder="Name" {...register('name', { required: true })} />
             <TextField.Root placeholder="AI Type" {...register('aiType', { required: true })} />
-            <TextField.Root placeholder="Root AI Type" {...register('rootAiType', { required: true })} />
+            <TextField.Root
+              placeholder="Root AI Type"
+              {...register('rootAiType', { required: true })}
+            />
             <TextArea placeholder="Prompt" rows={7} {...register('prompt', { required: true })} />
           </Flex>
           <Flex gap="3" mt="4" justify="end">

@@ -23,7 +23,7 @@ import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { LuMessageSquarePlus } from 'react-icons/lu'
 import { ChatContext, Model } from '@/components'
 
-export interface ModelPanelProps { }
+export interface ModelPanelProps {}
 enum TokenState {
   Invalid = -1,
   Validating = 0,
@@ -150,10 +150,18 @@ const ModelPanel = (_props: ModelPanelProps) => {
           py="3"
           px="4"
           style={{ backgroundColor: 'var(--color-background)' }}
-          className='sticky top-0 shadow-md'
+          className="sticky top-0 shadow-md"
         >
-          <Heading size="4" className="font-mono font-normal">Settings</Heading>
-          <IconButton size="2" variant="ghost" color="gray" radius="full" onClick={onCloseModelPanel}>
+          <Heading size="4" className="font-mono font-normal">
+            Settings
+          </Heading>
+          <IconButton
+            size="2"
+            variant="ghost"
+            color="gray"
+            radius="full"
+            onClick={onCloseModelPanel}
+          >
             <AiOutlineClose className="size-4" />
           </IconButton>
         </Flex>

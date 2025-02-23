@@ -96,7 +96,7 @@ const getGenAIStream = async (
       height: '',
       rootAiType: `${rootAiType}`,
       // maxToken: 16384
-      maxToken: null,
+      maxToken: null
     })
   })
 

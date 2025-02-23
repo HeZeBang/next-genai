@@ -12,13 +12,13 @@ const ChatProvider = () => {
   return (
     <ChatContext.Provider value={provider}>
       <Flex style={{ height: 'calc(100% - 56px)' }} className="relative">
-        <ChatSideBar
-          isGenerating={isGenerating}
-        />
+        <ChatSideBar isGenerating={isGenerating} />
         <div className="flex-1 relative">
-          <Chat ref={provider.chatRef}
+          <Chat
+            ref={provider.chatRef}
             isGenerating={isGenerating}
-            setIsGenerating={(state: boolean) => setIsGenerating(state)} />
+            setIsGenerating={(state: boolean) => setIsGenerating(state)}
+          />
           <ModelPanel />
         </div>
       </Flex>

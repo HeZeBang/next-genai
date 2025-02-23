@@ -86,10 +86,16 @@ const postChatOrQuestion = async (
 }
 
 const Chat = (props: ChatProps, ref: any) => {
-  const { debug, currentChatRef, saveMessages,
-    onToggleSidebar, onOpenModelPanel, onCreateChat,
-    forceUpdate, toggleSidebar } =
-    useContext(ChatContext)
+  const {
+    debug,
+    currentChatRef,
+    saveMessages,
+    onToggleSidebar,
+    onOpenModelPanel,
+    onCreateChat,
+    forceUpdate,
+    toggleSidebar
+  } = useContext(ChatContext)
 
   const [isLoading, setIsLoading] = [props.isGenerating, props.setIsGenerating]
 
@@ -265,11 +271,15 @@ const Chat = (props: ChatProps, ref: any) => {
   })
 
   return (
-    <Flex onClick={
-      () => {
-        if (toggleSidebar)
-          onToggleSidebar?.()
-      }} direction="column" height="100%" width="100%" className={toggleSidebar ? 'blur-sm transition-all' : 'transition-all'}>
+    <Flex
+      onClick={() => {
+        if (toggleSidebar) onToggleSidebar?.()
+      }}
+      direction="column"
+      height="100%"
+      width="100%"
+      className={toggleSidebar ? 'blur-sm transition-all' : 'transition-all'}
+    >
       {currentChatRef?.current ? (
         <Flex direction="column" height="100%" className="relative" gap="3">
           <Flex
@@ -278,17 +288,17 @@ const Chat = (props: ChatProps, ref: any) => {
             py="3"
             px="4"
             // style={{ backgroundColor: 'var(--gray-a2)' }}
-            className='shadow-sm'
+            className="shadow-sm"
           >
-            <Heading size="4" weight='regular' className="font-mono flex-1">
+            <Heading size="4" weight="regular" className="font-mono flex-1">
               {currentChatRef?.current?.model?.name || 'None'}
             </Heading>
             <Tooltip content={'New Chat'}>
               <Button
-                variant='soft' className='rounded-xl mx-1'
+                variant="soft"
+                className="rounded-xl mx-1"
                 onClick={() => {
-                  if (currentChatRef?.current?.model)
-                    onCreateChat?.(currentChatRef?.current?.model)
+                  if (currentChatRef?.current?.model) onCreateChat?.(currentChatRef?.current?.model)
                 }}
               >
                 <PlusIcon />
@@ -296,7 +306,8 @@ const Chat = (props: ChatProps, ref: any) => {
             </Tooltip>
             <Tooltip content={'New Chat'}>
               <Button
-                variant='soft' className='rounded-xl mx-1 md:hidden'
+                variant="soft"
+                className="rounded-xl mx-1 md:hidden"
                 onClick={onToggleSidebar}
               >
                 <HamburgerMenuIcon />
@@ -310,8 +321,8 @@ const Chat = (props: ChatProps, ref: any) => {
             style={{ height: '100%' }}
           >
             {conversation.current.map((item, index) => (
-              <Container size="3">
-                <Message key={index} message={item} />
+              <Container size="3" key={index}>
+                <Message message={item} />
               </Container>
             ))}
             {currentMessage && (
@@ -435,19 +446,22 @@ const Chat = (props: ChatProps, ref: any) => {
             <Button
               onClick={onToggleSidebar}
               className="md:hidden p-5"
-              variant='soft' radius='full'>
+              variant="soft"
+              radius="full"
+            >
               Start Chat
             </Button>
             <Button
               onClick={() => onOpenModelPanel?.('chat')}
               className="md:hidden p-5"
-              variant='outline' radius='full'>
+              variant="outline"
+              radius="full"
+            >
               Settings
             </Button>
           </Flex>
         </Flex>
-      )
-      }
+      )}
     </Flex>
   )
 }
