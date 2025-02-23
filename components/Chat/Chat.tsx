@@ -125,7 +125,7 @@ const Chat = (props: ChatProps, ref: any) => {
   const sendMessage = useCallback(
     async (e: any) => {
       if (!isLoading) {
-        setMessage(e.target.value.replace(HTML_REGULAR, ''))
+        setMessage(value => value.replace(HTML_REGULAR, ''))
         e.preventDefault()
         const input = textAreaRef.current?.innerHTML?.replace(HTML_REGULAR, '') || ''
 
