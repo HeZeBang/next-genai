@@ -119,6 +119,7 @@ const Chat = (props: ChatProps, ref: any) => {
   const sendMessage = useCallback(
     async (e: any) => {
       if (!isLoading) {
+        setMessage(e.target.value.replace(HTML_REGULAR, ''))
         e.preventDefault()
         const input = textAreaRef.current?.innerHTML?.replace(HTML_REGULAR, '') || ''
 
@@ -308,15 +309,17 @@ const Chat = (props: ChatProps, ref: any) => {
             scrollbars="vertical"
             style={{ height: '100%' }}
           >
-            <Container size="3">
-              {conversation.current.map((item, index) => (
+            {conversation.current.map((item, index) => (
+              <Container size="3">
                 <Message key={index} message={item} />
-              ))}
-              {currentMessage && (
+              </Container>
+            ))}
+            {currentMessage && (
+              <Container size="3">
                 <Message message={{ content: currentMessage, role: 'assistant' }} isLoading />
-              )}
-              <div ref={bottomOfChatRef}></div>
-            </Container>
+              </Container>
+            )}
+            <div ref={bottomOfChatRef}></div>
           </ScrollArea>
           <div className="px-4 pb-3">
             <Container size="3">
@@ -333,7 +336,7 @@ const Chat = (props: ChatProps, ref: any) => {
                     html={message}
                     disabled={isLoading}
                     onChange={(e) => {
-                      setMessage(e.target.value.replace(HTML_REGULAR, ''))
+                      // setMessage(e.target.value.replace(HTML_REGULAR, ''))
                     }}
                     onKeyDown={(e) => {
                       handleKeypress(e)
