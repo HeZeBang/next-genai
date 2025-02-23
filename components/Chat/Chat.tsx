@@ -125,7 +125,7 @@ const Chat = (props: ChatProps, ref: any) => {
   const sendMessage = useCallback(
     async (e: any) => {
       if (!isLoading) {
-        setMessage(value => value.replace(HTML_REGULAR, ''))
+        setMessage((value) => value.replace(HTML_REGULAR, ''))
         e.preventDefault()
         const input = textAreaRef.current?.innerHTML?.replace(HTML_REGULAR, '') || ''
 
@@ -243,7 +243,7 @@ const Chat = (props: ChatProps, ref: any) => {
   }, [conversation, currentMessage])
 
   useEffect(() => {
-    document.getElementById("bottomOfChat")?.scrollIntoView({ behavior: 'smooth' })
+    document.getElementById('bottomOfChat')?.scrollIntoView({ behavior: 'smooth' })
   }, [conversation])
 
   useEffect(() => {

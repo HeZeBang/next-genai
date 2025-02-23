@@ -67,10 +67,12 @@ export const ChatSideBar = (props: ChatSideBarProps) => {
                   <Table.Row>
                     <Table.ColumnHeaderCell>Model</Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell className="text-right">
-                      Prompt Price <br /><sup>/ M tokens</sup>
+                      Prompt Price <br />
+                      <sup>/ M tokens</sup>
                     </Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell className="text-right">
-                      Completion Price <br /><sup> / M tokens</sup>
+                      Completion Price <br />
+                      <sup> / M tokens</sup>
                     </Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell></Table.ColumnHeaderCell>
                   </Table.Row>
@@ -125,7 +127,13 @@ export const ChatSideBar = (props: ChatSideBarProps) => {
                     toast.error('Please wait for the current chat to finish generating.')
                   else if (currentChatRef?.current?.id !== chat.id) {
                     onChangeChat?.(chat)
-                    setTimeout(() => document.getElementById("bottomOfChat")?.scrollIntoView({ behavior: 'smooth' }), 10)
+                    setTimeout(
+                      () =>
+                        document
+                          .getElementById('bottomOfChat')
+                          ?.scrollIntoView({ behavior: 'smooth' }),
+                      10
+                    )
                   }
                   onCloseModelPanel?.()
                 }}
