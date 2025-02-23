@@ -23,7 +23,7 @@ import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { LuMessageSquarePlus } from 'react-icons/lu'
 import { ChatContext, Model } from '@/components'
 
-export interface ModelPanelProps {}
+export interface ModelPanelProps { }
 enum TokenState {
   Invalid = -1,
   Validating = 0,
@@ -350,7 +350,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
                     {prompt.name}
                   </Text>
                   <Text as="p" size="2" className="line-clamp-2">
-                    Prompt: {prompt.prompt || ''}
+                    <b>Prompt:</b> {prompt.prompt || ''}
                   </Text>
                 </Box>
                 <Flex gap="3">

@@ -243,6 +243,10 @@ const Chat = (props: ChatProps, ref: any) => {
   }, [conversation, currentMessage])
 
   useEffect(() => {
+    document.getElementById("bottomOfChat")?.scrollIntoView({ behavior: 'smooth' })
+  }, [conversation])
+
+  useEffect(() => {
     conversationRef.current = conversation.current
     if (currentChatRef?.current?.id) {
       saveMessages?.(conversation.current)
@@ -330,7 +334,7 @@ const Chat = (props: ChatProps, ref: any) => {
                 <Message message={{ content: currentMessage, role: 'assistant' }} isLoading />
               </Container>
             )}
-            <div ref={bottomOfChatRef}></div>
+            <div id="bottomOfChat" ref={bottomOfChatRef}></div>
           </ScrollArea>
           <div className="px-4 pb-3">
             <Container size="3">
