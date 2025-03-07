@@ -139,16 +139,18 @@ const getGenAIStream = async (
 
           try {
             const json = JSON.parse(data)
+            console.log(isReasoning, data)
             let text = json.choices[0]?.delta?.content || json.choices[0]?.delta?.reasoning_content
             if (text !== undefined) {
-              if (json.choices[0]?.delta?.reasoning_content) {
+              if (json.choices[0]?.delta?.reasoning_content !== undefined) {
                 if (!isReasoning) {
                   text = `<think>\n\n${text}`
                   isReasoning = true
                 }
               } else if (isReasoning) {
-                text = `${text}\n\n</think>`
+                text = `</think>\n\n${text}`
                 isReasoning = false
+
               }
             }
             const queue = encoder.encode(text)
