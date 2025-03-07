@@ -95,7 +95,8 @@ const getGenAIStream = async (
       width: '',
       height: '',
       rootAiType: `${rootAiType}`,
-      maxToken: 16384
+      // maxToken: 16384
+      maxToken: null
     })
   })
 
@@ -116,6 +117,7 @@ const getGenAIStream = async (
 
   return new ReadableStream({
     async start(controller) {
+      let isReasoning = false
       const onParse = (event: ParsedEvent | ReconnectInterval) => {
         if (event.type === 'event') {
           const data = event.data
@@ -137,13 +139,21 @@ const getGenAIStream = async (
 
           try {
             const json = JSON.parse(data)
-            const text = json.choices[0]?.delta?.content
+            // console.log(isReasoning, data)
+            let text = json.choices[0]?.delta?.content || json.choices[0]?.delta?.reasoning_content
             if (text !== undefined) {
-              const queue = encoder.encode(text)
-              controller.enqueue(queue)
-            } else {
-              console.error('Received undefined content:', json)
+              if (json.choices[0]?.delta?.reasoning_content !== undefined) {
+                if (!isReasoning) {
+                  text = `<think>\n\n${text}`
+                  isReasoning = true
+                }
+              } else if (isReasoning) {
+                text = `</think>\n\n${text}`
+                isReasoning = false
+              }
             }
+            const queue = encoder.encode(text)
+            controller.enqueue(queue)
           } catch (e) {
             console.error('Error parsing event data: ', data, e)
             controller.error(e)

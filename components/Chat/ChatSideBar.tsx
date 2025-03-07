@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useContext } from 'react'
-import { GearIcon } from '@radix-ui/react-icons'
+import { ArrowLeftIcon, GearIcon, PlusIcon } from '@radix-ui/react-icons'
 import './index.scss'
 import {
   Box,
@@ -15,12 +15,16 @@ import {
   Text
 } from '@radix-ui/themes'
 import cs from 'classnames'
+import toast from 'react-hot-toast'
 import { AiOutlineCloseCircle } from 'react-icons/ai'
 import { FiPlus } from 'react-icons/fi'
 import ChatContext from './chatContext'
 import { ChatMessage } from './interface'
 
-export const ChatSideBar = () => {
+export interface ChatSideBarProps {
+  isGenerating?: boolean
+}
+export const ChatSideBar = (props: ChatSideBarProps) => {
   const {
     currentChatRef,
     chatList,
@@ -63,12 +67,14 @@ export const ChatSideBar = () => {
                   <Table.Row>
                     <Table.ColumnHeaderCell>Model</Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell className="text-right">
-                      Prompt Price
+                      Prompt Price <br />
+                      <sup>/ M tokens</sup>
                     </Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell className="text-right">
-                      Completion Price
+                      Completion Price <br />
+                      <sup> / M tokens</sup>
                     </Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell></Table.ColumnHeaderCell>
                   </Table.Row>
                 </Table.Header>
 
@@ -79,16 +85,16 @@ export const ChatSideBar = () => {
                         {model.name}
                       </Table.RowHeaderCell>
                       <Table.Cell className="align-middle text-right">
-                        {((model.promptPrice || 0) * 1000000).toFixed(1)} / M tokens
+                        {((model.promptPrice || 0) * 1000000).toFixed(1)}
                       </Table.Cell>
                       <Table.Cell className="align-middle text-right">
-                        {((model.completionPrice || 0) * 1000000).toFixed(1)} / M tokens
+                        {((model.completionPrice || 0) * 1000000).toFixed(1)}
                       </Table.Cell>
                       <Table.Cell className="align-middle">
                         <Dialog.Close>
-                          <Button variant="soft" size="2" onClick={() => onCreateChat?.(model)}>
-                            Create
-                          </Button>
+                          <IconButton onClick={() => onCreateChat?.(model)}>
+                            <PlusIcon />
+                          </IconButton>
                         </Dialog.Close>
                       </Table.Cell>
                     </Table.Row>
@@ -117,7 +123,18 @@ export const ChatSideBar = () => {
                   active: currentChatRef?.current?.id === chat.id
                 })}
                 onClick={() => {
-                  if (currentChatRef?.current?.id !== chat.id) onChangeChat?.(chat)
+                  if (props.isGenerating)
+                    toast.error('Please wait for the current chat to finish generating.')
+                  else if (currentChatRef?.current?.id !== chat.id) {
+                    onChangeChat?.(chat)
+                    setTimeout(
+                      () =>
+                        document
+                          .getElementById('bottomOfChat')
+                          ?.scrollIntoView({ behavior: 'smooth' }),
+                      10
+                    )
+                  }
                   onCloseModelPanel?.()
                 }}
               >

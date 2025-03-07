@@ -14,6 +14,7 @@ export const DefaultModels: Model[] = [
     role: 'system',
     name: 'DeepSeek V3 - 671B',
     prompt: 'You are an AI assistant that helps people find information.',
+    aiType: 'deepseek-v3:671b',
     rootAiType: 'xinference',
     promptPrice: 0,
     completionPrice: 0,
@@ -24,6 +25,7 @@ export const DefaultModels: Model[] = [
     role: 'system',
     name: 'DeepSeek R1 - 671B',
     prompt: 'You are an AI assistant that helps people find information.',
+    aiType: 'deepseek-r1:671b',
     rootAiType: 'xinference',
     promptPrice: 0,
     completionPrice: 0,
@@ -34,6 +36,7 @@ export const DefaultModels: Model[] = [
     role: 'system',
     name: 'GPT-4 Turbo',
     prompt: 'You are an AI assistant that helps people find information.',
+    aiType: 'gpt-4-turbo',
     rootAiType: 'azure',
     promptPrice: 0.00001,
     completionPrice: 0.00003,
@@ -44,6 +47,7 @@ export const DefaultModels: Model[] = [
     role: 'system',
     name: 'GPT-3.5 Turbo',
     prompt: 'You are an AI assistant that helps people find information.',
+    aiType: 'gpt-3.5-turbo',
     rootAiType: 'azure',
     promptPrice: 5.0e-7,
     completionPrice: 0.0000015,
@@ -54,6 +58,7 @@ export const DefaultModels: Model[] = [
     role: 'system',
     name: 'GPT-4',
     prompt: 'You are an AI assistant that helps people find information.',
+    aiType: 'gpt-4',
     rootAiType: 'azure',
     promptPrice: 0.00006,
     completionPrice: 0.00012,
@@ -64,6 +69,7 @@ export const DefaultModels: Model[] = [
     role: 'system',
     name: 'GPT-4o',
     prompt: 'You are an AI assistant that helps people find information.',
+    aiType: 'gpt-4-o',
     rootAiType: 'azure',
     promptPrice: 0.000005,
     completionPrice: 0.000015,
@@ -74,6 +80,7 @@ export const DefaultModels: Model[] = [
     role: 'user',
     name: 'O1 Mini',
     prompt: 'You are an AI assistant that helps people find information.',
+    aiType: 'o1-mini',
     rootAiType: 'azure',
     promptPrice: 0.0000033,
     completionPrice: 0.00001485,
@@ -197,12 +204,14 @@ const useChatHook = () => {
   }
 
   const onCreateModel = async (values: any) => {
-    const { type, name, prompt, files } = values
+    const { type, name, prompt, files, aiType, rootAiType, role } = values
     const model: Model = {
       id: uuid(),
-      role: 'system',
+      role,
       name,
       prompt,
+      aiType,
+      rootAiType,
       key: ''
     }
 

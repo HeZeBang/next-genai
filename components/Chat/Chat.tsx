@@ -9,7 +9,7 @@ import {
   useRef,
   useState
 } from 'react'
-import { LockClosedIcon, LockOpen1Icon } from '@radix-ui/react-icons'
+import { HamburgerMenuIcon, LockClosedIcon, LockOpen1Icon, PlusIcon } from '@radix-ui/react-icons'
 import {
   Container,
   Flex,
@@ -18,7 +18,9 @@ import {
   ScrollArea,
   Tooltip,
   Text,
-  Blockquote
+  Blockquote,
+  Button,
+  Box
 } from '@radix-ui/themes'
 import ContentEditable from 'react-contenteditable'
 import toast from 'react-hot-toast'
@@ -32,7 +34,10 @@ import './index.scss'
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
 
-export interface ChatProps {}
+export interface ChatProps {
+  isGenerating: boolean
+  setIsGenerating: (state: boolean) => void
+}
 
 export interface ChatGPInstance {
   setConversation: (messages: ChatMessage[]) => void
@@ -52,12 +57,14 @@ const postChatOrQuestion = async (
   const data = {
     prompt: chat?.model?.prompt,
     messages: [...messages!],
-    model: chat?.model?.id,
+    model: chat?.model?.aiType,
     input,
     apiKey: localStorage.getItem('apiKey'),
     groupId,
     rootAiType: chat?.model?.rootAiType
   }
+
+  console.log(chat?.model?.aiType, chat?.model?.id)
 
   const timeoutId = setTimeout(() => controller.abort(), 5 * 60 * 1000) // 5 min timeout
 
@@ -79,10 +86,18 @@ const postChatOrQuestion = async (
 }
 
 const Chat = (props: ChatProps, ref: any) => {
-  const { debug, currentChatRef, saveMessages, onToggleSidebar, forceUpdate } =
-    useContext(ChatContext)
+  const {
+    debug,
+    currentChatRef,
+    saveMessages,
+    onToggleSidebar,
+    onOpenModelPanel,
+    onCreateChat,
+    forceUpdate,
+    toggleSidebar
+  } = useContext(ChatContext)
 
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = [props.isGenerating, props.setIsGenerating]
 
   const conversationRef = useRef<ChatMessage[]>()
 
@@ -110,6 +125,7 @@ const Chat = (props: ChatProps, ref: any) => {
   const sendMessage = useCallback(
     async (e: any) => {
       if (!isLoading) {
+        setMessage((value) => value.replace(HTML_REGULAR, ''))
         e.preventDefault()
         const input = textAreaRef.current?.innerHTML?.replace(HTML_REGULAR, '') || ''
 
@@ -227,6 +243,10 @@ const Chat = (props: ChatProps, ref: any) => {
   }, [conversation, currentMessage])
 
   useEffect(() => {
+    document.getElementById('bottomOfChat')?.scrollIntoView({ behavior: 'smooth' })
+  }, [conversation])
+
+  useEffect(() => {
     conversationRef.current = conversation.current
     if (currentChatRef?.current?.id) {
       saveMessages?.(conversation.current)
@@ -254,111 +274,146 @@ const Chat = (props: ChatProps, ref: any) => {
     }
   })
 
-  return currentChatRef?.current ? (
-    <Flex direction="column" height="100%" className="relative" gap="3">
-      <Flex
-        justify="between"
-        align="center"
-        py="3"
-        px="4"
-        style={{ backgroundColor: 'var(--gray-a2)' }}
-      >
-        <Heading size="4">{currentChatRef?.current?.model?.name || 'None'}</Heading>
-      </Flex>
-      <ScrollArea
-        className="flex-1 px-4"
-        type="auto"
-        scrollbars="vertical"
-        style={{ height: '100%' }}
-      >
-        <Container size="3">
-          {conversation.current.map((item, index) => (
-            <Message key={index} message={item} />
-          ))}
-          {currentMessage && (
-            <Message message={{ content: currentMessage, role: 'assistant' }} isLoading />
-          )}
-          <div ref={bottomOfChatRef}></div>
-        </Container>
-      </ScrollArea>
-      <div className="px-4 pb-3">
-        <Container size="3">
-          <Flex align="end" justify="between" gap="3" className="relative">
-            <div className="rt-TextAreaRoot rt-r-size-1 rt-variant-surface flex-1 rounded-3xl chat-textarea">
-              <ContentEditable
-                innerRef={textAreaRef}
-                style={{
-                  minHeight: '24px',
-                  maxHeight: '200px',
-                  overflowY: 'auto'
+  return (
+    <Flex
+      onClick={() => {
+        if (toggleSidebar) onToggleSidebar?.()
+      }}
+      direction="column"
+      height="100%"
+      width="100%"
+      className={toggleSidebar ? 'blur-sm transition-all' : 'transition-all'}
+    >
+      {currentChatRef?.current ? (
+        <Flex direction="column" height="100%" className="relative" gap="3">
+          <Flex
+            justify="between"
+            align="center"
+            py="3"
+            px="4"
+            // style={{ backgroundColor: 'var(--gray-a2)' }}
+            className="shadow-sm"
+          >
+            <Heading size="4" weight="regular" className="font-mono flex-1">
+              {currentChatRef?.current?.model?.name || 'None'}
+            </Heading>
+            <Tooltip content={'New Chat'}>
+              <Button
+                variant="soft"
+                className="rounded-xl mx-1"
+                onClick={() => {
+                  if (currentChatRef?.current?.model) onCreateChat?.(currentChatRef?.current?.model)
                 }}
-                className="rt-TextAreaInput text-base"
-                html={message}
-                disabled={isLoading}
-                onChange={(e) => {
-                  setMessage(e.target.value.replace(HTML_REGULAR, ''))
-                }}
-                onKeyDown={(e) => {
-                  handleKeypress(e)
-                }}
-              />
-              <div className="rt-TextAreaChrome"></div>
-            </div>
-            <Flex gap="3" className="absolute right-0 pr-4 bottom-3 pt">
-              {isLoading && (
-                <Flex
-                  width="6"
-                  height="6"
-                  align="center"
-                  justify="center"
-                  style={{ color: 'var(--accent-11)' }}
-                >
-                  <AiOutlineLoading3Quarters className="animate-spin size-4" />
-                </Flex>
-              )}
-              <Tooltip content={'Auto Scrolling'}>
-                <IconButton
-                  variant="soft"
-                  color="gray"
-                  size="2"
-                  className="rounded-xl cursor-pointer"
-                  onClick={() => setScrollToBottom((state) => !state)}
-                >
-                  {scrollToBottom ? (
-                    <LockClosedIcon className="size-4" />
-                  ) : (
-                    <LockOpen1Icon className="size-4" />
+              >
+                <PlusIcon />
+              </Button>
+            </Tooltip>
+            <Tooltip content={'New Chat'}>
+              <Button
+                variant="soft"
+                className="rounded-xl mx-1 md:hidden"
+                onClick={onToggleSidebar}
+              >
+                <HamburgerMenuIcon />
+              </Button>
+            </Tooltip>
+          </Flex>
+          <ScrollArea
+            className="flex-1 px-4"
+            type="auto"
+            scrollbars="vertical"
+            style={{ height: '100%' }}
+          >
+            {conversation.current.map((item, index) => (
+              <Container size="3" key={index}>
+                <Message message={item} />
+              </Container>
+            ))}
+            {currentMessage && (
+              <Container size="3">
+                <Message message={{ content: currentMessage, role: 'assistant' }} isLoading />
+              </Container>
+            )}
+            <div id="bottomOfChat" ref={bottomOfChatRef}></div>
+          </ScrollArea>
+          <div className="px-4 pb-3">
+            <Container size="3">
+              <Flex align="end" justify="between" gap="3" className="relative">
+                <div className="rt-TextAreaRoot rt-r-size-1 rt-variant-surface flex-1 rounded-3xl chat-textarea">
+                  <ContentEditable
+                    innerRef={textAreaRef}
+                    style={{
+                      minHeight: '24px',
+                      maxHeight: '200px',
+                      overflowY: 'auto'
+                    }}
+                    className="rt-TextAreaInput text-base"
+                    html={message}
+                    disabled={isLoading}
+                    onChange={(e) => {
+                      // setMessage(e.target.value.replace(HTML_REGULAR, ''))
+                    }}
+                    onKeyDown={(e) => {
+                      handleKeypress(e)
+                    }}
+                  />
+                  <div className="rt-TextAreaChrome"></div>
+                </div>
+                <Flex gap="3" className="absolute right-0 pr-4 bottom-3 pt">
+                  {isLoading && (
+                    <Flex
+                      width="6"
+                      height="6"
+                      align="center"
+                      justify="center"
+                      style={{ color: 'var(--accent-11)' }}
+                    >
+                      <AiOutlineLoading3Quarters className="animate-spin size-4" />
+                    </Flex>
                   )}
-                </IconButton>
-              </Tooltip>
-              {currentMessage ? (
-                <Tooltip content={'Stop Generation'}>
-                  <IconButton
-                    variant="soft"
-                    // disabled={isLoading}
-                    color="gray"
-                    size="2"
-                    className="rounded-xl cursor-pointer"
-                    onClick={stopGeneration}
-                  >
-                    <FiStopCircle className="size-4" />
-                  </IconButton>
-                </Tooltip>
-              ) : (
-                <Tooltip content={'Send Message'}>
-                  <IconButton
-                    variant="soft"
-                    color="gray"
-                    size="2"
-                    className="rounded-xl cursor-pointer"
-                    onClick={sendMessage}
-                  >
-                    <FiSend className="size-4" />
-                  </IconButton>
-                </Tooltip>
-              )}
-              {/* TODO: Clear Context withoud history */}
-              {/* <Tooltip content={'Clear History'}>
+                  <Tooltip content={'Auto Scrolling'}>
+                    <IconButton
+                      variant="soft"
+                      color="gray"
+                      size="2"
+                      className="rounded-xl cursor-pointer"
+                      onClick={() => setScrollToBottom((state) => !state)}
+                    >
+                      {scrollToBottom ? (
+                        <LockClosedIcon className="size-4" />
+                      ) : (
+                        <LockOpen1Icon className="size-4" />
+                      )}
+                    </IconButton>
+                  </Tooltip>
+                  {currentMessage ? (
+                    <Tooltip content={'Stop Generation'}>
+                      <IconButton
+                        variant="soft"
+                        // disabled={isLoading}
+                        color="gray"
+                        size="2"
+                        className="rounded-xl cursor-pointer"
+                        onClick={stopGeneration}
+                      >
+                        <FiStopCircle className="size-4" />
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip content={'Send Message'}>
+                      <IconButton
+                        variant="soft"
+                        color="gray"
+                        size="2"
+                        className="rounded-xl cursor-pointer"
+                        onClick={sendMessage}
+                      >
+                        <FiSend className="size-4" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                  {/* TODO: Clear Context withoud history */}
+                  {/* <Tooltip content={'Clear History'}>
               <IconButton
                 variant="soft"
                 color="gray"
@@ -370,38 +425,47 @@ const Chat = (props: ChatProps, ref: any) => {
                 <AiOutlineClear className="size-4" />
               </IconButton>
             </Tooltip> */}
-              <Tooltip content={'Toggle Sidebar'}>
-                <IconButton
-                  variant="soft"
-                  color="gray"
-                  size="2"
-                  className="rounded-xl md:hidden cursor-pointer"
-                  disabled={isLoading}
-                  onClick={onToggleSidebar}
-                >
-                  <AiOutlineUnorderedList className="size-4" />
-                </IconButton>
-              </Tooltip>
-            </Flex>
-          </Flex>
-        </Container>
-      </div>
-    </Flex>
-  ) : (
-    <Flex direction="column" height="100%" justify="center" align="center">
-      <Heading
-        className="text-center font-mono lg:text-7xl text-4xl py-2 tracking-tight from-[#FF1CF7] to-[#b249f8] bg-clip-text text-transparent bg-gradient-to-b inline"
-        weight="bold"
-      >
-        Next.GenAI
-      </Heading>
-      <Text size="4" className="text-gray-500 font-mono">
-        Let&apos;s make GenAI prettier.
-      </Text>
+                </Flex>
+              </Flex>
+            </Container>
+          </div>
+        </Flex>
+      ) : (
+        <Flex direction="column" height="100%" justify="center" align="center">
+          <Heading
+            className="text-center font-mono lg:text-7xl text-4xl py-2 tracking-tight from-[#FF1CF7] to-[#b249f8] bg-clip-text text-transparent bg-gradient-to-b inline"
+            weight="bold"
+          >
+            Next.GenAI
+          </Heading>
+          <Text size="4" className="text-gray-500 font-mono">
+            Let&apos;s make GenAI prettier.
+          </Text>
 
-      <Blockquote className="my-5 py-2 text-gray-500" weight="light">
-        First use? Please configure your API key in the settings below.
-      </Blockquote>
+          <Blockquote className="my-5 py-2 text-gray-500" weight="light">
+            First use? Please configure your API key in the settings below.
+          </Blockquote>
+
+          <Flex gap="3">
+            <Button
+              onClick={onToggleSidebar}
+              className="md:hidden p-5"
+              variant="soft"
+              radius="full"
+            >
+              Start Chat
+            </Button>
+            <Button
+              onClick={() => onOpenModelPanel?.('chat')}
+              className="md:hidden p-5"
+              variant="outline"
+              radius="full"
+            >
+              Settings
+            </Button>
+          </Flex>
+        </Flex>
+      )}
     </Flex>
   )
 }

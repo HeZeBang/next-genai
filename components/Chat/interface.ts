@@ -9,7 +9,8 @@ export interface Model {
   avatar?: string
   name?: string
   prompt?: string
-  rootAiType?: string
+  aiType: string
+  rootAiType: string
   description?: string
   promptPrice?: number
   completionPrice?: number
