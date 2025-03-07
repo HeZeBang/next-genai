@@ -117,7 +117,7 @@ const getGenAIStream = async (
 
   return new ReadableStream({
     async start(controller) {
-      let isReasoning = false;
+      let isReasoning = false
       const onParse = (event: ParsedEvent | ReconnectInterval) => {
         if (event.type === 'event') {
           const data = event.data
@@ -150,7 +150,6 @@ const getGenAIStream = async (
               } else if (isReasoning) {
                 text = `</think>\n\n${text}`
                 isReasoning = false
-
               }
             }
             const queue = encoder.encode(text)
