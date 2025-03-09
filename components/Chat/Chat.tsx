@@ -216,7 +216,12 @@ const Chat = (props: ChatProps, ref: any) => {
 
   const handleKeypress = useCallback(
     (e: any) => {
-      if (e.keyCode == 13 && !e.shiftKey) {
+      // if (e.keyCode == 13 && !e.shiftKey) {
+      //   sendMessage(e)
+      //   e.preventDefault()
+      // }
+      // Ctrl + Enter to send
+      if (e.keyCode == 13 && e.ctrlKey) {
         sendMessage(e)
         e.preventDefault()
       }
@@ -231,8 +236,8 @@ const Chat = (props: ChatProps, ref: any) => {
 
   useEffect(() => {
     if (textAreaRef.current) {
-      textAreaRef.current.style.height = '50px'
-      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight + 2}px`
+      textAreaRef.current.style.minHeight = '50px'
+      textAreaRef.current.style.minHeight = `${textAreaRef.current.scrollHeight + 2}px`
     }
   }, [message, textAreaRef])
 
@@ -348,10 +353,15 @@ const Chat = (props: ChatProps, ref: any) => {
                       overflowY: 'auto'
                     }}
                     className="rt-TextAreaInput text-base"
+                    aria-placeholder={`Ask anything... (${'Ctrl + Enter'} to send)`}
                     html={message}
                     disabled={isLoading}
                     onChange={(e) => {
-                      // setMessage(e.target.value.replace(HTML_REGULAR, ''))
+                      if (e.target.value === '<br>') {
+                        setMessage('')
+                        if (textAreaRef.current)
+                          textAreaRef.current.innerHTML = "";
+                      }
                     }}
                     onKeyDown={(e) => {
                       handleKeypress(e)

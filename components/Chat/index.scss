@@ -1,6 +1,6 @@
 .chat-textarea {
   .rt-TextAreaInput {
-    height: 50px;
+    min-height: 50px;
     @apply py-3 px-4 pr-24;
     img {
       @apply max-w-md max-md:max-w-full;
@@ -9,6 +9,19 @@
       table-layout: fixed;
       width: 100%;
     }
+  }
+  .rt-TextAreaInput[aria-placeholder]::before {
+      content: attr(aria-placeholder);
+      position: absolute;
+      // top: 8px;
+      // left: 8px;
+      color: #999;
+      pointer-events: none; /* 防止点击提示文本 */
+  }
+
+  /* 当有内容时隐藏提示文本 */
+  .rt-TextAreaInput:not(:empty)::before {
+      display: none;
   }
 }
 
