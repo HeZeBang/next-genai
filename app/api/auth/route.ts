@@ -11,6 +11,7 @@ export async function POST(req: NextRequest) {
     }
 
     loginGenAI(username, password)
+    return NextResponse.json({ success: true })
   } catch (error) {
     console.error(error)
     return NextResponse.json(
