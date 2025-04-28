@@ -21,14 +21,14 @@ export async function POST(req: NextRequest) {
       }
     })
       .then((res) => res.json())
-      .then((data) => data.result)
-      .then((res) => res.records.at(0))
+      .then((data) => data?.result)
+      .then((res) => res?.records?.at(0))
       .then((res) => {
         const data = {
-          quota: res.quota,
-          used: res.monthSurplus,
-          username: res.username,
-          userid: res.id
+          quota: res?.quota,
+          used: res?.monthSurplus,
+          username: res?.username,
+          userid: res?.id
         }
         if (!!data.quota && typeof data.used === 'number' && data.username && data.userid)
           return data
