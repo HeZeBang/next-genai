@@ -19,10 +19,10 @@ import {
   TextField
 } from '@radix-ui/themes'
 import { debounce } from 'lodash-es'
+import toast from 'react-hot-toast'
 import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { LuMessageSquarePlus } from 'react-icons/lu'
 import { ChatContext, Model } from '@/components'
-import toast from 'react-hot-toast'
 
 export interface ModelPanelProps { }
 enum TokenState {
