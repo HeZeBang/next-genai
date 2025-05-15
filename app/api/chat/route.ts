@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
       groupId,
       rootAiType
     )
+
     return new NextResponse(stream, {
       headers: { 'Content-Type': 'text/event-stream' }
     })
@@ -163,10 +164,15 @@ const getGenAIStream = async (
 
       const parser = createParser(onParse)
 
-      for await (const chunk of res.body as any) {
-        // An extra newline is required to make AzureGenAI work.
-        const str = decoder.decode(chunk).replace('[DONE]\n', '[DONE]\n\n')
-        parser.feed(str)
+      try {
+        for await (const chunk of res.body as any) {
+          // An extra newline is required to make AzureGenAI work.
+          const str = decoder.decode(chunk).replace('[DONE]\n', '[DONE]\n\n')
+          parser.feed(str)
+        }
+      } catch (e) {
+        console.error('Error parsing event data: ', e)
+        controller.close()
       }
     }
   })
