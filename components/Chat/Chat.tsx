@@ -245,7 +245,7 @@ const Chat = (props: ChatProps, ref: any) => {
     if (bottomOfChatRef.current && scrollToBottom) {
       bottomOfChatRef.current.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [conversation, currentMessage])
+  }, [conversation, currentMessage, isLoading])
 
   useEffect(() => {
     document.getElementById('bottomOfChat')?.scrollIntoView({ behavior: 'smooth' })
@@ -331,12 +331,13 @@ const Chat = (props: ChatProps, ref: any) => {
           >
             {conversation.current.map((item, index) => (
               <Container size="3" key={index}>
-                <Message message={item} />
+                <Message message={item} currentModel={currentChatRef?.current?.model} />
               </Container>
             ))}
             {currentMessage && (
               <Container size="3">
-                <Message message={{ content: currentMessage, role: 'assistant' }} isLoading />
+                <Message message={{ content: currentMessage, role: 'assistant' }} isLoading currentModel={currentChatRef?.current?.model} />
+                {/* TODO: Add custom model */}
               </Container>
             )}
             <div id="bottomOfChat" ref={bottomOfChatRef}></div>

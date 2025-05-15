@@ -1,6 +1,7 @@
 export interface ChatMessage {
   content: string
   role: ChatRole
+  model?: Model
 }
 
 export interface Model {
