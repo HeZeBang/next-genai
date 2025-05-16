@@ -210,10 +210,6 @@ const useChatHook = () => {
     const newMessages = messagesMap.current.get(chat.id) || []
     chatRef.current?.setConversation(newMessages)
 
-    console.log("From", currentChatRef.current?.id, "To", chat.id)
-    console.log("Old Messages", oldMessages)
-    console.log("New Messages", newMessages)
-
     chatRef.current?.focus()
     currentChatRef.current = chat
     forceUpdate()
