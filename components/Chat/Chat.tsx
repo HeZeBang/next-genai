@@ -31,7 +31,7 @@ import { ChatContextType } from './chatContext'
 import type { Chat, ChatMessage, Model, ChatRole } from './interface'
 import Message from './Message'
 import './index.scss'
-// import { BorderBeam } from '../magicui/border-beam'
+import { BorderBeam } from '../magicui/border-beam'
 
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
@@ -382,9 +382,17 @@ const Chat = (props: ChatProps, ref: any) => {
           </ScrollArea>
           <div className="px-4 pb-3">
             <Container size="3">
-              <Flex align="end" justify="between" gap="3" className="relative border-2 dark:border-neutral-800 rounded-3xl dark:focus-within:border-purple-400 focus-within:border-purple-300 focus-within:shadow-lg transition-all" direction="column" >
-                {/* <BorderBeam /> */}
-                <div className="rt-TextAreaRoot rt-r-size-1 rt-variant-surface flex-1 shadow-none rounded-3xl chat-textarea w-full">
+              <Flex align="end" justify="between" gap="3" className="relative border-2 dark:border-neutral-800 rounded-3xl dark:focus-within:border-purple-400 focus-within:border-purple-300 focus-within:shadow-lg transition-all"
+                direction="column" style={{ overflow: "clip" }}>
+                <BorderBeam
+                  duration={4}
+                  size={100}
+                  className='from-transparent via-purple-500 to-transparent'
+                  style={{
+                    opacity: isLoading ? 1 : 0
+                  }}
+                />
+                <div className="rt-TextAreaRoot rt-r-size-1 flex-1 shadow-none rounded-3xl chat-textarea w-full">
                   <ContentEditable
                     innerRef={textAreaRef}
                     style={{
