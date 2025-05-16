@@ -382,7 +382,7 @@ const Chat = (props: ChatProps, ref: any) => {
           </ScrollArea>
           <div className="px-4 pb-3">
             <Container size="3">
-              <Flex align="end" justify="between" gap="3" className="relative border-2 border-muted rounded-3xl focus-within:border-purple-300 focus-within:shadow-lg transition-all" direction="column" >
+              <Flex align="end" justify="between" gap="3" className="relative border-2 dark:border-neutral-800 rounded-3xl dark:focus-within:border-purple-400 focus-within:border-purple-300 focus-within:shadow-lg transition-all" direction="column" >
                 {/* <BorderBeam /> */}
                 <div className="rt-TextAreaRoot rt-r-size-1 rt-variant-surface flex-1 shadow-none rounded-3xl chat-textarea w-full">
                   <ContentEditable
