@@ -205,10 +205,16 @@ const useChatHook = () => {
 
   const onChangeChat = useCallback((chat: Chat) => {
     const oldMessages = chatRef.current?.getConversation() || []
+    messagesMap.current.set(currentChatRef.current?.id!, oldMessages)
+    setMessages(currentChatRef.current?.id!, oldMessages)
     const newMessages = messagesMap.current.get(chat.id) || []
     chatRef.current?.setConversation(newMessages)
+
+    console.log("From", currentChatRef.current?.id, "To", chat.id)
+    console.log("Old Messages", oldMessages)
+    console.log("New Messages", newMessages)
+
     chatRef.current?.focus()
-    messagesMap.current.set(currentChatRef.current?.id!, oldMessages)
     currentChatRef.current = chat
     forceUpdate()
   }, [])
