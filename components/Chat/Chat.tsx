@@ -91,7 +91,6 @@ const Chat = (props: ChatProps, ref: any) => {
   const {
     debug,
     currentChatRef,
-    saveMessages,
     onToggleSidebar,
     onOpenModelPanel,
     onCreateChat,
@@ -301,8 +300,9 @@ const Chat = (props: ChatProps, ref: any) => {
     return {
       setConversation(messages: ChatMessage[]) {
         const chatId = currentChatRef?.current?.id
+        console.log("Set Conversation", chatId, messages)
         if (chatId) {
-          setMessages?.(chatId, messages)
+          // setMessages?.(chatId, messages)
           conversation.current = messages
           forceUpdate?.()
         }
