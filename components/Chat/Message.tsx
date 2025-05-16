@@ -8,11 +8,12 @@ import { HiUser } from 'react-icons/hi'
 import { RiRobot2Line } from 'react-icons/ri'
 import { Markdown } from '@/components'
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
-import { ChatMessage } from './interface'
+import { ChatMessage, Model } from './interface'
 
 export interface MessageProps {
   message: ChatMessage
   isLoading?: boolean
+  currentModel?: Model
 }
 
 const Message = (props: MessageProps) => {
@@ -39,7 +40,7 @@ const Message = (props: MessageProps) => {
       />
       <div className="flex-1 pt-1 break-all">
         <Badge color={isUser ? 'purple' : 'green'} style={{ marginBottom: '1em' }}>
-          {isUser ? 'You' : 'AI'}
+          {isUser ? 'You' : (props.message.model?.name || props.currentModel?.name || 'AI')}
         </Badge>
         {isUser ? (
           <div

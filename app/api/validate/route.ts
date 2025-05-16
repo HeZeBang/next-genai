@@ -22,7 +22,6 @@ export async function POST(req: NextRequest) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log('API response:', data)
         if (data.success === false) {
           throw new Error(data.message || `API 错误: ${data}`)
         }
