@@ -377,7 +377,7 @@ const Chat = (props: ChatProps, ref: any) => {
                 <Flex className="pb-2 px-2 w-full" justify="between" align="center">
                   <Flex gap="2" align="center">
                     <Select.Root
-                      defaultValue={currentChatRef?.current?.model?.id}
+                      value={currentChatRef?.current?.model?.id}
                       onValueChange={(value) => {
                         const model = DefaultModels.find((m) => m.id === value)
                         if (model && currentChatRef?.current) {
