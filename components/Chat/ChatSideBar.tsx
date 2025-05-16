@@ -123,9 +123,10 @@ export const ChatSideBar = (props: ChatSideBarProps) => {
                   active: currentChatRef?.current?.id === chat.id
                 })}
                 onClick={() => {
-                  if (props.isGenerating)
-                    toast.error('Please wait for the current chat to finish generating.')
-                  else if (currentChatRef?.current?.id !== chat.id) {
+                  // if (props.isGenerating)
+                  //   toast.error('Please wait for the current chat to finish generating.')
+                  // else 
+                  if (currentChatRef?.current?.id !== chat.id) {
                     onChangeChat?.(chat)
                     setTimeout(
                       () =>

@@ -28,7 +28,8 @@ import toast from 'react-hot-toast'
 import { AiOutlineClear, AiOutlineLoading3Quarters, AiOutlineUnorderedList } from 'react-icons/ai'
 import { FiSend, FiStopCircle } from 'react-icons/fi'
 import ChatContext from './chatContext'
-import type { Chat, ChatMessage, Model } from './interface'
+import { ChatContextType } from './chatContext'
+import type { Chat, ChatMessage, Model, ChatRole } from './interface'
 import Message from './Message'
 import './index.scss'
 
@@ -99,7 +100,9 @@ const Chat = (props: ChatProps, ref: any) => {
     toggleSidebar,
     models,
     DefaultModels,
-  } = useContext(ChatContext)
+    getMessages,
+    setMessages,
+  } = useContext(ChatContext) as ChatContextType
 
   const [isLoading, setIsLoading] = [props.isGenerating, props.setIsGenerating]
 
@@ -108,6 +111,8 @@ const Chat = (props: ChatProps, ref: any) => {
   const [message, setMessage] = useState('')
 
   const [currentMessage, setCurrentMessage] = useState<string>('')
+
+  const [currentMessageId, setCurrentMessageId] = useState<string | undefined>('')
 
   const [scrollToBottom, setScrollToBottom] = useState(true)
 
@@ -130,6 +135,9 @@ const Chat = (props: ChatProps, ref: any) => {
     async (e: any) => {
       if (!isLoading) {
         setMessage((value) => value.replace(HTML_REGULAR, ''))
+        const lockedChatId = currentChatRef?.current?.id
+        const lockedModel = currentChatRef?.current?.model
+        setCurrentMessageId(lockedChatId)
         e.preventDefault()
         const input = textAreaRef.current?.innerHTML?.replace(HTML_REGULAR, '') || ''
 
@@ -138,18 +146,21 @@ const Chat = (props: ChatProps, ref: any) => {
           return
         }
 
-        const message = [...conversation.current]
-        conversation.current = [...conversation.current, { content: input, role: 'user', model: currentChatRef?.current?.model }]
+        if (!lockedChatId) return
+        const message = [...getMessages?.(lockedChatId) || []]
+        const newMessages = [...message, { content: input, role: 'user' as ChatRole, model: lockedModel }]
+        setMessages?.(lockedChatId, newMessages)
+        conversation.current = newMessages
         setMessage('')
         setIsLoading(true)
         try {
           const controller = new AbortController()
           controllerRef.current = controller
           const response = await postChatOrQuestion(
-            currentChatRef?.current!,
+            { ...(currentChatRef?.current || {}), id: lockedChatId, model: lockedModel },
             message,
             input,
-            currentChatRef?.current?.id!,
+            lockedChatId,
             controller
           )
 
@@ -188,17 +199,24 @@ const Chat = (props: ChatProps, ref: any) => {
               if (debug) {
                 console.log({ resultContent })
               }
-              conversation.current = [
-                ...conversation.current,
-                { content: resultContent, role: 'assistant', model: currentChatRef?.current?.model }
+              if (!lockedChatId) return
+              const prevMessages = getMessages?.(lockedChatId) || []
+              const updatedMessages = [
+                ...prevMessages,
+                { content: resultContent, role: 'assistant' as ChatRole, model: lockedModel }
               ]
-
+              setMessages?.(lockedChatId, updatedMessages)
+              conversation.current = updatedMessages
               setCurrentMessage('')
             }, 1)
           } else {
             const result = await response.json()
             if (response.status === 401) {
-              conversation.current.pop()
+              if (lockedChatId) {
+                const prevMessages = getMessages?.(lockedChatId) || []
+                setMessages?.(lockedChatId, prevMessages.slice(0, -1))
+                conversation.current = prevMessages.slice(0, -1)
+              }
               location.href =
                 result.redirect +
                 `?callbackUrl=${encodeURIComponent(location.pathname + location.search)}`
@@ -215,7 +233,7 @@ const Chat = (props: ChatProps, ref: any) => {
         }
       }
     },
-    [currentChatRef, debug, isLoading]
+    [currentChatRef, debug, isLoading, getMessages, setMessages]
   )
 
   const handleKeypress = useCallback(
@@ -234,8 +252,12 @@ const Chat = (props: ChatProps, ref: any) => {
   )
 
   const clearMessages = () => {
-    conversation.current = []
-    forceUpdate?.()
+    const chatId = currentChatRef?.current?.id
+    if (chatId) {
+      setMessages?.(chatId, [])
+      conversation.current = []
+      forceUpdate?.()
+    }
   }
 
   useEffect(() => {
@@ -256,11 +278,13 @@ const Chat = (props: ChatProps, ref: any) => {
   }, [conversation])
 
   useEffect(() => {
-    conversationRef.current = conversation.current
-    if (currentChatRef?.current?.id) {
-      saveMessages?.(conversation.current)
+    const chatId = currentChatRef?.current?.id
+    if (chatId) {
+      const msgs = getMessages?.(chatId) || []
+      conversation.current = msgs
+      conversationRef.current = msgs
     }
-  }, [currentChatRef, conversation.current, saveMessages])
+  }, [currentChatRef, getMessages])
 
   useEffect(() => {
     if (!isLoading) {
@@ -271,8 +295,12 @@ const Chat = (props: ChatProps, ref: any) => {
   useImperativeHandle(ref, () => {
     return {
       setConversation(messages: ChatMessage[]) {
-        conversation.current = messages
-        forceUpdate?.()
+        const chatId = currentChatRef?.current?.id
+        if (chatId) {
+          setMessages?.(chatId, messages)
+          conversation.current = messages
+          forceUpdate?.()
+        }
       },
       getConversation() {
         return conversationRef.current
@@ -333,12 +361,12 @@ const Chat = (props: ChatProps, ref: any) => {
             scrollbars="vertical"
             style={{ height: '100%' }}
           >
-            {conversation.current.map((item, index) => (
+            {(getMessages?.(currentChatRef?.current?.id || '') || []).map((item: ChatMessage, index: number) => (
               <Container size="3" key={index}>
                 <Message message={item} currentModel={currentChatRef?.current?.model} />
               </Container>
             ))}
-            {currentMessage && (
+            {currentMessage && currentMessageId == currentChatRef?.current?.id && (
               <Container size="3">
                 <Message message={{ content: currentMessage, role: 'assistant' }} isLoading currentModel={currentChatRef?.current?.model} />
                 {/* TODO: Add custom model */}
