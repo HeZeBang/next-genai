@@ -36,6 +36,26 @@
   }
 }
 
+@keyframes border-beam {
+  0% {
+    border-color: transparent;
+  }
+
+  50% {
+    border-color: var(--accent-a5);
+    /* Tailwind 的 blue-500 */
+  }
+
+  100% {
+    border-color: transparent;
+  }
+}
+
+.animate-border-beam {
+  animation: border-beam 2s infinite;
+}
+
+
 .chat-side-bar {
   @apply overflow-hidden w-64 z-10;
 

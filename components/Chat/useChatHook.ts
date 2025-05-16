@@ -183,6 +183,8 @@ const useChatHook = () => {
 
   const [toggleSidebar, setToggleSidebar] = useState<boolean>(false)
 
+  const [generatingChatId, setGeneratingChatId] = useState<string | null>(null)
+
   const onOpenModelPanel = (type: string = 'chat') => {
     setModelPanelType(type)
     setOpenModelPanel(true)
@@ -298,11 +300,21 @@ const useChatHook = () => {
     })
   }
 
-  const saveMessages = (messages: ChatMessage[]) => {
+  const saveMessages = (messages: ChatMessage[], destination?: string) => {
     if (messages.length > 0) {
-      localStorage.setItem(`ms_${currentChatRef.current?.id}`, JSON.stringify(messages))
+      localStorage.setItem(`ms_${destination || currentChatRef.current?.id}`, JSON.stringify(messages))
     } else {
-      localStorage.removeItem(`ms_${currentChatRef.current?.id}`)
+      localStorage.removeItem(`ms_${destination || currentChatRef.current?.id}`)
+    }
+  }
+
+  const getMessages = (chatId: string) => messagesMap.current.get(chatId) || []
+  const setMessages = (chatId: string, messages: ChatMessage[]) => {
+    messagesMap.current.set(chatId, messages)
+    if (messages.length > 0) {
+      localStorage.setItem(`ms_${chatId}`, JSON.stringify(messages))
+    } else {
+      localStorage.removeItem(`ms_${chatId}`)
     }
   }
 
@@ -384,10 +396,14 @@ const useChatHook = () => {
     onDeleteModel,
     onEditModel,
     saveMessages,
+    getMessages,
+    setMessages,
     onOpenModelPanel,
     onCloseModelPanel,
     onToggleSidebar,
-    forceUpdate
+    forceUpdate,
+    generatingChatId,
+    setGeneratingChatId,
   }
 }
 

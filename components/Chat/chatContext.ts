@@ -3,7 +3,7 @@
 import { createContext, MutableRefObject } from 'react'
 import { Chat, ChatMessage, Model } from './interface'
 
-const ChatContext = createContext<{
+export type ChatContextType = {
   debug?: boolean
   modelPanelType: string
   DefaultModels: Model[]
@@ -24,16 +24,22 @@ const ChatContext = createContext<{
   onEditModel?: (model: Model) => void
   onCreateChat?: (model: Model) => void
   onChangeChat?: (chat: Chat) => void
-  saveMessages?: (messages: ChatMessage[]) => void
+  saveMessages?: (messages: ChatMessage[], destination?: string) => void
+  getMessages?: (chatId: string) => ChatMessage[]
+  setMessages?: (chatId: string, messages: ChatMessage[]) => void
   onOpenModelPanel?: (type?: string) => void
   onCloseModelPanel?: () => void
   onToggleSidebar?: () => void
   forceUpdate?: () => void
-}>({
+  generatingChatId?: string | null
+  setGeneratingChatId?: (id: string | null) => void
+}
+
+const ChatContext = createContext<ChatContextType>({
   modelPanelType: 'chat',
   DefaultModels: [],
   chatList: [],
   models: []
 })
-
 export default ChatContext
+
