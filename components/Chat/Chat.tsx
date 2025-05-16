@@ -382,16 +382,17 @@ const Chat = (props: ChatProps, ref: any) => {
           </ScrollArea>
           <div className="px-4 pb-3">
             <Container size="3">
-              <Flex align="end" justify="between" gap="3" className="relative border-2 dark:border-neutral-800 rounded-3xl dark:focus-within:border-purple-400 focus-within:border-purple-300 focus-within:shadow-lg transition-all"
-                direction="column" style={{ overflow: "clip" }}>
-                <BorderBeam
+              <Flex align="end" justify="between" gap="3" direction="column"
+                className={`relative border-2 dark:border-neutral-800 rounded-3xl dark:focus-within:border-purple-400 focus-within:border-purple-300 focus-within:shadow-lg transition-all ${isLoading ? "animate-border-beam" : ""}`}
+                style={{ overflow: "clip" }}>
+                {/* <BorderBeam
                   duration={4}
                   size={100}
                   className='from-transparent via-purple-500 to-transparent'
                   style={{
                     opacity: isLoading ? 1 : 0
                   }}
-                />
+                /> */}
                 <div className="rt-TextAreaRoot rt-r-size-1 flex-1 shadow-none rounded-3xl chat-textarea w-full">
                   <ContentEditable
                     innerRef={textAreaRef}
