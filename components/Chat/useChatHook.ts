@@ -12,7 +12,7 @@ export const DefaultModels: Model[] = [
   {
     id: 'deepseek-v3:671b',
     role: 'system',
-    name: 'DeepSeek V3 - 671B',
+    name: 'DeepSeek V3 - 671B 0324',
     prompt: 'You are an AI assistant that helps people find information.',
     aiType: 'deepseek-v3:671b',
     rootAiType: 'xinference',
@@ -23,7 +23,7 @@ export const DefaultModels: Model[] = [
   {
     id: 'deepseek-r1:671b',
     role: 'system',
-    name: 'DeepSeek R1 - 671B 0324',
+    name: 'DeepSeek R1 - 671B',
     prompt: 'You are an AI assistant that helps people find information.',
     aiType: 'deepseek-r1:671b',
     rootAiType: 'xinference',
