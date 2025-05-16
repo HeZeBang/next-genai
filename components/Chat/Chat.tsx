@@ -381,6 +381,7 @@ const Chat = (props: ChatProps, ref: any) => {
                       onValueChange={(value) => {
                         const model = DefaultModels.find((m) => m.id === value)
                         if (model && currentChatRef?.current) {
+                          setMessage(textAreaRef.current?.getHTML() || '')
                           currentChatRef.current = {
                             ...currentChatRef.current,
                             model
