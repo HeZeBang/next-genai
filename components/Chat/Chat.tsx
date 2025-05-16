@@ -31,7 +31,6 @@ import { ChatContextType } from './chatContext'
 import type { Chat, ChatMessage, Model, ChatRole } from './interface'
 import Message from './Message'
 import './index.scss'
-import { BorderBeam } from '../magicui/border-beam'
 
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
