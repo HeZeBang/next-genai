@@ -98,7 +98,7 @@ const Chat = (props: ChatProps, ref: any) => {
     onCreateChat,
     forceUpdate,
     toggleSidebar,
-    // models,
+    models,
     DefaultModels,
     getMessages,
     setMessages,
@@ -136,6 +136,7 @@ const Chat = (props: ChatProps, ref: any) => {
   const sendMessage = useCallback(
     async (e: any) => {
       if (!isLoading) {
+        setIsLoading(true)
         setMessage((value) => value.replace(HTML_REGULAR, ''))
         const lockedChatId = currentChatRef?.current?.id
         const lockedModel = currentChatRef?.current?.model
@@ -154,7 +155,6 @@ const Chat = (props: ChatProps, ref: any) => {
         setMessages?.(lockedChatId, newMessages)
         conversation.current = newMessages
         setMessage('')
-        setIsLoading(true)
         setGeneratingChatId?.(lockedChatId)
         try {
           const controller = new AbortController()
@@ -436,11 +436,22 @@ const Chat = (props: ChatProps, ref: any) => {
                     >
                       <Select.Trigger variant="soft" color="gray" className="rounded-xl" />
                       <Select.Content>
-                        {DefaultModels.map((model) => (
-                          <Select.Item key={model.id} value={model.id || ''}>
-                            {model.name}
-                          </Select.Item>
-                        ))}
+                        <Select.Group>
+                          <Select.Label>Default</Select.Label>
+                          {DefaultModels.map((model) => (
+                            <Select.Item key={model.id} value={model.id || ''}>
+                              {model.name}
+                            </Select.Item>
+                          ))}
+                        </Select.Group>
+                        <Select.Group>
+                          <Select.Label>Custom</Select.Label>
+                          {models.map((model) => (
+                            <Select.Item key={model.id} value={model.id || ''}>
+                              {model.name}
+                            </Select.Item>
+                          ))}
+                        </Select.Group>
                       </Select.Content>
                     </Select.Root>
                   </Flex>
