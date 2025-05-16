@@ -19,11 +19,12 @@ import {
   TextField
 } from '@radix-ui/themes'
 import { debounce } from 'lodash-es'
+import toast from 'react-hot-toast'
 import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { LuMessageSquarePlus } from 'react-icons/lu'
 import { ChatContext, Model } from '@/components'
 
-export interface ModelPanelProps {}
+export interface ModelPanelProps { }
 enum TokenState {
   Invalid = -1,
   Validating = 0,
@@ -111,7 +112,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
       })
         .then((resp) => resp.json())
         .then((data) => {
-          if (data.success === false) throw new Error('Not Valid')
+          if (data.success === false) throw new Error(data.error || 'Token is invalid or expired')
           setQuota(data.quota)
           setSurplus(data.used)
           localStorage.setItem('username', data.username)
@@ -120,6 +121,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
         })
         .catch((err) => {
           console.error(err)
+          toast.error(`${err}`)
           setIsValidating(TokenState.Invalid)
         })
     } catch (err) {

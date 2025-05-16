@@ -21,18 +21,33 @@ export async function POST(req: NextRequest) {
       }
     })
       .then((res) => res.json())
-      .then((data) => data.result)
-      .then((res) => res.records.at(0))
+      .then((data) => {
+        if (data.success === false) {
+          throw new Error(data.message || `API 错误: ${data}`)
+        }
+        return data?.result
+      })
+      .then((res) => res?.records?.at(0))
       .then((res) => {
         const data = {
-          quota: res.quota,
-          used: res.monthSurplus,
-          username: res.username,
-          userid: res.id
+          quota: res?.quota,
+          used: res?.monthSurplus,
+          username: res?.username,
+          userid: res?.id
         }
-        if (!!data.quota && typeof data.used === 'number' && data.username && data.userid)
-          return data
-        else throw new Error('One of data is undefined')
+        if (!data.quota) {
+          throw new Error('Missing quota in user data')
+        }
+        if (typeof data.used !== 'number') {
+          throw new Error('Invalid or missing "used" (monthSurplus) in user data')
+        }
+        if (!data.username) {
+          throw new Error('Missing username in user data')
+        }
+        if (!data.userid) {
+          throw new Error('Missing userid in user data')
+        }
+        return data
       })
     return NextResponse.json(res)
   } catch (error) {

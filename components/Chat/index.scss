@@ -1,14 +1,38 @@
+.rt-TextAreaRoot {
+  &:focus-within {
+    outline: none;
+  }
+}
+
 .chat-textarea {
+
   .rt-TextAreaInput {
-    height: 50px;
-    @apply py-3 px-4 pr-24;
+    min-height: 50px;
+    @apply py-3 px-4;
+
     img {
       @apply max-w-md max-md:max-w-full;
     }
+
     table {
       table-layout: fixed;
       width: 100%;
     }
+
+    &:focus-within {
+      outline: none;
+    }
+  }
+
+  .rt-TextAreaInput[aria-placeholder]::before {
+    content: attr(aria-placeholder);
+    position: absolute;
+    color: #999;
+    pointer-events: none;
+  }
+
+  .rt-TextAreaInput:not(:empty)::before {
+    display: none;
   }
 }
 
@@ -18,14 +42,14 @@
   background-color: var(--color-background);
   transition: 0.5s;
 
-  @apply max-md:absolute max-md:top-0 max-md:bottom-0   max-md:border-none max-md:w-0;
+  @apply max-md:absolute max-md:top-0 max-md:bottom-0 max-md:border-none max-md:w-0;
 
-  .rt-ScrollAreaViewport > div {
+  .rt-ScrollAreaViewport>div {
     display: block;
     width: 100%;
   }
 
-  > div {
+  >div {
     border-right: 1px solid var(--gray-a4);
   }
 
@@ -57,10 +81,11 @@
 
 .userMessage {
   table {
-    @apply border-collapse border  border-slate-400;
+    @apply border-collapse border border-slate-400;
+
     th,
     td {
-      @apply border  border-slate-300;
+      @apply border border-slate-300;
     }
   }
 }
