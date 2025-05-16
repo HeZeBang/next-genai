@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useContext } from 'react'
-import { ArrowLeftIcon, GearIcon, PlusIcon } from '@radix-ui/react-icons'
+import { GearIcon, PlusIcon } from '@radix-ui/react-icons'
 import './index.scss'
 import {
   Box,
@@ -14,9 +14,9 @@ import {
   Table,
   Text
 } from '@radix-ui/themes'
+import { Box as RadixBox } from '@radix-ui/themes'
 import cs from 'classnames'
-import toast from 'react-hot-toast'
-import { AiOutlineCloseCircle } from 'react-icons/ai'
+import { AiOutlineCloseCircle, AiOutlineLoading } from 'react-icons/ai'
 import { FiPlus } from 'react-icons/fi'
 import ChatContext from './chatContext'
 import { ChatMessage } from './interface'
@@ -24,7 +24,7 @@ import { ChatMessage } from './interface'
 export interface ChatSideBarProps {
   isGenerating?: boolean
 }
-export const ChatSideBar = (props: ChatSideBarProps) => {
+export const ChatSideBar = (_: ChatSideBarProps) => {
   const {
     currentChatRef,
     chatList,
@@ -34,7 +34,8 @@ export const ChatSideBar = (props: ChatSideBarProps) => {
     onChangeChat,
     onCreateChat,
     onOpenModelPanel,
-    onCloseModelPanel
+    onCloseModelPanel,
+    generatingChatId
   } = useContext(ChatContext)
 
   return (
@@ -123,9 +124,10 @@ export const ChatSideBar = (props: ChatSideBarProps) => {
                   active: currentChatRef?.current?.id === chat.id
                 })}
                 onClick={() => {
-                  if (props.isGenerating)
-                    toast.error('Please wait for the current chat to finish generating.')
-                  else if (currentChatRef?.current?.id !== chat.id) {
+                  // if (props.isGenerating)
+                  //   toast.error('Please wait for the current chat to finish generating.')
+                  // else 
+                  if (currentChatRef?.current?.id !== chat.id) {
                     onChangeChat?.(chat)
                     setTimeout(
                       () =>
@@ -150,19 +152,34 @@ export const ChatSideBar = (props: ChatSideBarProps) => {
                     </Text>
                   </div>
                 </Flex>
-                <IconButton
-                  size="2"
-                  className="cursor-pointer"
-                  variant="ghost"
-                  color="gray"
-                  radius="full"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onDeleteChat?.(chat)
-                  }}
-                >
-                  <AiOutlineCloseCircle className="size-4" />
-                </IconButton>
+
+                {generatingChatId === chat.id ? (
+                  <IconButton
+                    size="2"
+                    className="cursor-pointer"
+                    variant="ghost"
+                    color="gray"
+                    radius="full"
+                    disabled={true}
+                  >
+                    <AiOutlineLoading className="size-4 animate-spin" />
+                  </IconButton>
+                ) : (
+                  <IconButton
+                    size="2"
+                    className="cursor-pointer"
+                    variant="ghost"
+                    color="gray"
+                    radius="full"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onDeleteChat?.(chat)
+                    }}
+                  >
+                    <AiOutlineCloseCircle className="size-4" />
+                  </IconButton>
+                )
+                }
               </Box>
             ))}
           </Flex>

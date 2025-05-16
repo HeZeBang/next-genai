@@ -20,17 +20,18 @@ import {
   Text,
   Blockquote,
   Button,
-  Box,
   Select
 } from '@radix-ui/themes'
 import ContentEditable from 'react-contenteditable'
 import toast from 'react-hot-toast'
-import { AiOutlineClear, AiOutlineLoading3Quarters, AiOutlineUnorderedList } from 'react-icons/ai'
+import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 import { FiSend, FiStopCircle } from 'react-icons/fi'
 import ChatContext from './chatContext'
-import type { Chat, ChatMessage, Model } from './interface'
+import { ChatContextType } from './chatContext'
+import type { Chat, ChatMessage, Model, ChatRole } from './interface'
 import Message from './Message'
 import './index.scss'
+import { BorderBeam } from '../magicui/border-beam'
 
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
@@ -99,7 +100,11 @@ const Chat = (props: ChatProps, ref: any) => {
     toggleSidebar,
     models,
     DefaultModels,
-  } = useContext(ChatContext)
+    getMessages,
+    setMessages,
+    // generatingChatId,
+    setGeneratingChatId,
+  } = useContext(ChatContext) as ChatContextType
 
   const [isLoading, setIsLoading] = [props.isGenerating, props.setIsGenerating]
 
@@ -108,6 +113,8 @@ const Chat = (props: ChatProps, ref: any) => {
   const [message, setMessage] = useState('')
 
   const [currentMessage, setCurrentMessage] = useState<string>('')
+
+  const [currentMessageId, setCurrentMessageId] = useState<string | undefined>('')
 
   const [scrollToBottom, setScrollToBottom] = useState(true)
 
@@ -120,7 +127,7 @@ const Chat = (props: ChatProps, ref: any) => {
   const controllerRef = useRef<AbortController>()
 
   const stopGeneration = useCallback(
-    async (e: any) => {
+    async (_: any) => {
       controllerRef.current?.abort()
     },
     [currentMessage, controllerRef]
@@ -129,7 +136,11 @@ const Chat = (props: ChatProps, ref: any) => {
   const sendMessage = useCallback(
     async (e: any) => {
       if (!isLoading) {
+        setIsLoading(true)
         setMessage((value) => value.replace(HTML_REGULAR, ''))
+        const lockedChatId = currentChatRef?.current?.id
+        const lockedModel = currentChatRef?.current?.model
+        setCurrentMessageId(lockedChatId)
         e.preventDefault()
         const input = textAreaRef.current?.innerHTML?.replace(HTML_REGULAR, '') || ''
 
@@ -138,18 +149,21 @@ const Chat = (props: ChatProps, ref: any) => {
           return
         }
 
-        const message = [...conversation.current]
-        conversation.current = [...conversation.current, { content: input, role: 'user', model: currentChatRef?.current?.model }]
+        if (!lockedChatId) return
+        const message = [...getMessages?.(lockedChatId) || []]
+        const newMessages = [...message, { content: input, role: 'user' as ChatRole, model: lockedModel }]
+        setMessages?.(lockedChatId, newMessages)
+        conversation.current = newMessages
         setMessage('')
-        setIsLoading(true)
+        setGeneratingChatId?.(lockedChatId)
         try {
           const controller = new AbortController()
           controllerRef.current = controller
           const response = await postChatOrQuestion(
-            currentChatRef?.current!,
+            { ...(currentChatRef?.current || {}), id: lockedChatId, model: lockedModel },
             message,
             input,
-            currentChatRef?.current?.id!,
+            lockedChatId,
             controller
           )
 
@@ -188,17 +202,25 @@ const Chat = (props: ChatProps, ref: any) => {
               if (debug) {
                 console.log({ resultContent })
               }
-              conversation.current = [
-                ...conversation.current,
-                { content: resultContent, role: 'assistant', model: currentChatRef?.current?.model }
+              if (!lockedChatId) return
+              const prevMessages = getMessages?.(lockedChatId) || []
+              const updatedMessages = [
+                ...prevMessages,
+                { content: resultContent, role: 'assistant' as ChatRole, model: lockedModel }
               ]
-
+              setMessages?.(lockedChatId, updatedMessages)
+              conversation.current = updatedMessages
               setCurrentMessage('')
+              setGeneratingChatId?.(null)
             }, 1)
           } else {
             const result = await response.json()
             if (response.status === 401) {
-              conversation.current.pop()
+              if (lockedChatId) {
+                const prevMessages = getMessages?.(lockedChatId) || []
+                setMessages?.(lockedChatId, prevMessages.slice(0, -1))
+                conversation.current = prevMessages.slice(0, -1)
+              }
               location.href =
                 result.redirect +
                 `?callbackUrl=${encodeURIComponent(location.pathname + location.search)}`
@@ -208,14 +230,16 @@ const Chat = (props: ChatProps, ref: any) => {
           }
 
           setIsLoading(false)
+          setGeneratingChatId?.(null)
         } catch (error: any) {
           console.error(error)
           toast.error(error.message)
           setIsLoading(false)
+          setGeneratingChatId?.(null)
         }
       }
     },
-    [currentChatRef, debug, isLoading]
+    [currentChatRef, debug, isLoading, getMessages, setMessages, setGeneratingChatId]
   )
 
   const handleKeypress = useCallback(
@@ -233,10 +257,14 @@ const Chat = (props: ChatProps, ref: any) => {
     [sendMessage]
   )
 
-  const clearMessages = () => {
-    conversation.current = []
-    forceUpdate?.()
-  }
+  // const clearMessages = () => {
+  //   const chatId = currentChatRef?.current?.id
+  //   if (chatId) {
+  //     setMessages?.(chatId, [])
+  //     conversation.current = []
+  //     forceUpdate?.()
+  //   }
+  // }
 
   useEffect(() => {
     if (textAreaRef.current) {
@@ -256,11 +284,13 @@ const Chat = (props: ChatProps, ref: any) => {
   }, [conversation])
 
   useEffect(() => {
-    conversationRef.current = conversation.current
-    if (currentChatRef?.current?.id) {
-      saveMessages?.(conversation.current)
+    const chatId = currentChatRef?.current?.id
+    if (chatId) {
+      const msgs = getMessages?.(chatId) || []
+      conversation.current = msgs
+      conversationRef.current = msgs
     }
-  }, [currentChatRef, conversation.current, saveMessages])
+  }, [currentChatRef, getMessages])
 
   useEffect(() => {
     if (!isLoading) {
@@ -271,8 +301,12 @@ const Chat = (props: ChatProps, ref: any) => {
   useImperativeHandle(ref, () => {
     return {
       setConversation(messages: ChatMessage[]) {
-        conversation.current = messages
-        forceUpdate?.()
+        const chatId = currentChatRef?.current?.id
+        if (chatId) {
+          setMessages?.(chatId, messages)
+          conversation.current = messages
+          forceUpdate?.()
+        }
       },
       getConversation() {
         return conversationRef.current
@@ -333,12 +367,12 @@ const Chat = (props: ChatProps, ref: any) => {
             scrollbars="vertical"
             style={{ height: '100%' }}
           >
-            {conversation.current.map((item, index) => (
+            {(getMessages?.(currentChatRef?.current?.id || '') || []).map((item: ChatMessage, index: number) => (
               <Container size="3" key={index}>
                 <Message message={item} currentModel={currentChatRef?.current?.model} />
               </Container>
             ))}
-            {currentMessage && (
+            {currentMessage && currentMessageId == currentChatRef?.current?.id && (
               <Container size="3">
                 <Message message={{ content: currentMessage, role: 'assistant' }} isLoading currentModel={currentChatRef?.current?.model} />
                 {/* TODO: Add custom model */}
@@ -348,8 +382,18 @@ const Chat = (props: ChatProps, ref: any) => {
           </ScrollArea>
           <div className="px-4 pb-3">
             <Container size="3">
-              <Flex align="end" justify="between" gap="3" className="relative border-2 border-gray-400 rounded-3xl focus-within:border-purple-300 focus-within:shadow-lg transition-all" direction="column" >
-                <div className="rt-TextAreaRoot rt-r-size-1 rt-variant-surface flex-1 shadow-none rounded-3xl chat-textarea w-full">
+              <Flex align="end" justify="between" gap="3" direction="column"
+                className={`relative border-2 dark:border-neutral-800 rounded-3xl dark:focus-within:border-purple-400 focus-within:border-purple-300 focus-within:shadow-lg transition-all ${isLoading ? "animate-border-beam" : ""}`}
+                style={{ overflow: "clip" }}>
+                {/* <BorderBeam
+                  duration={4}
+                  size={100}
+                  className='from-transparent via-purple-500 to-transparent'
+                  style={{
+                    opacity: isLoading ? 1 : 0
+                  }}
+                /> */}
+                <div className="rt-TextAreaRoot rt-r-size-1 flex-1 shadow-none rounded-3xl chat-textarea w-full">
                   <ContentEditable
                     innerRef={textAreaRef}
                     style={{
@@ -392,11 +436,22 @@ const Chat = (props: ChatProps, ref: any) => {
                     >
                       <Select.Trigger variant="soft" color="gray" className="rounded-xl" />
                       <Select.Content>
-                        {DefaultModels.map((model) => (
-                          <Select.Item key={model.id} value={model.id || ''}>
-                            {model.name}
-                          </Select.Item>
-                        ))}
+                        <Select.Group>
+                          <Select.Label>Default</Select.Label>
+                          {DefaultModels.map((model) => (
+                            <Select.Item key={model.id} value={model.id || ''}>
+                              {model.name}
+                            </Select.Item>
+                          ))}
+                        </Select.Group>
+                        <Select.Group>
+                          <Select.Label>Custom</Select.Label>
+                          {models.map((model) => (
+                            <Select.Item key={model.id} value={model.id || ''}>
+                              {model.name}
+                            </Select.Item>
+                          ))}
+                        </Select.Group>
                       </Select.Content>
                     </Select.Root>
                   </Flex>
