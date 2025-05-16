@@ -20,18 +20,18 @@ import {
   Text,
   Blockquote,
   Button,
-  Box,
   Select
 } from '@radix-ui/themes'
 import ContentEditable from 'react-contenteditable'
 import toast from 'react-hot-toast'
-import { AiOutlineClear, AiOutlineLoading3Quarters, AiOutlineUnorderedList } from 'react-icons/ai'
+import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 import { FiSend, FiStopCircle } from 'react-icons/fi'
 import ChatContext from './chatContext'
 import { ChatContextType } from './chatContext'
 import type { Chat, ChatMessage, Model, ChatRole } from './interface'
 import Message from './Message'
 import './index.scss'
+// import { BorderBeam } from '../magicui/border-beam'
 
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
@@ -98,10 +98,12 @@ const Chat = (props: ChatProps, ref: any) => {
     onCreateChat,
     forceUpdate,
     toggleSidebar,
-    models,
+    // models,
     DefaultModels,
     getMessages,
     setMessages,
+    // generatingChatId,
+    setGeneratingChatId,
   } = useContext(ChatContext) as ChatContextType
 
   const [isLoading, setIsLoading] = [props.isGenerating, props.setIsGenerating]
@@ -125,7 +127,7 @@ const Chat = (props: ChatProps, ref: any) => {
   const controllerRef = useRef<AbortController>()
 
   const stopGeneration = useCallback(
-    async (e: any) => {
+    async (_: any) => {
       controllerRef.current?.abort()
     },
     [currentMessage, controllerRef]
@@ -153,6 +155,7 @@ const Chat = (props: ChatProps, ref: any) => {
         conversation.current = newMessages
         setMessage('')
         setIsLoading(true)
+        setGeneratingChatId?.(lockedChatId)
         try {
           const controller = new AbortController()
           controllerRef.current = controller
@@ -208,6 +211,7 @@ const Chat = (props: ChatProps, ref: any) => {
               setMessages?.(lockedChatId, updatedMessages)
               conversation.current = updatedMessages
               setCurrentMessage('')
+              setGeneratingChatId?.(null)
             }, 1)
           } else {
             const result = await response.json()
@@ -226,14 +230,16 @@ const Chat = (props: ChatProps, ref: any) => {
           }
 
           setIsLoading(false)
+          setGeneratingChatId?.(null)
         } catch (error: any) {
           console.error(error)
           toast.error(error.message)
           setIsLoading(false)
+          setGeneratingChatId?.(null)
         }
       }
     },
-    [currentChatRef, debug, isLoading, getMessages, setMessages]
+    [currentChatRef, debug, isLoading, getMessages, setMessages, setGeneratingChatId]
   )
 
   const handleKeypress = useCallback(
@@ -251,14 +257,14 @@ const Chat = (props: ChatProps, ref: any) => {
     [sendMessage]
   )
 
-  const clearMessages = () => {
-    const chatId = currentChatRef?.current?.id
-    if (chatId) {
-      setMessages?.(chatId, [])
-      conversation.current = []
-      forceUpdate?.()
-    }
-  }
+  // const clearMessages = () => {
+  //   const chatId = currentChatRef?.current?.id
+  //   if (chatId) {
+  //     setMessages?.(chatId, [])
+  //     conversation.current = []
+  //     forceUpdate?.()
+  //   }
+  // }
 
   useEffect(() => {
     if (textAreaRef.current) {
@@ -376,7 +382,8 @@ const Chat = (props: ChatProps, ref: any) => {
           </ScrollArea>
           <div className="px-4 pb-3">
             <Container size="3">
-              <Flex align="end" justify="between" gap="3" className="relative border-2 border-gray-400 rounded-3xl focus-within:border-purple-300 focus-within:shadow-lg transition-all" direction="column" >
+              <Flex align="end" justify="between" gap="3" className="relative border-2 border-muted rounded-3xl focus-within:border-purple-300 focus-within:shadow-lg transition-all" direction="column" >
+                {/* <BorderBeam /> */}
                 <div className="rt-TextAreaRoot rt-r-size-1 rt-variant-surface flex-1 shadow-none rounded-3xl chat-textarea w-full">
                   <ContentEditable
                     innerRef={textAreaRef}

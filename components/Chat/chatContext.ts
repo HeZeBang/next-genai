@@ -31,6 +31,8 @@ export type ChatContextType = {
   onCloseModelPanel?: () => void
   onToggleSidebar?: () => void
   forceUpdate?: () => void
+  generatingChatId?: string | null
+  setGeneratingChatId?: (id: string | null) => void
 }
 
 const ChatContext = createContext<ChatContextType>({
@@ -39,5 +41,5 @@ const ChatContext = createContext<ChatContextType>({
   chatList: [],
   models: []
 })
-
 export default ChatContext
+

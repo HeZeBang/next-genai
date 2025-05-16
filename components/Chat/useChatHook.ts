@@ -183,6 +183,8 @@ const useChatHook = () => {
 
   const [toggleSidebar, setToggleSidebar] = useState<boolean>(false)
 
+  const [generatingChatId, setGeneratingChatId] = useState<string | null>(null)
+
   const onOpenModelPanel = (type: string = 'chat') => {
     setModelPanelType(type)
     setOpenModelPanel(true)
@@ -399,7 +401,9 @@ const useChatHook = () => {
     onOpenModelPanel,
     onCloseModelPanel,
     onToggleSidebar,
-    forceUpdate
+    forceUpdate,
+    generatingChatId,
+    setGeneratingChatId,
   }
 }
 
