@@ -300,9 +300,8 @@ const Chat = (props: ChatProps, ref: any) => {
     return {
       setConversation(messages: ChatMessage[]) {
         const chatId = currentChatRef?.current?.id
-        console.log("Set Conversation", chatId, messages)
         if (chatId) {
-          // setMessages?.(chatId, messages)
+          // setMessages?.(chatId, messages) // FIXME: unnecessary set
           conversation.current = messages
           forceUpdate?.()
         }
