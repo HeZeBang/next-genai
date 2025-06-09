@@ -45,16 +45,20 @@ const HighlightCode = memo((
 
   return match ? (
     <Fragment>
-      <Tooltip open={tooltipOpen} content="Copied!">
-        <IconButton
-          className="absolute right-4 top-4 cursor-pointer"
-          variant="solid"
-          onClick={onCopy}
-          onMouseLeave={() => setTooltipOpen(false)}
-        >
-          <RxClipboardCopy />
-        </IconButton>
-      </Tooltip>
+      <div className="flex items-center justify-between">
+        <span>{match[1]}</span>
+        <Tooltip open={tooltipOpen} content="Copied!">
+          <IconButton
+            // className="absolute right-4 top-4 cursor-pointer"
+            className="cursor-pointer"
+            variant="solid"
+            onClick={onCopy}
+            onMouseLeave={() => setTooltipOpen(false)}
+          >
+            <RxClipboardCopy />
+          </IconButton>
+        </Tooltip>
+      </div>
       <SyntaxHighlighter {...rest} style={vscDarkPlus} language={match[1]} PreTag="div">
         {code}
       </SyntaxHighlighter>
