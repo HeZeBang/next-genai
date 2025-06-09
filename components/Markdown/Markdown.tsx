@@ -1,6 +1,6 @@
 'use client'
 
-import { ClassAttributes, Fragment, HTMLAttributes, useCallback, useState } from 'react'
+import { ClassAttributes, Fragment, HTMLAttributes, useCallback, useState, memo, useMemo } from 'react'
 import { ChevronUpIcon, InfoCircledIcon } from '@radix-ui/react-icons'
 import { Button, Callout, ChevronDownIcon, IconButton, Tooltip } from '@radix-ui/themes'
 import cs from 'classnames'
@@ -23,7 +23,7 @@ export interface MarkdownProps {
   children: string
 }
 
-const HighlightCode = (
+const HighlightCode = memo((
   props: ClassAttributes<HTMLElement> & HTMLAttributes<HTMLElement> & ExtraProps
 ) => {
   const { children, className, ref, ...rest } = props
@@ -31,7 +31,9 @@ const HighlightCode = (
   const copy = useCopyToClipboard()
   const [tooltipOpen, setTooltipOpen] = useState<boolean>(false)
 
-  const code = match ? String(children).replace(/\n$/, '') : ''
+  const code = useMemo(() => {
+    return match ? String(children).replace(/\n$/, '') : ''
+  }, [children, match])
 
   const onCopy = useCallback(() => {
     copy(code, (isSuccess) => {
@@ -62,9 +64,11 @@ const HighlightCode = (
       {children}
     </code>
   )
-}
+})
 
-const ThinkComponent = ({ className, children }: MarkdownProps) => {
+HighlightCode.displayName = 'HighlightCode'
+
+const ThinkComponent = memo(({ className, children }: MarkdownProps) => {
   const [thinkOpen, setThinkOpen] = useState<boolean>(true)
   return (
     // <div
@@ -102,38 +106,56 @@ const ThinkComponent = ({ className, children }: MarkdownProps) => {
       </Callout.Root>
     </>
   )
-}
+})
 
-export const Markdown = ({ className, children }: MarkdownProps) => {
-  const processGenMath = (markdown: string) => {
+ThinkComponent.displayName = 'ThinkComponent'
+
+export const Markdown = memo(({ className, children }: MarkdownProps) => {
+  const processGenMath = useCallback((markdown: string) => {
     // Convert `\(...\)`, `\[...\]` -> `$...$` 和 `$$...$$`
     const processedMarkdown = markdown
       .replaceAll(/\\\((\s*?.*?\s*?)\\\)/g, '$$$1$$')
       .replaceAll(/\\\[(\s*?[\s\S]*?\s*?)\\\]/g, '$$$$$1$$$$')
 
     return processedMarkdown
-  }
-  const thinkPatch = (markdown: string) => {
+  }, [])
+
+  const thinkPatch = useCallback((markdown: string) => {
     return markdown
       .replaceAll(/<think>\s*/g, '<think>\n\n')
       .replaceAll(/\s*<\/think>/g, '\n\n</think>')
-  }
+  }, [])
+
+  // 缓存处理后的 markdown 内容
+  const processedContent = useMemo(() => {
+    return thinkPatch(processGenMath(children))
+  }, [children, thinkPatch, processGenMath])
+
+  // 缓存 remarkPlugins 和 rehypePlugins 数组
+  const remarkPlugins = useMemo(() => [remarkParse, remarkMath, remarkRehype, remarkGfm], [])
+  const rehypePlugins = useMemo(() => [rehypeRaw, [rehypeKatex, { output: 'mathml' }] as any, rehypeStringify], [])
+
+  // 缓存 components 对象，避免每次重新创建
+  const components = useMemo(() => ({
+    // TODO: fix error
+    //@ts-ignore
+    think: ThinkComponent,
+    code(props: any) {
+      return <HighlightCode {...props} />
+    }
+  }), [])
+
   // console.log(thinkPatch(processGenMath(children)));
   return (
     <ReactMarkdown
       className={cs('prose dark:prose-invert max-w-none', className)}
-      remarkPlugins={[remarkParse, remarkMath, remarkRehype, remarkGfm]}
-      rehypePlugins={[rehypeRaw, [rehypeKatex, { output: 'mathml' }], rehypeStringify]}
-      components={{
-        // TODO: fix error
-        //@ts-ignore
-        think: ThinkComponent,
-        code(props) {
-          return <HighlightCode {...props} />
-        }
-      }}
+      remarkPlugins={remarkPlugins}
+      rehypePlugins={rehypePlugins}
+      components={components}
     >
-      {thinkPatch(processGenMath(children))}
+      {processedContent}
     </ReactMarkdown>
   )
-}
+})
+
+Markdown.displayName = 'Markdown'
