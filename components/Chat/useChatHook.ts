@@ -171,6 +171,8 @@ const useChatHook = () => {
 
   const [models, setModels] = useState<Model[]>([])
 
+  const [defaultModels, setDefaultModels] = useState<Model[]>(DefaultModels)
+
   const [editModel, setEditModel] = useState<Model | undefined>()
 
   const [isOpenModelModal, setIsOpenModelModal] = useState<boolean>(false)
@@ -184,6 +186,25 @@ const useChatHook = () => {
   const [toggleSidebar, setToggleSidebar] = useState<boolean>(false)
 
   const [generatingChatId, setGeneratingChatId] = useState<string | null>(null)
+
+  const fetchModels = async () => {
+    const apiKey = localStorage.getItem('apiKey')
+    if (!apiKey) return
+
+    try {
+      const { data } = await axios.post('/api/modals', { apiKey })
+      if (Array.isArray(data) && data.length > 0) {
+        data[0].isDefault = true
+        setDefaultModels(data)
+      }
+    } catch (e) {
+      console.error('Failed to fetch models', e)
+    }
+  }
+
+  useEffect(() => {
+    fetchModels()
+  }, [])
 
   const onOpenModelPanel = (type: string = 'chat') => {
     setModelPanelType(type)
@@ -383,7 +404,7 @@ const useChatHook = () => {
 
   return {
     debug,
-    DefaultModels,
+    DefaultModels: defaultModels,
     chatRef,
     currentChatRef,
     chatList,
@@ -411,6 +432,7 @@ const useChatHook = () => {
     forceUpdate,
     generatingChatId,
     setGeneratingChatId,
+    fetchModels
   }
 }
 

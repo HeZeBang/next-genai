@@ -2,6 +2,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { Toaster } from 'react-hot-toast'
 import { Header } from '@/components/Header'
 import ThemesProvider from '@/providers/ThemesProvider'
+import ThemeScript from '@/components/Themes/ThemeScript'
 import '@/styles/globals.scss'
 import '@/styles/theme-config.css'
 
@@ -20,7 +21,17 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <ThemeScript
+          attribute="class"
+          defaultTheme="system"
+          enableSystem={true}
+          enableColorScheme={true}
+          storageKey="theme"
+          attrs={['light', 'dark']}
+        />
+      </head>
       <body>
         <ThemesProvider>
           <Header />
