@@ -33,6 +33,7 @@ export type ChatContextType = {
   forceUpdate?: () => void
   generatingChatId?: string | null
   setGeneratingChatId?: (id: string | null) => void
+  fetchModels?: () => Promise<void>
 }
 
 const ChatContext = createContext<ChatContextType>({
