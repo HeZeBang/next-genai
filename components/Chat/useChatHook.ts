@@ -38,7 +38,7 @@ export const DefaultModels: Model[] = [
     prompt: 'You are an AI assistant that helps people find information.',
     aiType: 'o4-mini',
     rootAiType: 'azure',
-    promptPrice: 0.00000110,
+    promptPrice: 0.0000011,
     completionPrice: 0.00000468,
     isDefault: false
   },
@@ -49,8 +49,8 @@ export const DefaultModels: Model[] = [
     prompt: 'You are an AI assistant that helps people find information.',
     aiType: 'GPT-4.1',
     rootAiType: 'azure',
-    promptPrice: 0.00000200,
-    completionPrice: 0.00000850,
+    promptPrice: 0.000002,
+    completionPrice: 0.0000085,
     isDefault: false
   },
   {
@@ -60,9 +60,9 @@ export const DefaultModels: Model[] = [
     prompt: 'You are an AI assistant that helps people find information.',
     aiType: 'o3',
     rootAiType: 'azure',
-    promptPrice: 0.00001000,
-    completionPrice: 0.00004250,
-    isDefault: false,
+    promptPrice: 0.00001,
+    completionPrice: 0.0000425,
+    isDefault: false
   },
   {
     id: 'GPT-4.1-mini',
@@ -71,9 +71,9 @@ export const DefaultModels: Model[] = [
     prompt: 'You are an AI assistant that helps people find information.',
     aiType: 'GPT-4.1-mini',
     rootAiType: 'azure',
-    promptPrice: 4.0E-7,
-    completionPrice: 0.00000170,
-    isDefault: false,
+    promptPrice: 4.0e-7,
+    completionPrice: 0.0000017,
+    isDefault: false
   },
   {
     id: 'gpt-4-turbo',
@@ -327,7 +327,10 @@ const useChatHook = () => {
 
   const saveMessages = (messages: ChatMessage[], destination?: string) => {
     if (messages.length > 0) {
-      localStorage.setItem(`ms_${destination || currentChatRef.current?.id}`, JSON.stringify(messages))
+      localStorage.setItem(
+        `ms_${destination || currentChatRef.current?.id}`,
+        JSON.stringify(messages)
+      )
     } else {
       localStorage.removeItem(`ms_${destination || currentChatRef.current?.id}`)
     }

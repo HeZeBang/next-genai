@@ -46,7 +46,7 @@ metadata:
   namespace: next-genai
 spec:
   ports:
-    - name: "3000"
+    - name: '3000'
       port: 3000
       targetPort: 3000
   selector:

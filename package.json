@@ -25,6 +25,7 @@
     "eventsource-parser": "^2.0.0",
     "lodash-es": "^4.17.21",
     "next": "16.0.7",
+    "nextjs": "^0.0.3",
     "react": "^18.3.1",
     "react-contenteditable": "^3.3.7",
     "react-dom": "^18.1.1",
