@@ -40,7 +40,7 @@ const Message = (props: MessageProps) => {
       />
       <div className="flex-1 pt-1 break-all">
         <Badge color={isUser ? 'purple' : 'green'} style={{ marginBottom: '1em' }}>
-          {isUser ? 'You' : (props.message.model?.name || props.currentModel?.name || 'AI')}
+          {isUser ? 'You' : props.message.model?.name || props.currentModel?.name || 'AI'}
         </Badge>
         {isUser ? (
           <div

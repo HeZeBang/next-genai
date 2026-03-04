@@ -12,7 +12,7 @@ export const DefaultModels: Model[] = [
   {
     id: 'deepseek-v3:671b',
     role: 'system',
-    name: 'DeepSeek V3 - 671B',
+    name: 'DeepSeek V3 - 671B 0324',
     prompt: 'You are an AI assistant that helps people find information.',
     aiType: 'deepseek-v3:671b',
     rootAiType: 'xinference',
@@ -23,7 +23,7 @@ export const DefaultModels: Model[] = [
   {
     id: 'deepseek-r1:671b',
     role: 'system',
-    name: 'DeepSeek R1 - 671B 0324',
+    name: 'DeepSeek R1 - 671B',
     prompt: 'You are an AI assistant that helps people find information.',
     aiType: 'deepseek-r1:671b',
     rootAiType: 'xinference',
@@ -38,7 +38,7 @@ export const DefaultModels: Model[] = [
     prompt: 'You are an AI assistant that helps people find information.',
     aiType: 'o4-mini',
     rootAiType: 'azure',
-    promptPrice: 0.00000110,
+    promptPrice: 0.0000011,
     completionPrice: 0.00000468,
     isDefault: false
   },
@@ -49,8 +49,8 @@ export const DefaultModels: Model[] = [
     prompt: 'You are an AI assistant that helps people find information.',
     aiType: 'GPT-4.1',
     rootAiType: 'azure',
-    promptPrice: 0.00000200,
-    completionPrice: 0.00000850,
+    promptPrice: 0.000002,
+    completionPrice: 0.0000085,
     isDefault: false
   },
   {
@@ -60,9 +60,9 @@ export const DefaultModels: Model[] = [
     prompt: 'You are an AI assistant that helps people find information.',
     aiType: 'o3',
     rootAiType: 'azure',
-    promptPrice: 0.00001000,
-    completionPrice: 0.00004250,
-    isDefault: false,
+    promptPrice: 0.00001,
+    completionPrice: 0.0000425,
+    isDefault: false
   },
   {
     id: 'GPT-4.1-mini',
@@ -71,9 +71,9 @@ export const DefaultModels: Model[] = [
     prompt: 'You are an AI assistant that helps people find information.',
     aiType: 'GPT-4.1-mini',
     rootAiType: 'azure',
-    promptPrice: 4.0E-7,
-    completionPrice: 0.00000170,
-    isDefault: false,
+    promptPrice: 4.0e-7,
+    completionPrice: 0.0000017,
+    isDefault: false
   },
   {
     id: 'gpt-4-turbo',
@@ -171,6 +171,8 @@ const useChatHook = () => {
 
   const [models, setModels] = useState<Model[]>([])
 
+  const [defaultModels, setDefaultModels] = useState<Model[]>(DefaultModels)
+
   const [editModel, setEditModel] = useState<Model | undefined>()
 
   const [isOpenModelModal, setIsOpenModelModal] = useState<boolean>(false)
@@ -182,6 +184,27 @@ const useChatHook = () => {
   const [modelPanelType, setModelPanelType] = useState<string>('')
 
   const [toggleSidebar, setToggleSidebar] = useState<boolean>(false)
+
+  const [generatingChatId, setGeneratingChatId] = useState<string | null>(null)
+
+  const fetchModels = async () => {
+    const apiKey = localStorage.getItem('apiKey')
+    if (!apiKey) return
+
+    try {
+      const { data } = await axios.post('/api/modals', { apiKey })
+      if (Array.isArray(data) && data.length > 0) {
+        data[0].isDefault = true
+        setDefaultModels(data)
+      }
+    } catch (e) {
+      console.error('Failed to fetch models', e)
+    }
+  }
+
+  useEffect(() => {
+    fetchModels()
+  }, [])
 
   const onOpenModelPanel = (type: string = 'chat') => {
     setModelPanelType(type)
@@ -203,10 +226,14 @@ const useChatHook = () => {
 
   const onChangeChat = useCallback((chat: Chat) => {
     const oldMessages = chatRef.current?.getConversation() || []
-    const newMessages = messagesMap.current.get(chat.id) || []
-    chatRef.current?.setConversation(newMessages)
-    chatRef.current?.focus()
     messagesMap.current.set(currentChatRef.current?.id!, oldMessages)
+    // setMessages(currentChatRef.current?.id!, oldMessages)
+    // const newMessages = messagesMap.current.get(chat.id) || []
+    const newMessages = getMessages(chat.id)
+    console.log('newMessages', newMessages)
+    chatRef.current?.setConversation(newMessages)
+
+    chatRef.current?.focus()
     currentChatRef.current = chat
     forceUpdate()
   }, [])
@@ -298,11 +325,27 @@ const useChatHook = () => {
     })
   }
 
-  const saveMessages = (messages: ChatMessage[]) => {
+  const saveMessages = (messages: ChatMessage[], destination?: string) => {
     if (messages.length > 0) {
-      localStorage.setItem(`ms_${currentChatRef.current?.id}`, JSON.stringify(messages))
+      localStorage.setItem(
+        `ms_${destination || currentChatRef.current?.id}`,
+        JSON.stringify(messages)
+      )
     } else {
-      localStorage.removeItem(`ms_${currentChatRef.current?.id}`)
+      localStorage.removeItem(`ms_${destination || currentChatRef.current?.id}`)
+    }
+  }
+
+  const getMessages = (chatId: string) => {
+    // return messagesMap.current.get(chatId) || []
+    return JSON.parse(localStorage.getItem(`ms_${chatId}`) || '[]') as ChatMessage[]
+  }
+  const setMessages = (chatId: string, messages: ChatMessage[]) => {
+    messagesMap.current.set(chatId, messages)
+    if (messages.length > 0) {
+      localStorage.setItem(`ms_${chatId}`, JSON.stringify(messages))
+    } else {
+      localStorage.removeItem(`ms_${chatId}`)
     }
   }
 
@@ -364,7 +407,7 @@ const useChatHook = () => {
 
   return {
     debug,
-    DefaultModels,
+    DefaultModels: defaultModels,
     chatRef,
     currentChatRef,
     chatList,
@@ -384,10 +427,15 @@ const useChatHook = () => {
     onDeleteModel,
     onEditModel,
     saveMessages,
+    getMessages,
+    setMessages,
     onOpenModelPanel,
     onCloseModelPanel,
     onToggleSidebar,
-    forceUpdate
+    forceUpdate,
+    generatingChatId,
+    setGeneratingChatId,
+    fetchModels
   }
 }
 

@@ -24,7 +24,7 @@ import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { LuMessageSquarePlus } from 'react-icons/lu'
 import { ChatContext, Model } from '@/components'
 
-export interface ModelPanelProps { }
+export interface ModelPanelProps {}
 enum TokenState {
   Invalid = -1,
   Validating = 0,
@@ -41,7 +41,8 @@ const ModelPanel = (_props: ModelPanelProps) => {
     onEditModel,
     onCreateChat,
     // onOpenModelModal,
-    onCloseModelPanel
+    onCloseModelPanel,
+    fetchModels
   } = useContext(ChatContext)
 
   const [promptList, setPromptList] = useState<Model[]>([])
@@ -89,6 +90,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
           setToken(data.token)
           localStorage.setItem('username', data.username)
           localStorage.setItem('userid', data.userid)
+          fetchModels?.()
         })
         .catch((err) => console.error(err))
     } catch (err) {
@@ -120,7 +122,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
           setIsValidating(TokenState.Valid)
         })
         .catch((err) => {
-          console.error(err)
+          console.warn(err)
           toast.error(`${err}`)
           setIsValidating(TokenState.Invalid)
         })
