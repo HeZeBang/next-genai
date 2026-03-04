@@ -4,6 +4,6 @@ services:
   next-genai:
     build: .
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - GENAI_API_BASE_URL=

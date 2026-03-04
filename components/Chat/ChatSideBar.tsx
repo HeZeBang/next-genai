@@ -126,7 +126,7 @@ export const ChatSideBar = (_: ChatSideBarProps) => {
                 onClick={() => {
                   // if (props.isGenerating)
                   //   toast.error('Please wait for the current chat to finish generating.')
-                  // else 
+                  // else
                   if (currentChatRef?.current?.id !== chat.id) {
                     onChangeChat?.(chat)
                     setTimeout(
@@ -178,8 +178,7 @@ export const ChatSideBar = (_: ChatSideBarProps) => {
                   >
                     <AiOutlineCloseCircle className="size-4" />
                   </IconButton>
-                )
-                }
+                )}
               </Box>
             ))}
           </Flex>

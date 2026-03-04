@@ -1,6 +1,14 @@
 'use client'
 
-import { ClassAttributes, Fragment, HTMLAttributes, useCallback, useState, memo, useMemo } from 'react'
+import {
+  ClassAttributes,
+  Fragment,
+  HTMLAttributes,
+  useCallback,
+  useState,
+  memo,
+  useMemo
+} from 'react'
 import { ChevronUpIcon, InfoCircledIcon } from '@radix-ui/react-icons'
 import { Button, Callout, ChevronDownIcon, IconButton, Tooltip } from '@radix-ui/themes'
 import cs from 'classnames'
@@ -23,52 +31,52 @@ export interface MarkdownProps {
   children: string
 }
 
-const HighlightCode = memo((
-  props: ClassAttributes<HTMLElement> & HTMLAttributes<HTMLElement> & ExtraProps
-) => {
-  const { children, className, ref, ...rest } = props
-  const match = /language-(\w+)/.exec(className || '')
-  const copy = useCopyToClipboard()
-  const [tooltipOpen, setTooltipOpen] = useState<boolean>(false)
+const HighlightCode = memo(
+  (props: ClassAttributes<HTMLElement> & HTMLAttributes<HTMLElement> & ExtraProps) => {
+    const { children, className, ref, ...rest } = props
+    const match = /language-(\w+)/.exec(className || '')
+    const copy = useCopyToClipboard()
+    const [tooltipOpen, setTooltipOpen] = useState<boolean>(false)
 
-  const code = useMemo(() => {
-    return match ? String(children).replace(/\n$/, '') : ''
-  }, [children, match])
+    const code = useMemo(() => {
+      return match ? String(children).replace(/\n$/, '') : ''
+    }, [children, match])
 
-  const onCopy = useCallback(() => {
-    copy(code, (isSuccess) => {
-      if (isSuccess) {
-        setTooltipOpen(true)
-      }
-    })
-  }, [code, copy])
+    const onCopy = useCallback(() => {
+      copy(code, (isSuccess) => {
+        if (isSuccess) {
+          setTooltipOpen(true)
+        }
+      })
+    }, [code, copy])
 
-  return match ? (
-    <Fragment>
-      <div className="flex items-center justify-between">
-        <span>{match[1]}</span>
-        <Tooltip open={tooltipOpen} content="Copied!">
-          <IconButton
-            // className="absolute right-4 top-4 cursor-pointer"
-            className="cursor-pointer"
-            variant="solid"
-            onClick={onCopy}
-            onMouseLeave={() => setTooltipOpen(false)}
-          >
-            <RxClipboardCopy />
-          </IconButton>
-        </Tooltip>
-      </div>
-      <SyntaxHighlighter {...rest} style={vscDarkPlus} language={match[1]} PreTag="div">
-        {code}
-      </SyntaxHighlighter>
-    </Fragment>
-  ) : (
-    <code ref={ref} {...rest} className={cs('highlight', className)}>
-      {children}
-    </code>
-  )
-})
+    return match ? (
+      <Fragment>
+        <div className="flex items-center justify-between">
+          <span>{match[1]}</span>
+          <Tooltip open={tooltipOpen} content="Copied!">
+            <IconButton
+              // className="absolute right-4 top-4 cursor-pointer"
+              className="cursor-pointer"
+              variant="solid"
+              onClick={onCopy}
+              onMouseLeave={() => setTooltipOpen(false)}
+            >
+              <RxClipboardCopy />
+            </IconButton>
+          </Tooltip>
+        </div>
+        <SyntaxHighlighter {...rest} style={vscDarkPlus} language={match[1]} PreTag="div">
+          {code}
+        </SyntaxHighlighter>
+      </Fragment>
+    ) : (
+      <code ref={ref} {...rest} className={cs('highlight', className)}>
+        {children}
+      </code>
+    )
+  }
+)
 
 HighlightCode.displayName = 'HighlightCode'
 
@@ -137,17 +145,23 @@ export const Markdown = memo(({ className, children }: MarkdownProps) => {
 
   // 缓存 remarkPlugins 和 rehypePlugins 数组
   const remarkPlugins = useMemo(() => [remarkParse, remarkMath, remarkRehype, remarkGfm], [])
-  const rehypePlugins = useMemo(() => [rehypeRaw, [rehypeKatex, { output: 'mathml' }] as any, rehypeStringify], [])
+  const rehypePlugins = useMemo(
+    () => [rehypeRaw, [rehypeKatex, { output: 'mathml' }] as any, rehypeStringify],
+    []
+  )
 
   // 缓存 components 对象，避免每次重新创建
-  const components = useMemo(() => ({
-    // TODO: fix error
-    //@ts-ignore
-    think: ThinkComponent,
-    code(props: any) {
-      return <HighlightCode {...props} />
-    }
-  }), [])
+  const components = useMemo(
+    () => ({
+      // TODO: fix error
+      //@ts-ignore
+      think: ThinkComponent,
+      code(props: any) {
+        return <HighlightCode {...props} />
+      }
+    }),
+    []
+  )
 
   // console.log(thinkPatch(processGenMath(children)));
   return (

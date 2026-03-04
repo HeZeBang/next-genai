@@ -52,7 +52,7 @@ const postChatOrQuestion = async (
   input: string,
   groupId: string,
   controller: AbortController,
-  model?: Model,
+  model?: Model
 ) => {
   const url = '/api/chat'
 
@@ -101,7 +101,7 @@ const Chat = (props: ChatProps, ref: any) => {
     getMessages,
     setMessages,
     // generatingChatId,
-    setGeneratingChatId,
+    setGeneratingChatId
   } = useContext(ChatContext) as ChatContextType
 
   const [isLoading, setIsLoading] = [props.isGenerating, props.setIsGenerating]
@@ -148,8 +148,11 @@ const Chat = (props: ChatProps, ref: any) => {
         }
 
         if (!lockedChatId) return
-        const message = [...getMessages?.(lockedChatId) || []]
-        const newMessages = [...message, { content: input, role: 'user' as ChatRole, model: lockedModel }]
+        const message = [...(getMessages?.(lockedChatId) || [])]
+        const newMessages = [
+          ...message,
+          { content: input, role: 'user' as ChatRole, model: lockedModel }
+        ]
         setMessages?.(lockedChatId, newMessages)
         conversation.current = newMessages
         setMessage('')
@@ -365,14 +368,20 @@ const Chat = (props: ChatProps, ref: any) => {
             scrollbars="vertical"
             style={{ height: '100%' }}
           >
-            {(getMessages?.(currentChatRef?.current?.id || '') || []).map((item: ChatMessage, index: number) => (
-              <Container size="3" key={index}>
-                <Message message={item} currentModel={currentChatRef?.current?.model} />
-              </Container>
-            ))}
+            {(getMessages?.(currentChatRef?.current?.id || '') || []).map(
+              (item: ChatMessage, index: number) => (
+                <Container size="3" key={index}>
+                  <Message message={item} currentModel={currentChatRef?.current?.model} />
+                </Container>
+              )
+            )}
             {currentMessage && currentMessageId == currentChatRef?.current?.id && (
               <Container size="3">
-                <Message message={{ content: currentMessage, role: 'assistant' }} isLoading currentModel={currentChatRef?.current?.model} />
+                <Message
+                  message={{ content: currentMessage, role: 'assistant' }}
+                  isLoading
+                  currentModel={currentChatRef?.current?.model}
+                />
                 {/* TODO: Add custom model */}
               </Container>
             )}
@@ -380,9 +389,14 @@ const Chat = (props: ChatProps, ref: any) => {
           </ScrollArea>
           <div className="px-4 pb-3">
             <Container size="3">
-              <Flex align="end" justify="between" gap="3" direction="column"
-                className={`relative border-2 dark:border-neutral-800 rounded-3xl dark:focus-within:border-purple-400 focus-within:border-purple-300 focus-within:shadow-lg transition-all ${isLoading ? "animate-border-beam" : ""}`}
-                style={{ overflow: "clip" }}>
+              <Flex
+                align="end"
+                justify="between"
+                gap="3"
+                direction="column"
+                className={`relative border-2 dark:border-neutral-800 rounded-3xl dark:focus-within:border-purple-400 focus-within:border-purple-300 focus-within:shadow-lg transition-all ${isLoading ? 'animate-border-beam' : ''}`}
+                style={{ overflow: 'clip' }}
+              >
                 {/* <BorderBeam
                   duration={4}
                   size={100}
@@ -406,8 +420,7 @@ const Chat = (props: ChatProps, ref: any) => {
                     onChange={(e) => {
                       if (e.target.value === '<br>') {
                         setMessage('')
-                        if (textAreaRef.current)
-                          textAreaRef.current.innerHTML = "";
+                        if (textAreaRef.current) textAreaRef.current.innerHTML = ''
                       }
                     }}
                     onKeyDown={(e) => {
