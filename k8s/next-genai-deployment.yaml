@@ -24,10 +24,10 @@ spec:
     spec:
       containers:
         - env:
-            - name: OPENAI_API_BASE_URL
+            - name: GENAI_API_BASE_URL
               valueFrom:
                 secretKeyRef:
-                  key: OPENAI_API_BASE_URL
+                  key: GENAI_API_BASE_URL
                   name: env
           image: ghcr.io/hezebang/next-genai:latest
           name: next-genai
