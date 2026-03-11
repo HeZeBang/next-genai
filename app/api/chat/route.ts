@@ -139,6 +139,10 @@ const getGenAIStream = async (
               return
             }
 
+            if (!json.choices) {
+              controller.close()
+              return
+            }
             const deltaContent = json.choices[0]?.delta?.content ?? null
             const deltaReasoning = json.choices[0]?.delta?.reasoning_content ?? null
 
