@@ -180,11 +180,32 @@ const Chat = (props: ChatProps, ref: any) => {
             let done = false
             let resultContent = ''
 
+            let streamError = ''
+
             while (!done) {
               try {
                 const { value, done: readerDone } = await reader.read()
                 const char = decoder.decode(value)
                 if (char) {
+                  // Check for stream error marker
+                  const errorMatch = char.match(/__STREAM_ERROR__:(.+)/)
+                  if (errorMatch) {
+                    streamError = errorMatch[1]
+                    done = true
+                    break
+                  }
+                  // Also check accumulated content for error marker (may span chunks)
+                  const pending = resultContent + char
+                  const accErrorMatch = pending.match(/__STREAM_ERROR__:(.+)/)
+                  if (accErrorMatch) {
+                    streamError = accErrorMatch[1]
+                    // Remove error marker from displayed content
+                    resultContent = pending.replace(/\n?__STREAM_ERROR__:.+/, '')
+                    setCurrentMessage(resultContent)
+                    done = true
+                    break
+                  }
+
                   setCurrentMessage((state) => {
                     if (debug) {
                       console.log({ char })
@@ -197,6 +218,10 @@ const Chat = (props: ChatProps, ref: any) => {
               } catch {
                 done = true
               }
+            }
+
+            if (streamError) {
+              toast.error(streamError)
             }
             // The delay of timeout can not be 0 as it will cause the message to not be rendered in racing condition
             setTimeout(() => {

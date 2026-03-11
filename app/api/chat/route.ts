@@ -132,32 +132,43 @@ const getGenAIStream = async (
           try {
             const json = JSON.parse(data)
             if (json.code == 500) {
-              throw new Error(json.errMsg)
+              const errMsg = json.errMsg || 'Server error'
+              console.error('GenAI stream error:', errMsg)
+              controller.enqueue(encoder.encode(`\n__STREAM_ERROR__:${errMsg}`))
+              controller.close()
+              return
             }
-          } catch (e) {
-            throw e
-          }
 
-          try {
-            const json = JSON.parse(data)
-            // console.log(isReasoning, data)
-            let text = json.choices[0]?.delta?.content || json.choices[0]?.delta?.reasoning_content
-            if (text !== undefined) {
-              if (json.choices[0]?.delta?.reasoning_content !== undefined) {
-                if (!isReasoning) {
-                  text = `<think>\n\n${text}`
-                  isReasoning = true
-                }
-              } else if (isReasoning) {
+            if (!json.choices) {
+              controller.close()
+              return
+            }
+            const deltaContent = json.choices[0]?.delta?.content ?? null
+            const deltaReasoning = json.choices[0]?.delta?.reasoning_content ?? null
+
+            if (deltaReasoning != null) {
+              // Reasoning chunk
+              let text = deltaReasoning
+              if (!isReasoning) {
+                text = `<think>\n\n${text}`
+                isReasoning = true
+              }
+              controller.enqueue(encoder.encode(text))
+            } else if (deltaContent != null) {
+              // Content chunk
+              let text = deltaContent
+              if (isReasoning) {
                 text = `</think>\n\n${text}`
                 isReasoning = false
               }
+              controller.enqueue(encoder.encode(text))
             }
-            const queue = encoder.encode(text)
-            controller.enqueue(queue)
+            // Both null: skip (avoid encoding null/undefined as literal strings)
           } catch (e) {
             console.error('Error parsing event data: ', data, e)
-            controller.error(e)
+            const errMsg = e instanceof Error ? e.message : 'Unknown error'
+            controller.enqueue(encoder.encode(`\n__STREAM_ERROR__:${errMsg}`))
+            controller.close()
           }
         }
       }
@@ -171,7 +182,9 @@ const getGenAIStream = async (
           parser.feed(str)
         }
       } catch (e) {
-        console.error('Error parsing event data: ', e)
+        console.error('Stream read error: ', e)
+        const errMsg = e instanceof Error ? e.message : 'Connection error'
+        controller.enqueue(encoder.encode(`\n__STREAM_ERROR__:${errMsg}`))
         controller.close()
       }
     }
