@@ -12,6 +12,7 @@ import {
   Dialog,
   Flex,
   Heading,
+  Link,
   IconButton,
   ScrollArea,
   Text,
@@ -55,6 +56,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
   const [loginLoading, setLoginLoading] = useState(false)
   const [loginError, setLoginError] = useState('')
   const [loginDialogOpen, setLoginDialogOpen] = useState(false)
+  const [tokenText, setTokenText] = useState('')
   const hiddenFormRef = useRef<HTMLFormElement>(null)
   const hiddenUsernameRef = useRef<HTMLInputElement>(null)
   const hiddenPasswordRef = useRef<HTMLInputElement>(null)
@@ -365,6 +367,71 @@ const ModelPanel = (_props: ModelPanelProps) => {
                   </Button>
                 </Flex>
               </form>
+            </Dialog.Content>
+          </Dialog.Root>
+
+          <Dialog.Root>
+            <Dialog.Trigger>
+              <Button className="ml-2 my-2" variant="soft">Retrieve API Key manually</Button>
+            </Dialog.Trigger>
+
+            <Dialog.Content maxWidth="450px">
+              <Dialog.Title>Retrieve API Key</Dialog.Title>
+              <Dialog.Description size="2" mb="4">
+                To retrieve your API Key, please follow the steps below.
+                <br />
+                <br />
+                1. Go to{' '}
+                <Link
+                  href="https://genai.shanghaitech.edu.cn/htk/user/login"
+                  target="_blank"
+                  referrerPolicy="no-referrer"
+                  underline="always"
+                >
+                  GenAI Login Page
+                </Link>
+                <br />
+                2. Login by your ShanghaiTech Account. If you are already logged in, skip this step.
+                <br />
+                3. Copy the link of the page you are redirected to after login. <br />
+                It should contain <code>?token=</code>, e.g.{' '}
+                <code>https://genai.shanghaitech.edu.cn/?token=...</code>
+              </Dialog.Description>
+
+              <Flex direction="column" gap="3">
+                <label>
+                  <Text as="div" size="2" mb="1" weight="bold">
+                    URL
+                  </Text>
+                  <TextField.Root
+                    defaultValue=""
+                    placeholder="https://genai.shanghaitech.edu.cn/?token=..."
+                    onChange={({ target }) => setTokenText(target.value)}
+                  />
+                </label>
+              </Flex>
+
+              <Flex gap="3" mt="4" justify="end">
+                <Dialog.Close>
+                  <Button variant="soft" color="gray">
+                    Cancel
+                  </Button>
+                </Dialog.Close>
+                <Dialog.Close>
+                  <Button
+                    disabled={!tokenText.includes('?token=')}
+                    onClick={() => {
+                      const tok = new URL(tokenText).searchParams.get('token') ?? ''
+                      if (tok) {
+                        localStorage.setItem('apiKey', tok)
+                        refreshToken()
+                      }
+                    }}
+                  >
+                    Save
+                  </Button>
+                </Dialog.Close>
+              </Flex>
             </Dialog.Content>
           </Dialog.Root>
 
