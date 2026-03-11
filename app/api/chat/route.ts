@@ -132,14 +132,13 @@ const getGenAIStream = async (
           try {
             const json = JSON.parse(data)
             if (json.code == 500) {
-              throw new Error(json.errMsg)
+              const errMsg = json.errMsg || 'Server error'
+              console.error('GenAI stream error:', errMsg)
+              controller.enqueue(encoder.encode(`\n__STREAM_ERROR__:${errMsg}`))
+              controller.close()
+              return
             }
-          } catch (e) {
-            throw e
-          }
 
-          try {
-            const json = JSON.parse(data)
             const deltaContent = json.choices[0]?.delta?.content ?? null
             const deltaReasoning = json.choices[0]?.delta?.reasoning_content ?? null
 
@@ -163,7 +162,9 @@ const getGenAIStream = async (
             // Both null: skip (avoid encoding null/undefined as literal strings)
           } catch (e) {
             console.error('Error parsing event data: ', data, e)
-            controller.error(e)
+            const errMsg = e instanceof Error ? e.message : 'Unknown error'
+            controller.enqueue(encoder.encode(`\n__STREAM_ERROR__:${errMsg}`))
+            controller.close()
           }
         }
       }
@@ -177,7 +178,9 @@ const getGenAIStream = async (
           parser.feed(str)
         }
       } catch (e) {
-        console.error('Error parsing event data: ', e)
+        console.error('Stream read error: ', e)
+        const errMsg = e instanceof Error ? e.message : 'Connection error'
+        controller.enqueue(encoder.encode(`\n__STREAM_ERROR__:${errMsg}`))
         controller.close()
       }
     }
