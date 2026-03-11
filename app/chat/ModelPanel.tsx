@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { CopyIcon, MagnifyingGlassIcon, ReloadIcon } from '@radix-ui/react-icons'
 import {
   Badge,
@@ -11,7 +11,6 @@ import {
   DataList,
   Dialog,
   Flex,
-  Link,
   Heading,
   IconButton,
   ScrollArea,
@@ -24,7 +23,7 @@ import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { LuMessageSquarePlus } from 'react-icons/lu'
 import { ChatContext, Model } from '@/components'
 
-export interface ModelPanelProps {}
+export interface ModelPanelProps { }
 enum TokenState {
   Invalid = -1,
   Validating = 0,
@@ -47,11 +46,18 @@ const ModelPanel = (_props: ModelPanelProps) => {
 
   const [promptList, setPromptList] = useState<Model[]>([])
   const [searchText, setSearchText] = useState('')
-  const [tokenText, setTokenText] = useState('')
   const [token, setToken] = useState('')
   const [isValidating, setIsValidating] = useState<TokenState>(0)
   const [quota, setQuota] = useState(4.0)
   const [surplus, setSurplus] = useState(0)
+  const [loginUsername, setLoginUsername] = useState('')
+  const [loginPassword, setLoginPassword] = useState('')
+  const [loginLoading, setLoginLoading] = useState(false)
+  const [loginError, setLoginError] = useState('')
+  const [loginDialogOpen, setLoginDialogOpen] = useState(false)
+  const hiddenFormRef = useRef<HTMLFormElement>(null)
+  const hiddenUsernameRef = useRef<HTMLInputElement>(null)
+  const hiddenPasswordRef = useRef<HTMLInputElement>(null)
 
   const handleSearch = useCallback(
     debounce((type: string, list: Model[], searchText: string) => {
@@ -128,6 +134,49 @@ const ModelPanel = (_props: ModelPanelProps) => {
         })
     } catch (err) {
       console.error(err)
+    }
+  }
+
+  const handleAutoLogin = async () => {
+    if (!loginUsername || !loginPassword) return
+    setLoginLoading(true)
+    setLoginError('')
+    try {
+      const resp = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: loginUsername, password: loginPassword })
+      })
+      const data = await resp.json()
+      if (!data.success) {
+        setLoginError(data.error || 'Login failed')
+        return
+      }
+      localStorage.setItem('apiKey', data.token)
+      // Prompt browser to save credentials:
+      // Chrome/Edge: Credential Management API
+      if ('PasswordCredential' in window) {
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const cred = new (window as any).PasswordCredential({ id: loginUsername, password: loginPassword })
+          await navigator.credentials.store(cred)
+        } catch { /* non-fatal */ }
+      }
+      // Firefox: submit a hidden form targeting an iframe so the browser detects a password form submission
+      if (hiddenUsernameRef.current && hiddenPasswordRef.current && hiddenFormRef.current) {
+        hiddenUsernameRef.current.value = loginUsername
+        hiddenPasswordRef.current.value = loginPassword
+        hiddenFormRef.current.submit()
+      }
+      await refreshToken()
+      setLoginDialogOpen(false)
+      setLoginUsername('')
+      setLoginPassword('')
+      setLoginError('')
+    } catch (err) {
+      setLoginError(err instanceof Error ? err.message : 'Network error, please try again')
+    } finally {
+      setLoginLoading(false)
     }
   }
 
@@ -242,76 +291,80 @@ const ModelPanel = (_props: ModelPanelProps) => {
               </DataList.Value>
             </DataList.Item>
           </DataList.Root>
-          <Dialog.Root>
+          <Dialog.Root open={loginDialogOpen} onOpenChange={setLoginDialogOpen}>
             <Dialog.Trigger>
-              <Button className="my-2">Retrieve API Key</Button>
+              <Button className="my-2">Login via ShanghaiTech Account</Button>
             </Dialog.Trigger>
 
-            <Dialog.Content maxWidth="450px">
-              <Dialog.Title>Retrieve API Key</Dialog.Title>
+            <Dialog.Content maxWidth="400px">
+              <Dialog.Title>Login via ShanghaiTech Account</Dialog.Title>
               <Dialog.Description size="2" mb="4">
-                To retrieve your API Key, please follow the steps below.
-                <br />
-                <br />
-                1. Go to{' '}
-                <Link
-                  href="https://genai.shanghaitech.edu.cn/htk/user/login"
-                  target="_blank"
-                  referrerPolicy="no-referrer"
-                  underline="always"
-                >
-                  GenAI Login Page
-                </Link>
-                <br />
-                2. Login by your ShanghaiTech Account. If you are already logged in, skip this step.
-                <br />
-                3. Copy the link of the page you are redirected to after login. <br />
-                It should be like{' '}
-                <code>https://genai.shanghaitech.edu.cn/dashboard/analysis?token=...</code>
+                Use ShanghaiTech unified identity authentication to automatically obtain the API Key.
               </Dialog.Description>
 
-              <Flex direction="column" gap="3">
-                <label>
-                  <Text as="div" size="2" mb="1" weight="bold">
-                    URL
-                  </Text>
-                  <TextField.Root
-                    defaultValue=""
-                    placeholder="https://genai.shanghaitech.edu.cn/dashboard/analysis?token=..."
-                    onChange={({ target }) => {
-                      setTokenText(target.value)
-                    }}
-                  />
-                </label>
-              </Flex>
+              <form
+                onSubmit={(e) => { e.preventDefault(); handleAutoLogin() }}
+                autoComplete="on"
+              >
+                <Flex direction="column" gap="3">
+                  <label>
+                    <Text as="div" size="2" mb="1" weight="bold">
+                      Student ID
+                    </Text>
+                    <TextField.Root
+                      name="username"
+                      autoComplete="username"
+                      placeholder="Student ID"
+                      value={loginUsername}
+                      disabled={loginLoading}
+                      onChange={({ target }) => setLoginUsername(target.value)}
+                    />
+                  </label>
+                  <label>
+                    <Text as="div" size="2" mb="1" weight="bold">
+                      Password
+                    </Text>
+                    <TextField.Root
+                      name="password"
+                      autoComplete="current-password"
+                      type="password"
+                      placeholder="Password"
+                      value={loginPassword}
+                      disabled={loginLoading}
+                      onChange={({ target }) => setLoginPassword(target.value)}
+                    />
+                  </label>
+                  {loginError && (
+                    <Text size="2" color="red">
+                      {loginError}
+                    </Text>
+                  )}
+                </Flex>
 
-              <Flex gap="3" mt="4" justify="end">
-                <Dialog.Close>
-                  <Button variant="soft" color="gray">
-                    Cancel
-                  </Button>
-                </Dialog.Close>
-                <Dialog.Close>
+                <Flex gap="3" mt="4" justify="end">
+                  <Dialog.Close>
+                    <Button
+                      type="button"
+                      variant="soft"
+                      color="gray"
+                      disabled={loginLoading}
+                      onClick={() => {
+                        setLoginUsername('')
+                        setLoginPassword('')
+                        setLoginError('')
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </Dialog.Close>
                   <Button
-                    disabled={
-                      !tokenText.startsWith(
-                        'https://genai.shanghaitech.edu.cn/dashboard/analysis?token='
-                      )
-                    }
-                    onClick={() => {
-                      const tok = tokenText.replace(
-                        'https://genai.shanghaitech.edu.cn/dashboard/analysis?token=',
-                        ''
-                      )
-                      // setToken(tok)
-                      localStorage.setItem('apiKey', tok)
-                      refreshToken()
-                    }}
+                    type="submit"
+                    disabled={loginLoading || !loginUsername || !loginPassword}
                   >
-                    Save
+                    {loginLoading ? <ReloadIcon className="animate-spin" /> : 'Login'}
                   </Button>
-                </Dialog.Close>
-              </Flex>
+                </Flex>
+              </form>
             </Dialog.Content>
           </Dialog.Root>
 
@@ -408,8 +461,43 @@ const ModelPanel = (_props: ModelPanelProps) => {
           </Button>
         </Container>
       </ScrollArea>
+      <HiddenCredentialForm
+        formRef={hiddenFormRef}
+        usernameRef={hiddenUsernameRef}
+        passwordRef={hiddenPasswordRef}
+      />
     </Flex>
   ) : null
+}
+
+// Hidden form targeting a hidden iframe — lets Firefox detect a password form
+// submission and offer to save credentials (Firefox ignores the Credential
+// Management API but does watch for native form submits with password fields).
+function HiddenCredentialForm({
+  formRef,
+  usernameRef,
+  passwordRef,
+}: {
+  formRef: React.RefObject<HTMLFormElement>
+  usernameRef: React.RefObject<HTMLInputElement>
+  passwordRef: React.RefObject<HTMLInputElement>
+}) {
+  return (
+    <>
+      <iframe name="_pw_save_frame" style={{ display: 'none' }} title="" />
+      <form
+        ref={formRef}
+        method="post"
+        action=""
+        target="_pw_save_frame"
+        style={{ display: 'none' }}
+        autoComplete="on"
+      >
+        <input ref={usernameRef} type="text" name="username" autoComplete="username" readOnly />
+        <input ref={passwordRef} type="password" name="password" autoComplete="current-password" readOnly />
+      </form>
+    </>
+  )
 }
 
 export default ModelPanel
