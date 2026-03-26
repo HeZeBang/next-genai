@@ -24,7 +24,7 @@ import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { LuMessageSquarePlus } from 'react-icons/lu'
 import { ChatContext, Model } from '@/components'
 
-export interface ModelPanelProps { }
+export interface ModelPanelProps {}
 enum TokenState {
   Invalid = -1,
   Validating = 0,
@@ -160,9 +160,14 @@ const ModelPanel = (_props: ModelPanelProps) => {
       if ('PasswordCredential' in window) {
         try {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const cred = new (window as any).PasswordCredential({ id: loginUsername, password: loginPassword })
+          const cred = new (window as any).PasswordCredential({
+            id: loginUsername,
+            password: loginPassword
+          })
           await navigator.credentials.store(cred)
-        } catch { /* non-fatal */ }
+        } catch {
+          /* non-fatal */
+        }
       }
       // Firefox: submit a hidden form targeting an iframe so the browser detects a password form submission
       if (hiddenUsernameRef.current && hiddenPasswordRef.current && hiddenFormRef.current) {
@@ -301,11 +306,15 @@ const ModelPanel = (_props: ModelPanelProps) => {
             <Dialog.Content maxWidth="400px">
               <Dialog.Title>Login via ShanghaiTech Account</Dialog.Title>
               <Dialog.Description size="2" mb="4">
-                Use ShanghaiTech unified identity authentication to automatically obtain the API Key.
+                Use ShanghaiTech unified identity authentication to automatically obtain the API
+                Key.
               </Dialog.Description>
 
               <form
-                onSubmit={(e) => { e.preventDefault(); handleAutoLogin() }}
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  handleAutoLogin()
+                }}
                 autoComplete="on"
               >
                 <Flex direction="column" gap="3">
@@ -359,10 +368,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
                       Cancel
                     </Button>
                   </Dialog.Close>
-                  <Button
-                    type="submit"
-                    disabled={loginLoading || !loginUsername || !loginPassword}
-                  >
+                  <Button type="submit" disabled={loginLoading || !loginUsername || !loginPassword}>
                     {loginLoading ? <ReloadIcon className="animate-spin" /> : 'Login'}
                   </Button>
                 </Flex>
@@ -372,7 +378,9 @@ const ModelPanel = (_props: ModelPanelProps) => {
 
           <Dialog.Root>
             <Dialog.Trigger>
-              <Button className="ml-2 my-2" variant="soft">Retrieve API Key manually</Button>
+              <Button className="ml-2 my-2" variant="soft">
+                Retrieve API Key manually
+              </Button>
             </Dialog.Trigger>
 
             <Dialog.Content maxWidth="450px">
@@ -543,7 +551,7 @@ const ModelPanel = (_props: ModelPanelProps) => {
 function HiddenCredentialForm({
   formRef,
   usernameRef,
-  passwordRef,
+  passwordRef
 }: {
   formRef: React.RefObject<HTMLFormElement>
   usernameRef: React.RefObject<HTMLInputElement>
@@ -561,7 +569,13 @@ function HiddenCredentialForm({
         autoComplete="on"
       >
         <input ref={usernameRef} type="text" name="username" autoComplete="username" readOnly />
-        <input ref={passwordRef} type="password" name="password" autoComplete="current-password" readOnly />
+        <input
+          ref={passwordRef}
+          type="password"
+          name="password"
+          autoComplete="current-password"
+          readOnly
+        />
       </form>
     </>
   )

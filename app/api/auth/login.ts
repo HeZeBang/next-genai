@@ -5,7 +5,7 @@ const HEADERS: Record<string, string> = {
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188',
   'sec-ch-ua': '"Not/A)Brand";v="99", "Microsoft Edge";v="115", "Chromium";v="115"',
   'sec-ch-ua-mobile': '?0',
-  'sec-ch-ua-platform': '"Windows"',
+  'sec-ch-ua-platform': '"Windows"'
 }
 
 /** Parse a named hidden input value from the HTML */
@@ -87,14 +87,14 @@ async function fetchWithCookies(
   for (let i = 0; i <= maxRedirects; i++) {
     const headers: Record<string, string> = {
       ...HEADERS,
-      ...(init.headers as Record<string, string>),
+      ...(init.headers as Record<string, string>)
     }
     if (cookies) headers['Cookie'] = cookies
 
     resp = await fetch(currentUrl, {
       ...init,
       headers,
-      redirect: 'manual',
+      redirect: 'manual'
     })
 
     cookies = mergeSetCookies(cookies, resp)
@@ -137,7 +137,7 @@ export async function loginGenAI(studentid: string, password: string): Promise<s
   // Step 1: GET GenAI login entry — it may redirect to IDS immediately
   const initResp = await fetch(genaiLoginUrl, {
     redirect: 'manual',
-    headers: HEADERS,
+    headers: HEADERS
   })
 
   let idsLoginUrl: string
@@ -156,8 +156,12 @@ export async function loginGenAI(studentid: string, password: string): Promise<s
   }
 
   // Step 2: GET the IDS login page — follow redirects to the actual login form URL
-  const { body: idsHtml, cookies: jar1, finalUrl: idsFormUrl } = await fetchWithCookies(idsLoginUrl, {
-    cookieJar: jar0,
+  const {
+    body: idsHtml,
+    cookies: jar1,
+    finalUrl: idsFormUrl
+  } = await fetchWithCookies(idsLoginUrl, {
+    cookieJar: jar0
   })
 
   // Step 3: Parse hidden form fields
@@ -179,7 +183,7 @@ export async function loginGenAI(studentid: string, password: string): Promise<s
     dllt: 'generalLogin',
     execution,
     _eventId: 'submit',
-    rmShown: '1',
+    rmShown: '1'
   })
 
   console.log('Posting login form to IDS at:', idsFormUrl)
@@ -188,7 +192,7 @@ export async function loginGenAI(studentid: string, password: string): Promise<s
     method: 'POST',
     body: formData.toString(),
     cookieJar: jar1,
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
   })
 
   // Step 6: Check for login failure
@@ -197,7 +201,9 @@ export async function loginGenAI(studentid: string, password: string): Promise<s
     postBody.includes('用户名或密码') ||
     postBody.includes('incorrectPassword')
   ) {
-    throw new Error('Username or password is incorrect, or an additional verification step is required (e.g. CAPTCHA).')
+    throw new Error(
+      'Username or password is incorrect, or an additional verification step is required (e.g. CAPTCHA).'
+    )
   }
 
   console.log('finalUrl after login POST:', finalUrl)
@@ -208,5 +214,7 @@ export async function loginGenAI(studentid: string, password: string): Promise<s
     if (token) return token
   }
 
-  throw new Error('Login successful but failed to extract token, please check GenAI API configuration')
+  throw new Error(
+    'Login successful but failed to extract token, please check GenAI API configuration'
+  )
 }
